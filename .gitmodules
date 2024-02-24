@@ -10,3 +10,6 @@
 [submodule "3rd/stb"]
 	path = 3rd/stb
 	url = git@github.com:nothings/stb.git
+[submodule "3rd/glew"]
+	path = 3rd/glew
+	url = git@github.com:nigels-com/glew.git
