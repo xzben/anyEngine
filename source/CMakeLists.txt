@@ -1,0 +1,21 @@
+set(TARGET_NAME AnyEngineGame)
+
+
+set(GAME_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+
+file(GLOB_RECURSE GAME_HEADERS CONFIGURE_DEPENDS ${GAME_SOURCE_DIR}/*.h)
+file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS ${GAME_SOURCE_DIR}/*.cpp)
+
+source_group(TREE "${GAME_SOURCE_DIR}" FILES ${GAME_HEADERS} ${GAME_SOURCES})
+
+include_directories( 
+	${GAME_SOURCE_DIR}
+)
+
+add_executable(${TARGET_NAME} ${GAME_HEADERS} ${GAME_SOURCES})
+
+target_link_libraries(${TARGET_NAME} 
+    glfw
+      
+     
+    )
