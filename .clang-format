@@ -1,0 +1,20 @@
+---
+# We'll use defaults from the Google style, but with 4 columns indentation.
+BasedOnStyle: Google
+IndentWidth: '4'
+---
+Language: Cpp
+
+# The extra indent or outdent of access modifiers
+AccessModifierOffset: '-4'
+
+#  Break before operators that aren’t assignments
+BreakBeforeBinaryOperators: NonAssignment
+
+# Disallow breaking string literals when formatting.
+BreakStringLiterals: 'false'
+
+# sort #includes
+SortIncludes: 'true'
+
+AlignConsecutiveAssignments:    true
