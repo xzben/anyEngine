@@ -17,5 +17,5 @@ add_library(${TARGET_NAME} ${RUNTIME_HEADERS} ${RUNTIME_SOURCES})
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 17)
 set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "engine")    
 
-target_link_libraries(${TARGET_NAME} glfw gfx)
+target_link_libraries(${TARGET_NAME} glfw)
 target_include_directories(${TARGET_NAME} PUBLIC ${ENGINE_SOURCE_DIR})
