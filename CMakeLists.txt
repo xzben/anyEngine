@@ -13,7 +13,7 @@ add_subdirectory(modules)
 add_subdirectory(source)
 
 if(WIN32)
-   # add_subdirectory(runtime-src/proj.win32)
+    add_subdirectory(runtime-src/proj.win32)
 elseif(UNIX)
     if(APPLE)
         add_subdirectory(runtime-src/proj.mac)

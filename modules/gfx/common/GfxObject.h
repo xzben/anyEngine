@@ -2,7 +2,9 @@
 
 #include <functional>
 
-#include "gfx_common.h"
+#include "gfx_defines.h"
+#include "gfx_types.h"
+
 BEGIN_GFX_NAMESPACE
 
 class Device;
@@ -45,7 +47,7 @@ public:
     }
     virtual ~GfxObject() {
         if (m_handle != GFX_OBJECT_NULL && m_deleter) {
-            m_deleter(*m_device, m_handle)
+            m_deleter(*m_device, m_handle);
         }
         m_handle = GFX_OBJECT_NULL;
     }
@@ -67,4 +69,5 @@ protected:
     HandleDeleter m_deleter = nullptr;
     GfxObjectType m_type{GfxObjectType::UnKnown};
 };
+
 END_GFX_NAMESPACE
