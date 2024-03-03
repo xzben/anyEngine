@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../desktop/DesktopWindow.h"
+#include "platform/desktop/DesktopWindow.h"
 
 class Win32Window : public DesktopWindow
 {

@@ -15,7 +15,7 @@ enum class GFX_API {
     VULKAN,
 };
 
-enum class QueueType {
+enum QueueType {
     Graphics = 0,
     Present,
     Transfer,
@@ -523,5 +523,25 @@ enum class MemoryAccess {
     HOST_ACCESS_SEQUENTIAL_WRITE_BIT = 1 << 3,
 };
 CC_ENUM_BITWISE_OPERATORS(MemoryAccess)
+
+template <typename T>
+struct RectImp {
+    T left;
+    T bottom;
+    T width;
+    T height;
+};
+
+template <typename T>
+struct SizeImp {
+    T width;
+    T height;
+};
+
+using RectI = RectImp<int32_t>;
+using RectF = RectImp<float>;
+
+using SizeI = SizeImp<int32_t>;
+using SizeF = SizeImp<float>;
 
 END_GFX_NAMESPACE

@@ -10,7 +10,6 @@
 static_assert(false, "un surport platform!");
 #endif
 
-Window *Window::create(const std::string &title, uint32_t w, uint32_t h)
-{
+Window *Window::create(const std::string &title, uint32_t w, uint32_t h) {
     return new WindowImpClass(title, w, h);
 }

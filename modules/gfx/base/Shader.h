@@ -4,6 +4,8 @@
 
 BEGIN_GFX_NAMESPACE
 
-class Shader {};
+class Shader {
+public:
+};
 
 END_GFX_NAMESPACE

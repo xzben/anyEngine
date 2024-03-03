@@ -4,6 +4,11 @@
 
 BEGIN_GFX_NAMESPACE
 
-class Pipeline {};
+class Shader;
+
+class Pipeline {
+public:
+    virtual Shader* getShader();
+};
 
 END_GFX_NAMESPACE

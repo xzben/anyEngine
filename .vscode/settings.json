@@ -42,6 +42,20 @@
         "xutility": "cpp",
         "algorithm": "cpp",
         "cassert": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "atomic": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "mutex": "cpp",
+        "ratio": "cpp",
+        "shared_mutex": "cpp",
+        "thread": "cpp",
+        "array": "cpp",
+        "iterator": "cpp",
+        "sstream": "cpp",
+        "string_view": "cpp",
+        "deque": "cpp",
+        "xtree": "cpp",
+        "optional": "cpp"
     }
 }
