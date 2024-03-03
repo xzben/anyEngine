@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "gfx_defines.h"
 #include "gfx_log.h"
 
@@ -28,7 +30,7 @@ inline std::underlying_type_t<T> toNumber(const T &v) {
 
 template <class T>
 inline bool hasFlag(const T flags, const T flagToTest) {
-    using ValueType = std::underlying_type<T>::type;
+    using ValueType = typename std::underlying_type<T>::type;
 
     CCASSERT((static_cast<ValueType>(flagToTest)
               & (static_cast<ValueType>(flagToTest) - 1))
