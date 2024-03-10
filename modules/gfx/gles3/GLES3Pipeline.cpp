@@ -1,0 +1,5 @@
+#include "GLES3Pipeline.h"
+
+BEGIN_GFX_NAMESPACE
+
+END_GFX_NAMESPACE

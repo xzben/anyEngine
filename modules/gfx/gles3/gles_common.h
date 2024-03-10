@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "../common/gfx_common.h"
+#include "core/gles3_core.h"
 #include "gles3_types.h"
 
 using OGL_HANDLE                 = uint32_t;

@@ -1,9 +1,12 @@
 #pragma once
 
-#include "../base/Queue.h"
-#include "core/core.h"
+#include "../base/Semaphore.h"
+#include "core/vulkan_core.h"
 #include "vulkan_common.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanQueue : public Queue, public GfxObject<VkQueue> {};
+class VulkanSemaphore : public Semaphore, public GfxObject {
+private:
+    const vk::LogicDevice& m_logicDevice;
+};
 END_GFX_NAMESPACE

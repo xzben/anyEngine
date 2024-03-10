@@ -7,8 +7,9 @@ class CommandBuffer;
 
 class CommandPool {
 public:
-    virtual CommandBuffer* alloc()        = 0;
-    virtual void free(CommandBuffer* cmd) = 0;
-    virtual void reset()                  = 0;
+    CommandPool()                                          = default;
+    virtual ~CommandPool()                                 = default;
+    virtual CommandBuffer* alloc(CommandBufferLevel level) = 0;
+    virtual void reset()                                   = 0;
 };
 END_GFX_NAMESPACE

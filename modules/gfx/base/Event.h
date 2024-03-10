@@ -4,6 +4,10 @@
 
 BEGIN_GFX_NAMESPACE
 
-class Event {};
+class Event {
+public:
+    Event()          = default;
+    virtual ~Event() = default;
+};
 
 END_GFX_NAMESPACE

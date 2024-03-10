@@ -12,7 +12,10 @@ class RenderPass;
 
 class CommandBuffer {
 public:
-    virtual void begin()                                   = 0;
+    CommandBuffer()          = default;
+    virtual ~CommandBuffer() = default;
+
+    virtual void begin(CommandBufferUsage usage)           = 0;
     virtual void beginRendPass(RenderPass* renderpass)     = 0;
     virtual void bindPipeline(Pipeline* pipeline)          = 0;
     virtual void bindInputAssembler(InputAssembler* input) = 0;

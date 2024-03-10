@@ -8,6 +8,9 @@
 
 BEGIN_GFX_NAMESPACE
 
+using GFX_HANDLE                        = void *;
+static const GFX_HANDLE GFX_NULL_HANDLE = 0;
+
 enum class GFX_API {
     UNKNOWN,
     OPENGL3,
@@ -51,13 +54,11 @@ enum class ResetMode : uint8_t {
     ResetPool = 0,
     ResetIndividually,
     AlwaysAllocate,
-    COUNT,
 };
 
 enum class CommandBufferLevel : uint8_t {
     PRIMARY = 0,
     SECONDARY,
-    COUNT,
 };
 
 enum class CommandBufferUsage : uint8_t {
@@ -92,17 +93,13 @@ public:
     uint32_t location{0};
 };
 
-enum class BufferUsage : uint8_t {
-    NONE         = 0,
-    TRANSFER_SRC = 1 << 0,
-    TRANSFER_DST = 1 << 1,
-    INDEX        = 1 << 2,
-    VERTEX       = 1 << 3,
-    UNIFORM      = 1 << 4,
-    STORAGE      = 1 << 5,
-    INDIRECT     = 1 << 6,
+enum class BufferType : uint32_t {
+    INDEX,
+    VERTEX,
+    UNIFORM,
+    STORAGE,
+    STAGE,
 };
-CC_ENUM_BITWISE_OPERATORS(BufferUsage)
 
 enum class TextureUsage {
     USAGE_UNDEFINE                     = 0,

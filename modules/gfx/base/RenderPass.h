@@ -4,6 +4,10 @@
 
 BEGIN_GFX_NAMESPACE
 
-class RenderPass {};
+class RenderPass {
+public:
+    RenderPass()          = default;
+    virtual ~RenderPass() = default;
+};
 
 END_GFX_NAMESPACE

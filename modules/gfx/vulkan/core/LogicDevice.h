@@ -3,7 +3,7 @@
 #include <array>
 #include <optional>
 
-#include "core_common.h"
+#include "vulkan_core_common.h"
 
 BEGIN_GFX_NAMESPACE
 
@@ -64,12 +64,12 @@ private:
 };
 
 struct DeviceQueue {
-    uint32_t family_index = 0;
+    uint32_t familyIndex = 0;
     std::vector<float> priorities;
 
     DeviceQueue(uint32_t i, std::vector<float> p)
-        : family_index(i), priorities(std::move(p)) {}
-    DeviceQueue(uint32_t i, float p) : family_index(i), priorities{p} {}
+        : familyIndex(i), priorities(std::move(p)) {}
+    DeviceQueue(uint32_t i, float p) : familyIndex(i), priorities{p} {}
 };
 
 class LogicDeviceBuilder {

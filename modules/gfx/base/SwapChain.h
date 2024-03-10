@@ -4,6 +4,10 @@
 
 BEGIN_GFX_NAMESPACE
 
-class SwapChain {};
+class SwapChain {
+public:
+    SwapChain()          = default;
+    virtual ~SwapChain() = default;
+};
 
 END_GFX_NAMESPACE

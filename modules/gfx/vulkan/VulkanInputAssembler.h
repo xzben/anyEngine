@@ -1,9 +1,12 @@
 #pragma once
 
-#include "../base/Queue.h"
-#include "core/core.h"
+#include "../base/InputAssembler.h"
+#include "core/vulkan_core.h"
 #include "vulkan_common.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanQueue : public Queue, public GfxObject<VkQueue> {};
+class VulkanInputAssembler : public InputAssembler, public GfxObject {
+private:
+    const vk::LogicDevice& m_logicDevice;
+};
 END_GFX_NAMESPACE

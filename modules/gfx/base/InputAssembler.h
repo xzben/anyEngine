@@ -8,6 +8,8 @@ class Buffer;
 
 class InputAssembler {
 public:
+    InputAssembler()                     = default;
+    virtual ~InputAssembler()            = default;
     virtual Buffer* getVertexBuffer()    = 0;
     virtual Buffer* getIndexBuffer()     = 0;
     virtual uint32_t getVertexCount()    = 0;

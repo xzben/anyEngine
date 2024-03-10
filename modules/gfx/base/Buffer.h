@@ -6,16 +6,21 @@ BEGIN_GFX_NAMESPACE
 
 class Buffer {
 public:
-    Buffer(BufferUsage& usage, uint32_t size)
-        : m_usage(usage), m_capacity(size) {}
+    Buffer()                                 = default;
     virtual ~Buffer()                        = default;
     virtual void update(const void* data, uint32_t size,
                         uint32_t offset = 0) = 0;
 
+    virtual uint32_t size()     = 0;
+    virtual uint32_t capacity() = 0;
+
+    template <typename Handle>
+    Handle getHandle() {
+        return static_cast<Handle>(getHandleImp());
+    }
+
 protected:
-    BufferUsage m_usage{BufferUsage::NONE};
-    uint32_t m_size{0};
-    uint32_t m_capacity{0};
+    virtual GFX_HANDLE getHandleImp() = 0;
 };
 
 END_GFX_NAMESPACE

@@ -3,7 +3,7 @@
 #include <optional>
 #include <vector>
 
-#include "core_common.h"
+#include "vulkan_core_common.h"
 
 BEGIN_GFX_NAMESPACE
 BEGIN_VK_NAMESPACE

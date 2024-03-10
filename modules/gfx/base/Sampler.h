@@ -4,6 +4,10 @@
 
 BEGIN_GFX_NAMESPACE
 
-class Sampler {};
+class Sampler {
+public:
+    Sampler()          = default;
+    virtual ~Sampler() = default;
+};
 
 END_GFX_NAMESPACE

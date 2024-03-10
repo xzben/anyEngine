@@ -6,6 +6,8 @@ BEGIN_GFX_NAMESPACE
 
 class Device {
 public:
+    Device()          = default;
+    virtual ~Device() = default;
 };
 
 END_GFX_NAMESPACE
