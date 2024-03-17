@@ -8,6 +8,8 @@ class Device {
 public:
     Device()          = default;
     virtual ~Device() = default;
+
+    virtual bool init(const DeviceInfo& info) = 0;
 };
 
 END_GFX_NAMESPACE

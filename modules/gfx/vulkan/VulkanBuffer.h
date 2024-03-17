@@ -7,7 +7,8 @@ BEGIN_GFX_NAMESPACE
 
 class VulkanBuffer : public Buffer, public GfxObject {
 public:
-    VulkanBuffer(vk::LogicDevice& logicDevice, BufferType type, uint32_t size,
+    VulkanBuffer(const vk::LogicDevice& logicDevice, BufferType type,
+                 uint32_t size,
                  const std::vector<uint32_t>& queue_family_indices);
     virtual ~VulkanBuffer();
     virtual void update(const void* data, uint32_t size,
@@ -19,11 +20,14 @@ public:
     void* map();
     void unmap();
 
+    operator bool() const { return m_handle != VK_NULL_HANDLE; }
+    operator VkBuffer() const { return m_handle; }
+
 protected:
     virtual GFX_HANDLE getHandleImp() override { return (GFX_HANDLE)m_handle; }
 
 private:
-    vk::LogicDevice& m_logicDevice;
+    const vk::LogicDevice& m_logicDevice;
     VkBuffer m_handle{VK_NULL_HANDLE};
     VmaAllocation m_allocation = VK_NULL_HANDLE;
     uint32_t m_size{0};

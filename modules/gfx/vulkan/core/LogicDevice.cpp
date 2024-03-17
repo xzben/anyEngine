@@ -10,13 +10,11 @@
 BEGIN_GFX_NAMESPACE
 BEGIN_VK_NAMESPACE
 
-LogicDevice::LogicDevice(const Instance* instance,
-                         const PhysicalDevice* physical_device, VkDevice device,
+LogicDevice::LogicDevice(const Instance& instance,
+                         const PhysicalDevice& physical_device, VkDevice device,
                          EmbeddingQueues& embedding_queues,
                          std::vector<QueueInfo> custom_queues)
-    : m_instance(instance),
-      m_physicalDevice(physical_device),
-      m_device(device) {
+    : m_device(device) {
     for (auto i = 0; i < QueueType::Count; ++i) {
         auto& info = embedding_queues.queue[i];
         for (auto j = 0; j < info.count; ++j) {
@@ -41,9 +39,9 @@ LogicDevice::LogicDevice(const Instance* instance,
 
     // vma
     VmaAllocatorCreateInfo vma_info = {};
-    vma_info.physicalDevice         = *m_physicalDevice;
+    vma_info.physicalDevice         = physical_device;
     vma_info.device                 = m_device;
-    vma_info.instance               = *m_instance;
+    vma_info.instance               = instance;
 #if VMA_DYNAMIC_VULKAN_FUNCTIONS
     static VmaVulkanFunctions vulkanFunctions = {};
     vulkanFunctions.vkGetInstanceProcAddr     = vkGetInstanceProcAddr;
@@ -60,9 +58,6 @@ LogicDevice::~LogicDevice() {
         m_commandPool = nullptr;
     }
 
-    if (m_surface != VK_NULL_HANDLE) {
-        vkDestroySurfaceKHR(*m_instance, m_surface, nullptr);
-    }
     if (m_allocator) {
         vmaDestroyAllocator(m_allocator);
     }
@@ -96,10 +91,10 @@ VulkanCommandPool* LogicDevice::createCommandPool(QueueType queue_type,
 }
 
 VulkanCommandBuffer* LogicDevice::requestCommandBuffer() const {
-    return m_commandPool->alloc();
+    return m_commandPool->alloc(CommandBufferLevel::PRIMARY);
 }
 
-LogicDevice* LogicDeviceBuilder::build() {
+std::unique_ptr<LogicDevice> LogicDeviceBuilder::build() {
     auto extensions = m_extensions;
 
     if (m_requirePresent) {
@@ -135,7 +130,7 @@ LogicDevice* LogicDeviceBuilder::build() {
     deviceInfo.ppEnabledLayerNames     = m_validationLayers.data();
 
     VkDevice device;
-    if (vkCreateDevice(*m_physicalDevice, &deviceInfo, nullptr, &device)
+    if (vkCreateDevice(m_physicalDevice, &deviceInfo, nullptr, &device)
         != VK_SUCCESS) {
         return nullptr;
     }
@@ -146,8 +141,9 @@ LogicDevice* LogicDeviceBuilder::build() {
         customQueues[i].count       = m_customQueues[i].priorities.size();
     }
 
-    return new LogicDevice(m_instance, m_physicalDevice, device,
-                           m_embeddingQueues, std::move(customQueues));
+    return std::make_unique<LogicDevice>(m_instance, m_physicalDevice, device,
+                                         m_embeddingQueues,
+                                         std::move(customQueues));
 }
 
 LogicDeviceBuilder& LogicDeviceBuilder::requireExtension(
@@ -168,7 +164,7 @@ LogicDeviceBuilder& LogicDeviceBuilder::requireValidationLayer(
 
 LogicDeviceBuilder& LogicDeviceBuilder::requirePresentQueue(
     uint32_t count, bool perferSperate) {
-    auto index = m_physicalDevice->getPresentQueueFamily(m_surface);
+    auto index = m_physicalDevice.getPresentQueueFamily(m_surface);
     assert(index);
 
     m_embeddingQueues.queue[QueueType::Present].count       = count;
@@ -177,7 +173,7 @@ LogicDeviceBuilder& LogicDeviceBuilder::requirePresentQueue(
 }
 LogicDeviceBuilder& LogicDeviceBuilder::requireGraphicsQueue(
     uint32_t count, bool perferSperate) {
-    auto index = m_physicalDevice->getGraphicsQueueFamily(perferSperate);
+    auto index = m_physicalDevice.getGraphicsQueueFamily(perferSperate);
     assert(index);
     m_embeddingQueues.queue[QueueType::Graphics].count       = count;
     m_embeddingQueues.queue[QueueType::Graphics].familyIndex = index.value();
@@ -185,7 +181,7 @@ LogicDeviceBuilder& LogicDeviceBuilder::requireGraphicsQueue(
 }
 LogicDeviceBuilder& LogicDeviceBuilder::requireComputeQueue(
     uint32_t count, bool perferSperate) {
-    auto index = m_physicalDevice->getComputeQueueFamily(perferSperate);
+    auto index = m_physicalDevice.getComputeQueueFamily(perferSperate);
     assert(index);
     m_embeddingQueues.queue[QueueType::Compute].count       = count;
     m_embeddingQueues.queue[QueueType::Compute].familyIndex = index.value();
@@ -193,7 +189,7 @@ LogicDeviceBuilder& LogicDeviceBuilder::requireComputeQueue(
 }
 LogicDeviceBuilder& LogicDeviceBuilder::requireTransferQueue(
     uint32_t count, bool perferSperate) {
-    auto index = m_physicalDevice->getTransferQueueFamily(perferSperate);
+    auto index = m_physicalDevice.getTransferQueueFamily(perferSperate);
     assert(index);
     m_embeddingQueues.queue[QueueType::Transfer].count       = count;
     m_embeddingQueues.queue[QueueType::Transfer].familyIndex = index.value();

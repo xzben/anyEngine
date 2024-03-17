@@ -29,7 +29,7 @@ VmaAllocationCreateFlags s_vk_createFlags[] = {
         | VMA_ALLOCATION_CREATE_MAPPED_BIT,
 };
 
-VulkanBuffer::VulkanBuffer(vk::LogicDevice& logicDevice, BufferType type,
+VulkanBuffer::VulkanBuffer(const vk::LogicDevice& logicDevice, BufferType type,
                            uint32_t size,
                            const std::vector<uint32_t>& queue_family_indices)
     : GfxObject(GfxObjectType::Buffer),

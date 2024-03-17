@@ -26,12 +26,12 @@ public:
 
     uint32_t api_version() const { return m_apiVersion; }
 
-    const std::vector<PhysicalDevice*>& getPhysicalDevices() const {
+    const std::vector<PhysicalDevice>& getPhysicalDevices() const {
         return m_physicalDevices;
     }
 
 private:
-    std::vector<PhysicalDevice*> m_physicalDevices;
+    std::vector<PhysicalDevice> m_physicalDevices;
     VkInstance m_handle   = VK_NULL_HANDLE;
     uint32_t m_apiVersion = VK_API_VERSION_1_0;
 
@@ -48,7 +48,7 @@ public:
     InstanceBuilder& operator=(const InstanceBuilder&) = delete;
     InstanceBuilder& operator=(InstanceBuilder&&)      = delete;
 
-    Instance* build();
+    std::unique_ptr<Instance> build();
 
     InstanceBuilder& setAppName(const std::string& name);
     InstanceBuilder& setAppVersion(uint32_t appVersion);

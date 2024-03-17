@@ -118,16 +118,16 @@ static std::optional<uint32_t> get_queue_family(
     return get_queue_family(families, with, {});
 }
 
-PhysicalDevice* PhysicalDeviceSelector::select() {
+PhysicalDevice PhysicalDeviceSelector::select() {
     if (m_requirePresent && !m_surface) {
         return nullptr;
     }
 
-    const auto& allDevices = m_instance->getPhysicalDevices();
+    const auto& allDevices = m_instance.getPhysicalDevices();
 
-    std::vector<std::pair<Suitable, PhysicalDevice*>> avalidDevices;
-    for (auto device : allDevices) {
-        auto suitable = isDeviceSuitable(*device);
+    std::vector<std::pair<Suitable, PhysicalDevice>> avalidDevices;
+    for (const auto& device : allDevices) {
+        auto suitable = isDeviceSuitable(device);
         if (suitable != Suitable::No) {
             avalidDevices.push_back(std::make_pair(suitable, device));
         }
@@ -144,7 +144,7 @@ PhysicalDevice* PhysicalDeviceSelector::select() {
         return nullptr;
     }
 
-    return avalidDevices[0].second;
+    return std::move(avalidDevices[0].second);
 }
 
 PhysicalDeviceSelector& PhysicalDeviceSelector::setSurface(
@@ -194,7 +194,7 @@ PhysicalDeviceSelector& PhysicalDeviceSelector::requireFeatures(
     return *this;
 }
 PhysicalDeviceSelector::Suitable PhysicalDeviceSelector::isDeviceSuitable(
-    PhysicalDevice& device) {
+    const PhysicalDevice& device) {
     Suitable suitable = Suitable::Full;
 
     // extension ok ?

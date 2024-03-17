@@ -56,6 +56,21 @@
         "string_view": "cpp",
         "deque": "cpp",
         "xtree": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "charconv": "cpp",
+        "map": "cpp",
+        "xxatomic": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "regex": "cpp",
+        "stack": "cpp",
+        "ctime": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "locale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xloctime": "cpp"
     }
 }

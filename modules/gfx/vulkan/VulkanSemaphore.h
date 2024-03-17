@@ -6,7 +6,15 @@
 BEGIN_GFX_NAMESPACE
 
 class VulkanSemaphore : public Semaphore, public GfxObject {
+public:
+    VulkanSemaphore(const vk::LogicDevice& device);
+    virtual ~VulkanSemaphore();
+
+    operator bool() const { return m_handle != VK_NULL_HANDLE; }
+    operator VkSemaphore() const { return m_handle; }
+
 private:
     const vk::LogicDevice& m_logicDevice;
+    VkSemaphore m_handle{VK_NULL_HANDLE};
 };
 END_GFX_NAMESPACE

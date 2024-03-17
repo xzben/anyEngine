@@ -4,6 +4,7 @@ set(TARGET_NAME gfx)
 
 set(GFX_LIB_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}")
 set(THIRD_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../3rd/")
+set(MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../")
 
 file(GLOB_RECURSE RUNTIME_HEADERS CONFIGURE_DEPENDS ${GFX_LIB_SOURCE}/*.h)
 file(GLOB_RECURSE RUNTIME_SOURCES CONFIGURE_DEPENDS ${GFX_LIB_SOURCE}/*.cpp)
@@ -13,6 +14,8 @@ file(GLOB_RECURSE RUNTIME_GLAB_HEADS CONFIGURE_DEPENDS ${THIRD_LIB_DIR}/glad/inc
 set(GFX_PRIVATE_INCLUDE 
 ${GFX_LIB_SOURCE}
 ${THIRD_LIB_DIR}
+${THIRD_LIB_DIR}/SPIRV-Reflect/
+${MODULES_DIR}/common/
 ${THIRD_LIB_DIR}/VulkanSDK/include/
 ${THIRD_LIB_DIR}/vulkanmemoryallocator/include/
 ${THIRD_LIB_DIR}/glad/include)
@@ -36,4 +39,4 @@ add_library(${TARGET_NAME} ${RUNTIME_HEADERS}
 target_include_directories(${TARGET_NAME} PUBLIC ${GFX_PUBLIC_INCLUDE})
 target_include_directories(${TARGET_NAME} PRIVATE ${GFX_PRIVATE_INCLUDE})
 
-target_link_libraries(${TARGET_NAME} PUBLIC glfw)
+target_link_libraries(${TARGET_NAME} PUBLIC glfw spirv-reflect-static)

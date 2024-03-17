@@ -26,15 +26,10 @@ class Instance;
 
 class LogicDevice {
 public:
-    LogicDevice(const Instance* instance, const PhysicalDevice* physical_device,
+    LogicDevice(const Instance& instance, const PhysicalDevice& physical_device,
                 VkDevice device, EmbeddingQueues& embedding_queues,
                 std::vector<QueueInfo> custom_queues);
     ~LogicDevice();
-
-    const Instance& instance() const { return *m_instance; }
-    const PhysicalDevice& physical_device() const { return *m_physicalDevice; }
-    void setSurface(VkSurfaceKHR surface) { m_surface = surface; }
-    VkSurfaceKHR surface() { return m_surface; }
 
     operator bool() const { return m_device != VK_NULL_HANDLE; }
     operator VkDevice() const { return m_device; }
@@ -50,12 +45,7 @@ public:
     VulkanCommandBuffer* requestCommandBuffer() const;
 
 private:
-    const Instance* m_instance;
-    const PhysicalDevice* m_physicalDevice;
-
-    VkDevice m_device      = VK_NULL_HANDLE;
-    VkSurfaceKHR m_surface = VK_NULL_HANDLE;
-
+    VkDevice m_device = VK_NULL_HANDLE;
     std::array<std::vector<VulkanQueue*>, QueueType::Count> m_embeddingQueues;
     std::unordered_map<uint32_t, std::vector<VulkanQueue*>> m_customQueues;
 
@@ -74,9 +64,9 @@ struct DeviceQueue {
 
 class LogicDeviceBuilder {
 public:
-    explicit LogicDeviceBuilder(const Instance* instance,
-                                const PhysicalDevice* phycialDevice,
-                                VkSurfaceKHR surface)
+    explicit LogicDeviceBuilder(const Instance& instance,
+                                const PhysicalDevice& phycialDevice,
+                                Surface& surface)
         : m_instance(instance),
           m_physicalDevice(phycialDevice),
           m_surface(surface) {}
@@ -86,7 +76,7 @@ public:
     LogicDeviceBuilder& operator=(const LogicDeviceBuilder&) = delete;
     LogicDeviceBuilder& operator=(LogicDeviceBuilder&&)      = delete;
 
-    LogicDevice* build();
+    std::unique_ptr<LogicDevice> build();
 
     LogicDeviceBuilder& requireExtension(const char* extension);
     LogicDeviceBuilder& requireFeatures(
@@ -113,11 +103,11 @@ private:
     std::vector<DeviceQueue> buildEmbeddingQueues();
 
 private:
-    const Instance* m_instance;
-    const PhysicalDevice* m_physicalDevice;
-    VkSurfaceKHR m_surface = VK_NULL_HANDLE;
+    const Instance& m_instance;
+    const PhysicalDevice& m_physicalDevice;
+    const Surface& m_surface;
 
-    bool m_requirePresent;
+    bool m_requirePresent{true};
     VkPhysicalDeviceFeatures m_features = {};
     std::vector<const char*> m_extensions;
     std::vector<const char*> m_validationLayers;

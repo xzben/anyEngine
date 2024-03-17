@@ -6,9 +6,10 @@ BEGIN_GFX_NAMESPACE
 
 class Fence {
 public:
-    Fence()          = default;
-    virtual ~Fence() = default;
-    bool reset();
-    bool wait(uint32_t timeout = std::numeric_limits<uint32_t>::max());
+    Fence()              = default;
+    virtual ~Fence()     = default;
+    virtual bool reset() = 0;
+    virtual bool wait(
+        uint32_t timeout = std::numeric_limits<uint32_t>::max()) = 0;
 };
 END_GFX_NAMESPACE

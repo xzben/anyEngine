@@ -3,7 +3,7 @@
 #include "VulkanCommandBuffer.h"
 
 BEGIN_GFX_NAMESPACE
-VulkanCommandPool::VulkanCommandPool(vk::LogicDevice& logicDevice,
+VulkanCommandPool::VulkanCommandPool(const vk::LogicDevice& logicDevice,
                                      uint32_t queueFamilyIndex,
                                      ResetMode resetMode)
     : GfxObject(GfxObjectType::CommandPool),
@@ -54,8 +54,6 @@ VulkanCommandBuffer* VulkanCommandPool::alloc(CommandBufferLevel level) {
     return ret;
 }
 
-void VulkanCommandPool::reset() {
-    
-}
+void VulkanCommandPool::reset() {}
 
 END_GFX_NAMESPACE

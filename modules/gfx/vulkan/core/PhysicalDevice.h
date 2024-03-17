@@ -57,7 +57,7 @@ private:
 
 class PhysicalDeviceSelector {
 public:
-    explicit PhysicalDeviceSelector(const Instance* instance,
+    explicit PhysicalDeviceSelector(const Instance& instance,
                                     VkSurfaceKHR surface = VK_NULL_HANDLE)
         : m_instance(instance), m_surface(surface) {}
 
@@ -66,7 +66,7 @@ public:
     PhysicalDeviceSelector& operator=(const PhysicalDeviceSelector&) = delete;
     PhysicalDeviceSelector& operator=(PhysicalDeviceSelector&&)      = delete;
 
-    PhysicalDevice* select();
+    PhysicalDevice select();
 
     PhysicalDeviceSelector& setSurface(VkSurfaceKHR surface);
     PhysicalDeviceSelector& preferDeviceType(VkPhysicalDeviceType type);
@@ -80,10 +80,10 @@ public:
 
 private:
     enum class Suitable { Full, Partial, No };
-    Suitable isDeviceSuitable(PhysicalDevice& device);
+    Suitable isDeviceSuitable(const PhysicalDevice& device);
 
 private:
-    const Instance* m_instance;
+    const Instance& m_instance;
     VkSurfaceKHR m_surface = VK_NULL_HANDLE;
 
     VkPhysicalDeviceType m_preferDeviceType =

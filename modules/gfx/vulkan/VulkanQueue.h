@@ -18,8 +18,8 @@ public:
 
     uint32_t familyIndex() { return m_familyIndex; }
 
-    operator bool() { return m_handle != VK_NULL_HANDLE; }
-    operator VkQueue() { return m_handle; }
+    operator bool() const { return m_handle != VK_NULL_HANDLE; }
+    operator VkQueue() const { return m_handle; }
 
 private:
     vk::LogicDevice& m_logicDevice;

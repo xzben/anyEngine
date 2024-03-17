@@ -27,4 +27,9 @@ if(NOT TARGET tinyobjloader)
     set_target_properties(tinyobjloader PROPERTIES FOLDER ${THIRD_PART_FOLDER}/tinyobjloader)
 endif()
 
+set(SPIRV_REFLECT_EXECUTABLE OFF CACHE BOOL "Build spirv-reflect executable" FORCE)
+set(SPIRV_REFLECT_EXAMPLES OFF CACHE BOOL "Build stripper examples" FORCE)
+set(SPIRV_REFLECT_STATIC_LIB ON CACHE BOOL "Build a SPIRV-Reflect static library" FORCE)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SPIRV-Reflect)
+
 

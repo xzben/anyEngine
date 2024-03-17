@@ -53,7 +53,7 @@ Instance::Instance(VkInstance handle, uint32_t apiVersion,
     vkEnumeratePhysicalDevices(m_handle, &count, physicalDevices.data());
 
     for (auto& device : physicalDevices) {
-        m_physicalDevices.push_back(new PhysicalDevice(device));
+        m_physicalDevices.emplace_back(device);
     }
 }
 
@@ -70,8 +70,8 @@ Instance::~Instance() {
     }
 }
 
-Instance* InstanceBuilder::build() {
-    Instance* instance = nullptr;
+std::unique_ptr<Instance> InstanceBuilder::build() {
+    std::unique_ptr<Instance> instance;
     SystemInfo sysInfo;
 
     auto extensions = m_extensions;
@@ -156,8 +156,9 @@ Instance* InstanceBuilder::build() {
         }
     }
 
-    return new Instance(instanceHandle, m_apiVersion, std::move(extensions),
-                        m_enableInvalidationLayer, debug_messenger);
+    return std::make_unique<Instance>(
+        instanceHandle, m_apiVersion, std::move(extensions),
+        m_enableInvalidationLayer, debug_messenger);
 }
 
 InstanceBuilder& InstanceBuilder::setAppName(const std::string& name) {

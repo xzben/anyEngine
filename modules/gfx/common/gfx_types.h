@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 #include "gfx_defines.h"
 #include "gfx_functions.h"
@@ -26,6 +27,20 @@ enum QueueType {
     Count,
 };
 
+struct SurfaceInfo {
+    void *handle{nullptr};
+    uint32_t width;
+    uint32_t height;
+};
+
+struct DeviceInfo {
+    std::string name{""};
+    bool present{true};
+    SurfaceInfo surface;
+    std::unordered_map<QueueType, uint32_t> queues;
+    uint32_t requireMemSize{0};
+};
+
 enum class GfxObjectType : uint8_t {
     UnKnown = 0,
     SwapChain,
@@ -47,6 +62,7 @@ enum class GfxObjectType : uint8_t {
     Device,
     Fence,
     Semaphore,
+    Event,
     Count,
 };
 
@@ -70,14 +86,25 @@ CC_ENUM_BITWISE_OPERATORS(CommandBufferUsage)
 
 enum class Format {
     UNDEFINED = 0,
-    Float,
+    Bool,
+    Bool2,
+    Bool3,
+    Bool4,
     Int,
+    Int2,
+    Int3,
+    Int4,
     UInt,
-    Vec2,
-    Vec3,
-    Vec4,
-    Mat4,
+    UInt2,
+    UInt3,
+    UInt4,
+    Float,
+    Float2,
+    Float3,
+    Float4,
+};
 
+enum class PixelFormat {
     RGBA8,
     RGB8,
     Depth,

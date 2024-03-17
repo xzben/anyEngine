@@ -8,14 +8,17 @@ class Buffer;
 
 class InputAssembler {
 public:
-    InputAssembler()                     = default;
-    virtual ~InputAssembler()            = default;
-    virtual Buffer* getVertexBuffer()    = 0;
-    virtual Buffer* getIndexBuffer()     = 0;
-    virtual uint32_t getVertexCount()    = 0;
-    virtual uint32_t getIndexCount()     = 0;
-    virtual uint32_t getVertexItemSize() = 0;
-    virtual uint32_t getIndexItemSize()  = 0;
+    InputAssembler()          = default;
+    virtual ~InputAssembler() = default;
+
+    virtual const std::vector<Attribute>& getAttributes() const = 0;
+    virtual Buffer* getVertexBuffer() const                     = 0;
+    virtual Buffer* getIndexBuffer() const                      = 0;
+    virtual uint32_t getVertexCount() const                     = 0;
+    virtual uint32_t getIndexCount() const                      = 0;
+    virtual uint32_t getVertexItemSize() const                  = 0;
+    virtual uint32_t getIndexItemSize() const                   = 0;
+    virtual PrimitiveModel getPrimivateModel() const            = 0;
 };
 
 END_GFX_NAMESPACE
