@@ -14,7 +14,9 @@ LogicDevice::LogicDevice(const Instance& instance,
                          const PhysicalDevice& physical_device, VkDevice device,
                          EmbeddingQueues& embedding_queues,
                          std::vector<QueueInfo> custom_queues)
-    : m_device(device) {
+    : m_device(device),
+      m_instance(instance),
+      m_physicalDevice(physical_device) {
     for (auto i = 0; i < QueueType::Count; ++i) {
         auto& info = embedding_queues.queue[i];
         for (auto j = 0; j < info.count; ++j) {

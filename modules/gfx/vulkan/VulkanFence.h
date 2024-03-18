@@ -23,6 +23,11 @@ public:
     static bool reset(const vk::LogicDevice& device,
                       std::vector<VkFence> fences);
 
+protected:
+    virtual GFX_HANDLE getHandleImp() const override {
+        return (GFX_HANDLE)m_handle;
+    }
+
 private:
     const vk::LogicDevice& m_logicDevice;
     VkFence m_handle{VK_NULL_HANDLE};

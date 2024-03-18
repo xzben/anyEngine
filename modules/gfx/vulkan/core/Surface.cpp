@@ -10,10 +10,19 @@ static_assert("need to implement this platform");
 BEGIN_GFX_NAMESPACE
 BEGIN_VK_NAMESPACE
 Surface::Surface(VkInstance instance, SurfaceInfo info) : m_instance(instance) {
+    update(info);
+}
+
+bool Surface::update(SurfaceInfo info) {
+    if (m_info.handle == info.handle) {
+        return false;
+    }
+
+    m_info = info;
 #if CUR_PLATFORM == PLATFORM_WINDOWS
     VkWin32SurfaceCreateInfoKHR createInfo{};
     createInfo.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    createInfo.hwnd      = (HWND)info.handle;
+    createInfo.hwnd      = (HWND)m_info.handle;
     createInfo.hinstance = GetModuleHandle(nullptr);
 
     if (vkCreateWin32SurfaceKHR(m_instance, &createInfo, nullptr, &m_handle)
@@ -23,6 +32,7 @@ Surface::Surface(VkInstance instance, SurfaceInfo info) : m_instance(instance) {
 #else
     static_assert("need to implement this platform");
 #endif
+    return true;
 }
 
 Surface::~Surface() { vkDestroySurfaceKHR(m_instance, m_handle, nullptr); }

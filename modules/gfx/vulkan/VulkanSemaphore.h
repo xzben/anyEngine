@@ -12,6 +12,9 @@ public:
 
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkSemaphore() const { return m_handle; }
+    virtual GFX_HANDLE getHandleImp() const override {
+        return (GFX_HANDLE)m_handle;
+    }
 
 private:
     const vk::LogicDevice& m_logicDevice;

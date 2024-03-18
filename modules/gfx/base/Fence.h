@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../common/gfx_common.h"
-
+#include "Handle.h"
 BEGIN_GFX_NAMESPACE
 
-class Fence {
+class Fence : public Handle {
 public:
     Fence()              = default;
     virtual ~Fence()     = default;

@@ -14,7 +14,13 @@ public:
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkSurfaceKHR() const { return m_handle; }
 
+    uint32_t width() const { return m_info.width; }
+    uint32_t height() const { return m_info.height; }
+
+    bool update(SurfaceInfo info);
+
 private:
+    SurfaceInfo m_info;
     VkSurfaceKHR m_handle{VK_NULL_HANDLE};
     VkInstance m_instance{VK_NULL_HANDLE};
 };

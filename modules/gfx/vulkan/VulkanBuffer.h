@@ -24,7 +24,9 @@ public:
     operator VkBuffer() const { return m_handle; }
 
 protected:
-    virtual GFX_HANDLE getHandleImp() override { return (GFX_HANDLE)m_handle; }
+    virtual GFX_HANDLE getHandleImp() const override {
+        return (GFX_HANDLE)m_handle;
+    }
 
 private:
     const vk::LogicDevice& m_logicDevice;

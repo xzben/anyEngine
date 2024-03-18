@@ -14,4 +14,7 @@ extern inline VkCompareOp mapVkCompareOp(CompareOpFlag flag);
 extern inline VkSamplerMipmapMode mapVkMipmapModel(Filter filter);
 extern inline VkBorderColor getBorderColor(SamplerBorderColor color);
 
+extern inline bool isDepthOnlyFormat(VkFormat format);
+extern inline bool isDepthStencilFormat(VkFormat format);
+
 END_VK_NAMESPACE END_GFX_NAMESPACE

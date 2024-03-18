@@ -31,6 +31,9 @@ public:
                 std::vector<QueueInfo> custom_queues);
     ~LogicDevice();
 
+    const Instance& getInstance() const { return m_instance; }
+    const PhysicalDevice& getPhysicalDevice() const { return m_physicalDevice; }
+
     operator bool() const { return m_device != VK_NULL_HANDLE; }
     operator VkDevice() const { return m_device; }
 
@@ -45,6 +48,8 @@ public:
     VulkanCommandBuffer* requestCommandBuffer() const;
 
 private:
+    const Instance& m_instance;
+    const PhysicalDevice& m_physicalDevice;
     VkDevice m_device = VK_NULL_HANDLE;
     std::array<std::vector<VulkanQueue*>, QueueType::Count> m_embeddingQueues;
     std::unordered_map<uint32_t, std::vector<VulkanQueue*>> m_customQueues;

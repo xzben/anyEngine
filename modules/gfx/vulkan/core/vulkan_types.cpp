@@ -3,6 +3,17 @@
 BEGIN_GFX_NAMESPACE
 BEGIN_VK_NAMESPACE
 
+inline bool isDepthOnlyFormat(VkFormat format) {
+    return format == VK_FORMAT_D16_UNORM || format == VK_FORMAT_D32_SFLOAT;
+}
+
+inline bool isDepthStencilFormat(VkFormat format) {
+    return format == VK_FORMAT_D16_UNORM_S8_UINT
+           || format == VK_FORMAT_D24_UNORM_S8_UINT
+           || format == VK_FORMAT_D32_SFLOAT_S8_UINT
+           || isDepthOnlyFormat(format);
+}
+
 std::unordered_map<Format, VkFormat> g_formats = {
     {Format::Bool, VK_FORMAT_R32_SINT},
     {Format::Bool2, VK_FORMAT_R32G32_SINT},
@@ -26,7 +37,7 @@ std::unordered_map<Format, VkFormat> g_formats = {
 };
 
 inline VkFormat mapVkFormat(Format format) {
-    VkFormat ret = 0;
+    VkFormat ret = VK_FORMAT_UNDEFINED;
     auto it      = g_formats.find(format);
     if (it != g_formats.end()) {
         ret = it->second;
@@ -68,24 +79,24 @@ inline VkSamplerAddressMode mapVkSamplerAddressModel(Address address) {
 
 inline VkCompareOp mapVkCompareOp(CompareOpFlag flag) {
     switch (flag) {
-        case CompareOpFlag::COMPARE_OP_NEVER:
+        case CompareOpFlag::NEVER:
             return VK_COMPARE_OP_NEVER;
-        case CompareOpFlag::COMPARE_OP_LESS:
+        case CompareOpFlag::LESS:
             return VK_COMPARE_OP_LESS;
-        case CompareOpFlag::COMPARE_OP_EQUAL:
+        case CompareOpFlag::EQUAL:
             return VK_COMPARE_OP_EQUAL;
-        case CompareOpFlag::COMPARE_OP_LESS_OR_EQUAL:
+        case CompareOpFlag::LESS_OR_EQUAL:
             return VK_COMPARE_OP_LESS_OR_EQUAL;
-        case CompareOpFlag::COMPARE_OP_GREATER:
+        case CompareOpFlag::GREATER:
             return VK_COMPARE_OP_GREATER;
-        case CompareOpFlag::COMPARE_OP_NOT_EQUAL:
+        case CompareOpFlag::NOT_EQUAL:
             return VK_COMPARE_OP_NOT_EQUAL;
-        case CompareOpFlag::COMPARE_OP_GREATER_OR_EQUAL:
+        case CompareOpFlag::GREATER_OR_EQUAL:
             return VK_COMPARE_OP_GREATER_OR_EQUAL;
-        case CompareOpFlag::COMPARE_OP_ALWAYS:
+        case CompareOpFlag::ALWAYS:
             return VK_COMPARE_OP_ALWAYS;
         default: {
-            CCERROR("unsupport compareop:%d", to_number(flag));
+            CCERROR("unsupport compareop:%d", toNumber(flag));
             return VK_COMPARE_OP_NEVER;
         }
     }

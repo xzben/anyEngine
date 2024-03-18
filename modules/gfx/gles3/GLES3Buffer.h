@@ -14,7 +14,9 @@ public:
     virtual uint32_t capacity() { return m_capacity; }
 
 protected:
-    virtual GFX_HANDLE getHandleImp() override { return (GFX_HANDLE)m_handle; }
+    virtual GFX_HANDLE getHandleImp() const override {
+        return (GFX_HANDLE)m_handle;
+    }
 
 private:
     gles::GLContext& m_context;
