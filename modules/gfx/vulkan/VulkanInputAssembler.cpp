@@ -4,7 +4,7 @@ BEGIN_GFX_NAMESPACE
 
 VulkanInputAssembler::VulkanInputAssembler(
     const vk::LogicDevice& device, const std::vector<Attribute>& attributes,
-    PrimitiveModel primitive)
+    PrimitiveType primitive)
     : GfxObject(GfxObjectType::InputAssembler),
       m_logicDevice(device),
       m_attributes(attributes),

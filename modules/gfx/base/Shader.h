@@ -8,6 +8,8 @@ class Shader {
 public:
     Shader()          = default;
     virtual ~Shader() = default;
+
+    virtual bool build() = 0;
 };
 
 END_GFX_NAMESPACE

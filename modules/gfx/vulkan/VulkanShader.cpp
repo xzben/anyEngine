@@ -136,7 +136,17 @@ ShaderModule::ShaderModule(const vk::LogicDevice& device,
 }
 
 ShaderModule::~ShaderModule() {
-    vkDestroyShaderModule(m_logicDevice, m_handle, nullptr);
+    if (m_handle) vkDestroyShaderModule(m_logicDevice, m_handle, nullptr);
+}
+
+VkPipelineShaderStageCreateInfo ShaderModule::getStageInfo() {
+    VkPipelineShaderStageCreateInfo info;
+    info.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    info.stage  = this->m_stage;
+    info.module = this->m_handle;
+    info.pName  = this->m_entryName.c_str();
+
+    return info;
 }
 
 bool ShaderModule::reflect(const std::vector<uint8_t>& code) {
@@ -173,17 +183,14 @@ bool VulkanShader::addStage(const std::vector<uint8_t>& code,
         return false;
     }
 
-    m_setLayoutDirty = true;
     m_modules.push_back(shaderModule);
-
+    m_stageInfos.push_back(shaderModule->getStageInfo());
     return true;
 }
 
-void VulkanShader::descriptorSetBindings(
+void VulkanShader::getDescriptorSetBindings(
     uint32_t set_index,
     std::vector<VkDescriptorSetLayoutBinding>& layout_bindings) {
-    buildLayoutSet();
-
     for (auto& set : m_setLayouts) {
         if (set.index == set_index) {
             layout_bindings.resize(set.bindings.size());
@@ -200,16 +207,14 @@ void VulkanShader::descriptorSetBindings(
     }
 }
 
-const vk::DescriptorSetLayout& VulkanShader::descriptorSetLayout(
+const vk::DescriptorSetLayout& VulkanShader::createDescriptorSetLayout(
     uint32_t set_index) {
-    buildLayoutSet();
-
     if (auto it = m_layouts.find(set_index); it != m_layouts.end()) {
         return it->second;
     }
 
     std::vector<VkDescriptorSetLayoutBinding> bindings;
-    descriptorSetBindings(set_index, bindings);
+    getDescriptorSetBindings(set_index, bindings);
 
     auto it = m_layouts.emplace(std::piecewise_construct,
                                 std::forward_as_tuple(set_index),
@@ -217,44 +222,7 @@ const vk::DescriptorSetLayout& VulkanShader::descriptorSetLayout(
     return it.first->second;
 }
 
-std::vector<vk::DescriptorSetLayout> VulkanShader::descriptorSetLayouts() {
-    buildLayoutSet();
-
-    std::vector<vk::DescriptorSetLayout> result;
-    for (auto& set : m_setLayouts) {
-        result.push_back(descriptorSetLayout(set.index));
-    }
-
-    return std::move(result);
-}
-
-const vk::PipelineLayout& VulkanShader::pipelineLayout() {
-    buildLayoutSet();
-
-    if (!m_pipelineLayout) {
-        m_pipelineLayout = std::make_unique<vk::PipelineLayout>(
-            m_logicDevice, descriptorSetLayouts());
-    }
-
-    return *m_pipelineLayout;
-}
-
-const std::vector<vk::VertexInputBinding>& VulkanShader::vertexInputBingdings()
-    const {
-    for (auto& stagemodule : m_modules) {
-        if (stagemodule->getStage() == VK_SHADER_STAGE_VERTEX_BIT) {
-            return stagemodule->getVertexInputBinding();
-        }
-    }
-
-    assert(false);
-    static const std::vector<vk::VertexInputBinding> empty;
-    return empty;
-}
-
 bool VulkanShader::buildLayoutSet() {
-    if (!m_setLayoutDirty) return false;
-    m_setLayoutDirty = false;
     m_setLayouts.clear();
 
     auto merge = [](auto& left, auto& right, auto cmp, auto domerge) {
@@ -328,9 +296,41 @@ bool VulkanShader::buildLayoutSet() {
     std::sort(m_setLayouts.begin(), m_setLayouts.end(),
               [](const auto& l, const auto& r) { return l.index <= r.index; });
 
-    m_layouts.clear();
-    m_pipelineLayout.reset(nullptr);
+    for (auto& set : m_setLayouts) {
+        m_layoutLists.push_back(createDescriptorSetLayout(set.index));
+    }
+    return true;
+}
+
+bool VulkanShader::build() {
+    buildLayoutSet();
+
+    // inputbindings
+    m_inputBindings.clear();
+    for (auto& stagemodule : m_modules) {
+        if (stagemodule->getStage() == VK_SHADER_STAGE_VERTEX_BIT) {
+            m_inputBindings = stagemodule->getVertexInputBinding();
+        }
+    }
+    m_vertexBindings.resize(1);
+    m_vertexAttributes.resize(m_inputBindings.size());
+    uint32_t index    = 0;
+    uint32_t offset   = 0;
+    uint32_t location = 0;
+    for (auto& input_item : m_inputBindings) {
+        m_vertexAttributes[index].binding  = location;
+        m_vertexAttributes[index].location = input_item.location;
+        m_vertexAttributes[index].format   = input_item.format;
+        m_vertexAttributes[index].offset   = offset;
+        uint32_t size = vk::mapVkFormatSize(input_item.format);
+        offset += size;
+        index++;
+    }
+    m_vertexBindings[0] = {0, offset, VK_VERTEX_INPUT_RATE_VERTEX};
+    m_pipelineLayout =
+        std::make_unique<vk::PipelineLayout>(m_logicDevice, m_layoutLists);
 
     return true;
 }
+
 END_GFX_NAMESPACE

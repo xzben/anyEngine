@@ -84,7 +84,7 @@ enum class CommandBufferUsage : uint8_t {
 };
 CC_ENUM_BITWISE_OPERATORS(CommandBufferUsage)
 
-enum class Format {
+enum class DataFormat {
     UNDEFINED = 0,
     Bool,
     Bool2,
@@ -105,6 +105,7 @@ enum class Format {
 };
 
 enum class PixelFormat {
+    UNDEFINED = 0,
     RGBA8,
     RGB8,
     Depth,
@@ -114,7 +115,7 @@ enum class PixelFormat {
 class Attribute {
 public:
     std::string name{""};
-    Format format;
+    DataFormat format;
     bool isNormalized{false};
     bool isIntanced{false};
     uint32_t location{0};
@@ -154,7 +155,7 @@ enum class ShaderStage {
 };
 CC_ENUM_BITWISE_OPERATORS(ShaderStage)
 
-enum class PrimitiveModel {
+enum class PrimitiveType {
     POINT_LIST                    = 0,
     LINE_LIST                     = 1,
     LINE_STRIP                    = 2,
@@ -195,8 +196,7 @@ struct RasterizationState {
                && depthBiasEnable == rhs.depthBiasEnable
                && depthBiasConstantFactor == rhs.depthBiasConstantFactor
                && depthBiasClamp == rhs.depthBiasClamp
-               && depthBiassSlopeFactor == rhs.depthBiassSlopeFactor
-               && primitiveModel == rhs.primitiveModel;
+               && depthBiassSlopeFactor == rhs.depthBiassSlopeFactor;
     }
 
     bool operator!=(const RasterizationState &rhs) { return !operator==(rhs); }
@@ -210,8 +210,8 @@ struct RasterizationState {
     float depthBiasConstantFactor{0.0f};
     float depthBiasClamp{0.0f};
     float depthBiassSlopeFactor{0.0f};
-    PrimitiveModel primitiveModel{PrimitiveModel::TRIANGLE_LIST};
 };
+
 enum class SampleCount {
     SAMPLE_COUNT_1_BIT  = 0x00000001,
     SAMPLE_COUNT_2_BIT  = 0x00000002,
@@ -227,7 +227,7 @@ struct MultiSampleState {
     SampleCount rasterizationSamples{SampleCount::SAMPLE_COUNT_1_BIT};
 };
 
-enum class CompareOpFlag {
+enum class CompareOp {
     EMPTY            = 0,
     NEVER            = 1,
     LESS             = 2,
@@ -262,7 +262,7 @@ struct StencilOpState {
     StencilOp failOp{StencilOp::KEEP};
     StencilOp passOp{StencilOp::KEEP};
     StencilOp depthFailOP{StencilOp::KEEP};
-    CompareOpFlag compareOp{CompareOpFlag::NEVER};
+    CompareOp compareOp{CompareOp::NEVER};
     uint32_t compareMask{0};
     uint32_t writeMask{0};
     uint32_t reference{0};
@@ -284,7 +284,7 @@ struct DepthStencilState {
 
     bool depthTestEnable{true};
     bool depthWriteEnable{true};
-    CompareOpFlag depthCompareOp{CompareOpFlag::LESS};
+    CompareOp depthCompareOp{CompareOp::LESS};
     bool depthBoundsTestEnable{false};
     float minDepthBounds{0.0};
     float maxDepthBounds{1.0f};
@@ -367,9 +367,9 @@ struct ColorBlendState {
 
 struct PipelineState {
     RasterizationState rasterize;
-    DepthStencilState depth_stencil;
+    DepthStencilState depthStencil;
     ColorBlendState blend;
-    MultiSampleState multi_sample;
+    MultiSampleState multiSample;
 };
 
 enum class Filter {
@@ -408,14 +408,14 @@ public:
     }
 
 public:
-    Filter minFilter{Filter::LINEAR};             // vlaue 0 - 3
-    Filter magFilter{Filter::LINEAR};             // vlaue 0 - 3
-    Filter mipFilter{Filter::LINEAR};             // vlaue 0 - 3
-    Address addressU{Address::WRAP};              // vlaue 0 - 3
-    Address addressV{Address::WRAP};              // vlaue 0 - 3
-    Address addressW{Address::WRAP};              // vlaue 0 - 3
-    uint32_t maxAnisotropy{0};                    // vlaue 0 - 15
-    CompareOpFlag cmpFunc{CompareOpFlag::EMPTY};  // value 0 - 8
+    Filter minFilter{Filter::LINEAR};     // vlaue 0 - 3
+    Filter magFilter{Filter::LINEAR};     // vlaue 0 - 3
+    Filter mipFilter{Filter::LINEAR};     // vlaue 0 - 3
+    Address addressU{Address::WRAP};      // vlaue 0 - 3
+    Address addressV{Address::WRAP};      // vlaue 0 - 3
+    Address addressW{Address::WRAP};      // vlaue 0 - 3
+    uint32_t maxAnisotropy{0};            // vlaue 0 - 15
+    CompareOp cmpFunc{CompareOp::EMPTY};  // value 0 - 8
     SamplerBorderColor bordercolor{SamplerBorderColor::TRANSPARENT_BLACK};
 };
 
@@ -464,6 +464,19 @@ enum class TextureType {
     CUBE,
     TEX1D_ARRAY,
     TEX2D_ARRAY,
+};
+
+
+struct TextureInfo {
+    TextureType type{TextureType::TEX2D};
+    uint32_t width{0};
+    uint32_t height{0};
+    uint32_t miplevels{1};
+    SampleCount sampleCount{SampleCount::SAMPLE_COUNT_1_BIT};
+    PixelFormat format{PixelFormat::RGBA8};
+    TextureUsage usage{TextureUsage::USAGE_SAMPLED_BIT
+                       | TextureUsage::USAGE_TRANSFER_DST_BIT
+                       | TextureUsage::USAGE_TRANSFER_SRC_BIT};
 };
 
 enum class PipelineStage : uint32_t {
@@ -538,6 +551,18 @@ enum class DependencyFlags : uint8_t {
 };
 CC_ENUM_BITWISE_OPERATORS(DependencyFlags);
 
+struct SubPassDependence {
+    uint32_t subpass;
+    PipelineStage stage_mask;
+    AccessFlags access_flags;
+};
+
+struct SubPassDependency {
+    SubPassDependence src;
+    SubPassDependence dst;
+    DependencyFlags flags;
+};
+
 enum class MemoryAccess {
     NONE                             = 0,
     READ_ONLY                        = 1 << 0,
@@ -547,6 +572,22 @@ enum class MemoryAccess {
     HOST_ACCESS_SEQUENTIAL_WRITE_BIT = 1 << 3,
 };
 CC_ENUM_BITWISE_OPERATORS(MemoryAccess)
+
+struct Attachment {
+    PixelFormat format = PixelFormat::UNDEFINED;
+    SampleCount samples{SampleCount::SAMPLE_COUNT_1_BIT};
+    LoadOp load_op{LoadOp::DONT_CARE};
+    StoreOp store_op{StoreOp::DONT_CARE};
+    LoadOp stencil_load_op{LoadOp::DONT_CARE};
+    StoreOp stencil_store_op{StoreOp::DONT_CARE};
+    ImageLayout initial_layout{ImageLayout::UNDEFINED};
+    ImageLayout final_layout{ImageLayout::UNDEFINED};
+};
+
+struct AttachmentReference {
+    uint32_t attachment;
+    ImageLayout layout;
+};
 
 template <typename T>
 struct RectImp {

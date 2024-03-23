@@ -10,7 +10,7 @@ class VulkanInputAssembler : public InputAssembler, public GfxObject {
 public:
     VulkanInputAssembler(const vk::LogicDevice& device,
                          const std::vector<Attribute>& attribute,
-                         PrimitiveModel primitive);
+                         PrimitiveType primitive);
     virtual ~VulkanInputAssembler();
 
     const std::vector<Attribute>& getAttributes() const override {
@@ -23,7 +23,7 @@ public:
     uint32_t getIndexCount() const override { return m_indexCount; }
     uint32_t getVertexItemSize() const override { return m_vertexItemSize; }
     uint32_t getIndexItemSize() const override { return m_indexItemSize; }
-    PrimitiveModel getPrimivateModel() const override {
+    PrimitiveType getPrimivateModel() const override {
         return m_primiitiveModel;
     }
 
@@ -37,7 +37,7 @@ private:
     uint32_t m_indexCount{0};
     uint32_t m_vertexItemSize{0};
     uint32_t m_indexItemSize{sizeof(uint32_t)};
-    PrimitiveModel m_primiitiveModel{PrimitiveModel::TRIANGLE_LIST};
+    PrimitiveType m_primiitiveModel{PrimitiveType::TRIANGLE_LIST};
 
     VkVertexInputBindingDescription m_binding_description;
     std::vector<VkVertexInputAttributeDescription> m_attribute_descriptions;

@@ -24,7 +24,7 @@ VulkanSampler::VulkanSampler(const vk::LogicDevice& device, SamplerInfo info)
     }
 
     samplerInfo.unnormalizedCoordinates = VK_FALSE;
-    if (m_info.cmpFunc == gfx::CompareOpFlag::EMPTY) {
+    if (m_info.cmpFunc == gfx::CompareOp::EMPTY) {
         samplerInfo.compareEnable = VK_FALSE;
     } else {
         samplerInfo.compareEnable = VK_TRUE;

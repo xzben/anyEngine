@@ -18,7 +18,7 @@ public:
     virtual uint32_t getIndexCount() const                      = 0;
     virtual uint32_t getVertexItemSize() const                  = 0;
     virtual uint32_t getIndexItemSize() const                   = 0;
-    virtual PrimitiveModel getPrimivateModel() const            = 0;
+    virtual PrimitiveType getPrimivateModel() const            = 0;
 };
 
 END_GFX_NAMESPACE

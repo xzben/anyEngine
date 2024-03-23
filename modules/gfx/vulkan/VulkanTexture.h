@@ -7,9 +7,11 @@ BEGIN_GFX_NAMESPACE
 
 class VulkanTexture : public Texture, public GfxObject {
 public:
+    VulkanTexture(const vk::LogicDevice& device, const TextureInfo& info);
+
 protected:
     virtual GFX_HANDLE getHandleImp() override {
-        return (GFX_HANDLE)m_imgHandle;
+        return (GFX_HANDLE)m_image->getHandle();
     }
 
     virtual const SizeI& getSize() override { return m_size; }
@@ -17,7 +19,8 @@ protected:
 private:
     SizeI m_size;
     const vk::LogicDevice& m_logicDevice;
-    VkImage m_imgHandle{VK_NULL_HANDLE};
-    VkImageView m_imgView{VK_NULL_HANDLE};
+
+    std::unique_ptr<vk::Image> m_image;
+    std::unique_ptr<vk::ImageView> m_imageView;
 };
 END_GFX_NAMESPACE

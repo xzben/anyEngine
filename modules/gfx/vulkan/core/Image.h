@@ -29,6 +29,7 @@ public:
 
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkImage() const { return m_handle; }
+    VkImage getHandle() const { return m_handle; }
     const LogicDevice& getLogicDevice() const { return *m_logicDevice; }
 
 public:

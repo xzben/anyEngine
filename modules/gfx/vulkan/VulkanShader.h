@@ -25,6 +25,8 @@ public:
         return m_setLayouts;
     }
 
+    VkPipelineShaderStageCreateInfo getStageInfo();
+
 protected:
     bool reflect(const std::vector<uint8_t>& code);
 
@@ -44,34 +46,61 @@ public:
     bool addStage(const std::vector<uint8_t>& code,
                   std::string entryName = "main");
 
-    const std::vector<ShaderModule*>& getModules() { return m_modules; }
+    virtual bool build() override;
 
-    void descriptorSetBindings(
+    void getDescriptorSetBindings(
         uint32_t set_index,
         std::vector<VkDescriptorSetLayoutBinding>& layout_bindings);
-    const vk::DescriptorSetLayout& descriptorSetLayout(uint32_t set_index);
 
-    std::vector<vk::DescriptorSetLayout> descriptorSetLayouts();
+    const std::vector<vk::DescriptorSetLayout>& descriptorSetLayouts() const {
+        return m_layoutLists;
+    }
 
-    const vk::PipelineLayout& pipelineLayout();
-    const std::vector<vk::VertexInputBinding>& vertexInputBingdings() const;
+    const vk::PipelineLayout& getPipelineLayout() const {
+        return *m_pipelineLayout;
+    }
+
+    const std::vector<vk::VertexInputBinding>& getVertexInputBingdings() const {
+        return m_inputBindings;
+    }
     const std::vector<vk::DescriptorSetLayoutInfo>& getDescriptorLayoutSets()
         const {
         return m_setLayouts;
     }
 
-private:
+    const std::vector<VkPipelineShaderStageCreateInfo>& getStageInfos() const {
+        return m_stageInfos;
+    }
+
+    const std::vector<VkVertexInputBindingDescription>&
+    getVkVertexBindingDescriptions() const {
+        return m_vertexBindings;
+    }
+
+    const std::vector<VkVertexInputAttributeDescription>&
+    getVkVertexAttributeDescriptions() const {
+        return m_vertexAttributes;
+    }
+
+protected:
+    const std::vector<ShaderModule*>& getModules() { return m_modules; }
+
+protected:
+    const vk::DescriptorSetLayout& createDescriptorSetLayout(
+        uint32_t set_index);
     bool buildLayoutSet();
 
 private:
     const vk::LogicDevice& m_logicDevice;
     std::vector<ShaderModule*> m_modules;
     std::vector<vk::DescriptorSetLayoutInfo> m_setLayouts;
-    bool m_setLayoutDirty = false;
-
     std::unordered_map<uint32_t, vk::DescriptorSetLayout> m_layouts;
+    std::vector<vk::DescriptorSetLayout> m_layoutLists;
+
     std::unique_ptr<vk::PipelineLayout> m_pipelineLayout;
 
+    std::vector<VkPipelineShaderStageCreateInfo> m_stageInfos;
+    std::vector<vk::VertexInputBinding> m_inputBindings;
     std::vector<VkVertexInputBindingDescription> m_vertexBindings;
     std::vector<VkVertexInputAttributeDescription> m_vertexAttributes;
 };
