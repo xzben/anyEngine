@@ -14,33 +14,50 @@ inline bool isDepthStencilFormat(VkFormat format) {
            || isDepthOnlyFormat(format);
 }
 
-std::unordered_map<Format, VkFormat> g_formats = {
-    {Format::Bool, VK_FORMAT_R32_SINT},
-    {Format::Bool2, VK_FORMAT_R32G32_SINT},
-    {Format::Bool3, VK_FORMAT_R32G32B32_SINT},
-    {Format::Bool4, VK_FORMAT_R32G32B32A32_SINT},
+struct FormatInfo {
+    VkFormat vkFormat;
+    uint32_t size;
+};
 
-    {Format::Int, VK_FORMAT_R32_SINT},
-    {Format::Int2, VK_FORMAT_R32G32_SINT},
-    {Format::Int3, VK_FORMAT_R32G32B32_SINT},
-    {Format::Int4, VK_FORMAT_R32G32B32A32_SINT},
+std::unordered_map<Format, FormatInfo> g_formats = {
+    {Format::Bool, {VK_FORMAT_R32_SINT, 4}},
+    {Format::UInt, {VK_FORMAT_R32_UINT, 4}},
+    {Format::Int, {VK_FORMAT_R32_SINT, 4}},
+    {Format::Float, {VK_FORMAT_R32_SFLOAT, 4}},
 
-    {Format::UInt, VK_FORMAT_R32_UINT},
-    {Format::UInt2, VK_FORMAT_R32G32_UINT},
-    {Format::UInt3, VK_FORMAT_R32G32B32_UINT},
-    {Format::UInt4, VK_FORMAT_R32G32B32A32_UINT},
+    {Format::Bool2, {VK_FORMAT_R32G32_SINT, 4 * 2}},
+    {Format::Int2, {VK_FORMAT_R32G32_SINT, 4 * 2}},
+    {Format::UInt2, {VK_FORMAT_R32G32_UINT, 4 * 2}},
+    {Format::Float2, {VK_FORMAT_R32G32_SFLOAT, 4 * 2}},
 
-    {Format::Float, VK_FORMAT_R32_SFLOAT},
-    {Format::Float2, VK_FORMAT_R32G32_SFLOAT},
-    {Format::Float3, VK_FORMAT_R32G32B32_SFLOAT},
-    {Format::Float4, VK_FORMAT_R32G32B32A32_SFLOAT},
+    {Format::Bool3, {VK_FORMAT_R32G32B32_SINT, 4 * 3}},
+    {Format::Int3, {VK_FORMAT_R32G32B32_SINT, 4 * 3}},
+    {Format::UInt3, {VK_FORMAT_R32G32B32_UINT, 4 * 3}},
+    {Format::Float3, {VK_FORMAT_R32G32B32_SFLOAT, 4 * 3}},
+
+    {Format::Bool4, {VK_FORMAT_R32G32B32A32_SINT, 4 * 4}},
+    {Format::Int4, {VK_FORMAT_R32G32B32A32_SINT, 4 * 4}},
+    {Format::UInt4, {VK_FORMAT_R32G32B32A32_UINT, 4 * 4}},
+    {Format::Float4, {VK_FORMAT_R32G32B32A32_SFLOAT, 4 * 4}},
 };
 
 inline VkFormat mapVkFormat(Format format) {
     VkFormat ret = VK_FORMAT_UNDEFINED;
     auto it      = g_formats.find(format);
     if (it != g_formats.end()) {
-        ret = it->second;
+        ret = it->second.vkFormat;
+    }
+
+    CCASSERT(false, "unnknow format:%d", format);
+
+    return ret;
+}
+
+inline uint32_t mapVkFormatSize(Format format) {
+    uint32_t ret = 0;
+    auto it      = g_formats.find(format);
+    if (it != g_formats.end()) {
+        ret = it->second.size;
     }
 
     CCASSERT(false, "unnknow format:%d", format);

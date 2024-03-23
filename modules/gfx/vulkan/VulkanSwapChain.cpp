@@ -152,6 +152,8 @@ bool SwapChainBuilder::build(VkSwapchainKHR& handle, VkSurfaceFormatKHR& format,
 
 SwapChainBuilder& SwapChainBuilder::setSurface(VkSurfaceKHR surface) {
     m_surface = surface;
+
+    return *this;
 }
 SwapChainBuilder& SwapChainBuilder::setOldSwapChain(
     VkSwapchainKHR oldSwapChain) {

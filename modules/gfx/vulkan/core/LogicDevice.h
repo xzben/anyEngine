@@ -2,7 +2,7 @@
 
 #include <array>
 #include <optional>
-
+#include "Surface.h"
 #include "vulkan_core_common.h"
 
 BEGIN_GFX_NAMESPACE

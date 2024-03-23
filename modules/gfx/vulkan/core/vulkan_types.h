@@ -6,7 +6,7 @@ BEGIN_GFX_NAMESPACE
 BEGIN_VK_NAMESPACE
 
 extern inline VkFormat mapVkFormat(Format format);
-
+extern inline uint32_t mapVkFormatSize(Format format);
 extern inline VkFilter mapVkFilter(Filter filter);
 extern inline VkSamplerAddressMode mapVkSamplerAddressModel(Address address);
 

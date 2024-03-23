@@ -125,7 +125,8 @@ bool VulkanDevice::init(const DeviceInfo& info) {
 
     m_logicDevice = createLogicDevice(info, *m_instance,
                                       std::move(phycialDevice), *m_surface);
+
+    return true;
 }
 
-VulkanDevice::~VulkanDevice() {}
 END_GFX_NAMESPACE

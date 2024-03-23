@@ -14,10 +14,9 @@ VulkanInputAssembler::VulkanInputAssembler(
     for (const auto& attr : m_attributes) {
         m_attribute_descriptions[index].binding  = m_location;
         m_attribute_descriptions[index].location = attr.location;
-        m_attribute_descriptions[index].format =
-            map_gfx_type_to_vk_format(attr.format);
-        m_attribute_descriptions[index].offset = offset;
-        uint32_t size = get_gfx_format_type_size(attr.format);
+        m_attribute_descriptions[index].format   = vk::mapVkFormat(attr.format);
+        m_attribute_descriptions[index].offset   = offset;
+        uint32_t size = vk::mapVkFormatSize(attr.format);
         offset += size;
         index++;
     }

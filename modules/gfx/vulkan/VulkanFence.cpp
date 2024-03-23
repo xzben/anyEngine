@@ -30,7 +30,7 @@ bool VulkanFence::reset() {
 
 bool VulkanFence::wait(
     const vk::LogicDevice& device, std::vector<VkFence> fences,
-    uint32_t timeout = std::numeric_limits<uint32_t>::max()) {
+    uint32_t timeout) {
     auto result =
         vkWaitForFences(device, fences.size(), fences.data(), true, timeout);
     return result == VK_SUCCESS;

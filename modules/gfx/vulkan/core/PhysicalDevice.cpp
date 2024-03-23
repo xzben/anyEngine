@@ -129,7 +129,7 @@ PhysicalDevice PhysicalDeviceSelector::select() {
     for (const auto& device : allDevices) {
         auto suitable = isDeviceSuitable(device);
         if (suitable != Suitable::No) {
-            avalidDevices.push_back(std::make_pair(suitable, device));
+            avalidDevices.push_back(std::make_pair(suitable, (VkPhysicalDevice)device));
         }
     }
     if (avalidDevices.empty()) {

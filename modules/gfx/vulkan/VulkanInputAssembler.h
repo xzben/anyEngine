@@ -3,9 +3,8 @@
 #include "../base/InputAssembler.h"
 #include "core/vulkan_core.h"
 #include "vulkan_common.h"
+#include "VulkanBuffer.h"
 BEGIN_GFX_NAMESPACE
-
-class VulkanBuffer;
 
 class VulkanInputAssembler : public InputAssembler, public GfxObject {
 public:

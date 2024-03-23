@@ -51,7 +51,7 @@ public:
         std::vector<VkDescriptorSetLayoutBinding>& layout_bindings);
     const vk::DescriptorSetLayout& descriptorSetLayout(uint32_t set_index);
 
-    std::vector<VkDescriptorSetLayout> descriptorSetLayouts();
+    std::vector<vk::DescriptorSetLayout> descriptorSetLayouts();
 
     const vk::PipelineLayout& pipelineLayout();
     const std::vector<vk::VertexInputBinding>& vertexInputBingdings() const;

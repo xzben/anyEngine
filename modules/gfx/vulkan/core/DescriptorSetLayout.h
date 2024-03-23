@@ -48,8 +48,12 @@ public:
     DescriptorSetLayout(const LogicDevice& device,
                         std::vector<VkDescriptorSetLayoutBinding> bindings);
     ~DescriptorSetLayout();
-    DescriptorSetLayout(DescriptorSetLayout&&)            = delete;
-    DescriptorSetLayout& operator=(DescriptorSetLayout&&) = delete;
+
+    DescriptorSetLayout(const DescriptorSetLayout& rhs)            = default;
+    DescriptorSetLayout& operator=(const DescriptorSetLayout& rhs) = default;
+
+    DescriptorSetLayout(DescriptorSetLayout&& rhs);
+    DescriptorSetLayout& operator=(DescriptorSetLayout&& rhs);
 
     const std::vector<VkDescriptorSetLayoutBinding>& bindings() const {
         return m_bindings;
@@ -63,7 +67,7 @@ public:
     operator VkDescriptorSetLayout() const { return m_handle; }
 
 private:
-    const LogicDevice& m_logicDevice;
+    const LogicDevice* m_logicDevice;
     std::vector<VkDescriptorSetLayoutBinding> m_bindings;
     std::vector<VkDescriptorBindingFlagsEXT> m_bindingFlags;
     VkDescriptorSetLayout m_handle{VK_NULL_HANDLE};

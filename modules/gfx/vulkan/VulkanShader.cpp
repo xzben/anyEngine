@@ -181,7 +181,25 @@ bool VulkanShader::addStage(const std::vector<uint8_t>& code,
 
 void VulkanShader::descriptorSetBindings(
     uint32_t set_index,
-    std::vector<VkDescriptorSetLayoutBinding>& layout_bindings) {}
+    std::vector<VkDescriptorSetLayoutBinding>& layout_bindings) {
+    buildLayoutSet();
+
+    for (auto& set : m_setLayouts) {
+        if (set.index == set_index) {
+            layout_bindings.resize(set.bindings.size());
+            for (auto i = 0; i < set.bindings.size(); i++) {
+                layout_bindings[i].binding = set.bindings[i].binding;
+                layout_bindings[i].descriptorCount =
+                    set.bindings[i].descriptorCount;
+                layout_bindings[i].descriptorType =
+                    set.bindings[i].descriptorType;
+                layout_bindings[i].stageFlags = set.bindings[i].stageFlags;
+                layout_bindings[i].pImmutableSamplers = nullptr;
+            }
+        }
+    }
+}
+
 const vk::DescriptorSetLayout& VulkanShader::descriptorSetLayout(
     uint32_t set_index) {
     buildLayoutSet();
@@ -199,14 +217,23 @@ const vk::DescriptorSetLayout& VulkanShader::descriptorSetLayout(
     return it.first->second;
 }
 
-std::vector<VkDescriptorSetLayout> VulkanShader::descriptorSetLayouts() {}
+std::vector<vk::DescriptorSetLayout> VulkanShader::descriptorSetLayouts() {
+    buildLayoutSet();
+
+    std::vector<vk::DescriptorSetLayout> result;
+    for (auto& set : m_setLayouts) {
+        result.push_back(descriptorSetLayout(set.index));
+    }
+
+    return std::move(result);
+}
 
 const vk::PipelineLayout& VulkanShader::pipelineLayout() {
     buildLayoutSet();
 
     if (!m_pipelineLayout) {
-        m_pipelineLayout =
-            std::make_unique<vk::PipelineLayout>(m_logicDevice, m_setLayouts);
+        m_pipelineLayout = std::make_unique<vk::PipelineLayout>(
+            m_logicDevice, descriptorSetLayouts());
     }
 
     return *m_pipelineLayout;
@@ -269,8 +296,7 @@ bool VulkanShader::buildLayoutSet() {
     for (auto& mod : m_modules) {
         merge(
             m_setLayouts, mod->getDescriptorSetLayouts(),
-            [](const vk::DescriptorSetLayoutInfo& l,
-               const vk::DescriptorSetLayoutInfo& r) {
+            [](const auto& l, const auto& r) {
                 if (l.index > r.index)
                     return 1;
                 else if (l.index < r.index)
@@ -278,11 +304,11 @@ bool VulkanShader::buildLayoutSet() {
                 else
                     return 0;
             },
-            [merge](const vk::DescriptorSetLayoutInfo& left,
+            [merge](vk::DescriptorSetLayoutInfo& left,
                     const vk::DescriptorSetLayoutInfo& right) {
                 merge(
                     left.bindings, right.bindings,
-                    [](vk::DescriptorBinding& l, vk::DescriptorBinding& r) {
+                    [](const auto& l, const auto& r) {
                         if (l.binding > r.binding) {
                             return 1;
                         } else if (l.binding < r.binding) {
@@ -291,7 +317,7 @@ bool VulkanShader::buildLayoutSet() {
                             return 0;
                         }
                     },
-                    [](vk::DescriptorBinding& l, vk::DescriptorBinding& r) {
+                    [](auto& l, auto& r) {
                         assert(l.descriptorType == r.descriptorType);
                         assert(l.descriptorCount == r.descriptorCount);
                         l.stageFlags |= r.stageFlags;

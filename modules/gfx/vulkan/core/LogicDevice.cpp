@@ -26,7 +26,7 @@ LogicDevice::LogicDevice(const Instance& instance,
     }
 
     for (auto& info : custom_queues) {
-        std::vector<Queue*> queues;
+        std::vector<VulkanQueue*> queues;
         queues.reserve(info.count);
         for (auto i = 0; i < info.count; ++i) {
             auto queue = new VulkanQueue(*this, info.familyIndex, i);
