@@ -43,8 +43,9 @@ class VulkanShader : public Shader, public GfxObject {
 public:
     VulkanShader(const vk::LogicDevice& device);
 
-    bool addStage(const std::vector<uint8_t>& code,
-                  std::string entryName = "main");
+    virtual bool addStage(const std::vector<uint8_t>& code,
+                          gfx::ShaderStage stage,
+                          const std::string& entryName = "main") override;
 
     virtual bool build() override;
 

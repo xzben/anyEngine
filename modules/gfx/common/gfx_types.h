@@ -17,6 +17,7 @@ enum class GFX_API {
     OPENGL3,
     GLES3,
     VULKAN,
+    METAL,
 };
 
 enum QueueType {
@@ -34,6 +35,7 @@ struct SurfaceInfo {
 };
 
 struct DeviceInfo {
+    GFX_API api{GFX_API::OPENGL3};
     std::string name{""};
     bool present{true};
     SurfaceInfo surface;
@@ -466,7 +468,6 @@ enum class TextureType {
     TEX2D_ARRAY,
 };
 
-
 struct TextureInfo {
     TextureType type{TextureType::TEX2D};
     uint32_t width{0};
@@ -601,6 +602,13 @@ template <typename T>
 struct SizeImp {
     T width;
     T height;
+};
+
+struct Viewport {
+    float x{0.f};
+    float y{0.f};
+    float width{0.f};
+    float height{0.f};
 };
 
 using RectI = RectImp<int32_t>;

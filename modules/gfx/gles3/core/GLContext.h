@@ -6,7 +6,13 @@
 BEGIN_GFX_NAMESPACE
 BEGIN_GLES_CORE_NAMESPACE
 
-class GLContext {};
+class GLContext {
+public:
+    GLContext() {}
+    virtual ~GLContext() {}
+
+    
+};
 
 END_GLES_CORE_NAMESPACE
 END_GFX_NAMESPACE

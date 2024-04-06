@@ -1,0 +1,5 @@
+#include "RenderPipeline.h"
+
+BEGIN_PIPELINE_NAMESPACE
+
+END_PIPELINE_NAMESPACE

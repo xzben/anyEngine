@@ -174,7 +174,8 @@ VulkanShader::VulkanShader(const vk::LogicDevice& device)
     : GfxObject(GfxObjectType::Shader), m_logicDevice(device) {}
 
 bool VulkanShader::addStage(const std::vector<uint8_t>& code,
-                            std::string entryName) {
+                            gfx::ShaderStage stage,
+                            const std::string& entryName) {
     ShaderModule* shaderModule =
         new ShaderModule(m_logicDevice, code, entryName);
 

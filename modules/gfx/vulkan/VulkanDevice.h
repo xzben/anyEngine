@@ -3,8 +3,10 @@
 #include <memory>
 
 #include "../base/Device.h"
+#include "VulkanShader.h"
 #include "core/vulkan_core.h"
 #include "vulkan_common.h"
+
 BEGIN_GFX_NAMESPACE
 
 class VulkanDevice : public Device {
@@ -13,6 +15,7 @@ public:
     virtual ~VulkanDevice();
 
     virtual bool init(const DeviceInfo& info) override;
+    virtual VulkanShader* createShader() override;
 
 protected:
     static std::unique_ptr<vk::Instance> getInstance(const DeviceInfo& info);

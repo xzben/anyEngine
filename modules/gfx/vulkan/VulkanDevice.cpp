@@ -1,4 +1,6 @@
 #include "VulkanDevice.h"
+
+#include "VulkanShader.h"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -127,6 +129,10 @@ bool VulkanDevice::init(const DeviceInfo& info) {
                                       std::move(phycialDevice), *m_surface);
 
     return true;
+}
+
+VulkanShader* VulkanDevice::createShader() {
+    return new VulkanShader(*this->m_logicDevice);
 }
 
 END_GFX_NAMESPACE

@@ -22,6 +22,7 @@ ${THIRD_LIB_DIR}/glad/include)
 
 set(GFX_PUBLIC_INCLUDE
 ${GFX_LIB_SOURCE}
+${MODULES_DIR}/common/
 )
 
 source_group(TREE "${GFX_LIB_SOURCE}" FILES 

@@ -2,16 +2,20 @@ set(TARGET_NAME AnyEngine)
 
 set(THIRD_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rd")
 set(ENGINE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-set(MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../modules")
+set(MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../modules/")
 
 file(GLOB_RECURSE RUNTIME_HEADERS CONFIGURE_DEPENDS ${ENGINE_SOURCE_DIR}/*.h)
 file(GLOB_RECURSE RUNTIME_SOURCES CONFIGURE_DEPENDS ${ENGINE_SOURCE_DIR}/*.cpp)
 
 source_group(TREE "${ENGINE_SOURCE_DIR}" FILES ${RUNTIME_HEADERS} ${RUNTIME_SOURCES})
 
+
+set(ENGINE_HEAD_DIRS 
+${ENGINE_SOURCE_DIR}
+${MODULES_DIR})
+
 include_directories( 
-	${ENGINE_SOURCE_DIR}
-	${MODULES_DIR}/common/
+	${ENGINE_HEAD_DIRS}
 )
 
 add_library(${TARGET_NAME} ${RUNTIME_HEADERS} ${RUNTIME_SOURCES})
@@ -19,5 +23,5 @@ add_library(${TARGET_NAME} ${RUNTIME_HEADERS} ${RUNTIME_SOURCES})
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 17)
 set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "engine")    
 
-target_link_libraries(${TARGET_NAME} glfw)
-target_include_directories(${TARGET_NAME} PUBLIC ${ENGINE_SOURCE_DIR})
+target_link_libraries(${TARGET_NAME} glfw gfx pipeline)
+target_include_directories(${TARGET_NAME} PUBLIC ${ENGINE_HEAD_DIRS})
