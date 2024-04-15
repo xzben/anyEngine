@@ -1,4 +1,4 @@
-#include "GLES3Semphore.h"
+#include "GLES3Semaphore.h"
 
 BEGIN_GFX_NAMESPACE
 

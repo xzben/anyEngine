@@ -6,7 +6,7 @@
 #include "vulkan_common.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanCommandPool : public CommandPool, public GfxObject {
+class VulkanCommandPool : public CommandPool {
 public:
     VulkanCommandPool(const vk::LogicDevice& logicDevice,
                       uint32_t queueFamilyIndex, ResetMode resetMode);
@@ -14,6 +14,7 @@ public:
 
     virtual VulkanCommandBuffer* alloc(CommandBufferLevel level) override;
     virtual void reset() override;
+    virtual void free(CommandBuffer* buffer) override;
 
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkCommandPool() const { return m_handle; }

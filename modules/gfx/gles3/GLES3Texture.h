@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3Texture : public Texture, public GfxObject {
+class GLES3Texture : public Texture {
 public:
     GLES3Texture(gles::GLContext& context);
     virtual ~GLES3Texture() {}

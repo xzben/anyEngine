@@ -4,9 +4,10 @@
 
 BEGIN_GFX_NAMESPACE
 
-class Event {
+class Event : public GfxObject {
 public:
-    Event()          = default;
+protected:
+    Event() : GfxObject(GfxObjectType::Event) {}
     virtual ~Event() = default;
 };
 

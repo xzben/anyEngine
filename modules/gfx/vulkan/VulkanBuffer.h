@@ -5,7 +5,7 @@
 #include "vulkan_common.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanBuffer : public Buffer, public GfxObject {
+class VulkanBuffer : public Buffer {
 public:
     VulkanBuffer(const vk::LogicDevice& logicDevice, BufferType type,
                  uint32_t size,

@@ -21,7 +21,7 @@ static VkImageCreateFlags getCreateFlag(TextureType type) {
 
 VulkanTexture::VulkanTexture(const vk::LogicDevice& device,
                              const TextureInfo& info)
-    : GfxObject(GfxObjectType::Texture), m_logicDevice(device) {
+    : m_logicDevice(device) {
     VkFormat vkFormat                 = vk::mapVkFormat(info.format);
     VkExtent3D extend                 = {info.width, info.height, 1};
     VkImageUsageFlags usage           = vk::mapVkImageUsage(info.usage);

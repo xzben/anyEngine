@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3Fence : public Fence, public GfxObject {
+class GLES3Fence : public Fence {
 public:
     GLES3Fence(gles::GLContext& context);
     virtual ~GLES3Fence() {}

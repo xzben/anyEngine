@@ -3,7 +3,18 @@
 #include <memory>
 
 #include "../base/Device.h"
+#include "VulkanBuffer.h"
+#include "VulkanEvent.h"
+#include "VulkanFence.h"
+#include "VulkanInputAssembler.h"
+#include "VulkanPipeline.h"
+#include "VulkanQueue.h"
+#include "VulkanRenderPass.h"
+#include "VulkanSampler.h"
+#include "VulkanSemaphore.h"
 #include "VulkanShader.h"
+#include "VulkanSwapChain.h"
+#include "VulkanTexture.h"
 #include "core/vulkan_core.h"
 #include "vulkan_common.h"
 
@@ -16,6 +27,47 @@ public:
 
     virtual bool init(const DeviceInfo& info) override;
     virtual VulkanShader* createShader() override;
+
+    virtual VulkanQueue* getQueue(QueueType& type, uint32_t index = 0) override;
+
+    virtual VulkanRenderPass* createRenderPass(
+        std::vector<Attachment>& attachments,
+        const std::vector<SubPass>& subpass,
+        const std::vector<SubPassDependency>& dependencies) override;
+
+    virtual VulkanPipeline* createPipeline(RenderPass* renderPass,
+                                           uint32_t subpass, Shader* shader,
+                                           const PipelineState& state) override;
+
+    virtual VulkanTexture* createTexture(const TextureInfo& info,
+                                         const void* pData = nullptr) override;
+    virtual VulkanBuffer* createBuffer(BufferType type, uint32_t size) override;
+    virtual VulkanSampler* createSampler(const SamplerInfo& info) override;
+
+    virtual VulkanInputAssembler* createInputAssembler(
+        const std::vector<Attribute>& attributes, const void* pVertexData,
+        uint32_t vertexCount, const void* pIndexData = nullptr,
+        uint32_t indexCount    = 0,
+        uint32_t indexItemSize = sizeof(uint32_t)) override;
+
+    virtual VulkanInputAssembler* createInputAssembler(
+        const std::vector<Attribute>& attributes,
+        const std::vector<Attribute>& InstanceAttributes,
+        const void* pVertexData, uint32_t vertexCount,
+        const void* pInstanceData, uint32_t instanceCount,
+        const void* pIndexData = nullptr, uint32_t indexCount = 0,
+        uint32_t indexItemSize = sizeof(uint32_t)) override;
+
+    virtual VulkanSwapChain* createSwapChain(void* nativeWindow, uint32_t width,
+                                             uint32_t height,
+                                             bool singleBuffer) override;
+    virtual VulkanFence* createFence(bool signaled = false) override;
+
+    virtual VulkanSemaphore* createSemaphore(uint32_t count = 0) override;
+
+    virtual VulkanEvent* createEvent() override;
+
+    virtual void waitIdle() override;
 
 protected:
     static std::unique_ptr<vk::Instance> getInstance(const DeviceInfo& info);

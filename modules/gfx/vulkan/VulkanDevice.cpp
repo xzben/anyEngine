@@ -135,4 +135,60 @@ VulkanShader* VulkanDevice::createShader() {
     return new VulkanShader(*this->m_logicDevice);
 }
 
+VulkanQueue* VulkanDevice::getQueue(QueueType& type, uint32_t index) {
+    return nullptr;
+}
+
+VulkanRenderPass* VulkanDevice::createRenderPass(
+    std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+    const std::vector<SubPassDependency>& dependencies) {
+    return nullptr;
+}
+
+VulkanPipeline* VulkanDevice::createPipeline(RenderPass* renderPass,
+                                             uint32_t subpass, Shader* shader,
+                                             const PipelineState& state) {
+    return nullptr;
+}
+
+VulkanTexture* VulkanDevice::createTexture(const TextureInfo& info,
+                                           const void* pData) {
+    return nullptr;
+}
+VulkanBuffer* VulkanDevice::createBuffer(BufferType type, uint32_t size) {
+    return nullptr;
+}
+VulkanSampler* VulkanDevice::createSampler(const SamplerInfo& info) {
+    return nullptr;
+}
+
+VulkanInputAssembler* VulkanDevice::createInputAssembler(
+    const std::vector<Attribute>& attributes, const void* pVertexData,
+    uint32_t vertexCount, const void* pIndexData, uint32_t indexCount,
+    uint32_t indexItemSize) {
+    return nullptr;
+}
+
+VulkanInputAssembler* VulkanDevice::createInputAssembler(
+    const std::vector<Attribute>& attributes,
+    const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
+    uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
+    const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
+    return nullptr;
+}
+
+VulkanSwapChain* VulkanDevice::createSwapChain(void* nativeWindow,
+                                               uint32_t width, uint32_t height,
+                                               bool singleBuffer) {
+    return nullptr;
+}
+VulkanFence* VulkanDevice::createFence(bool signaled) { return nullptr; }
+
+VulkanSemaphore* VulkanDevice::createSemaphore(uint32_t count) {
+    return nullptr;
+}
+
+VulkanEvent* VulkanDevice::createEvent() { return nullptr; }
+
+void VulkanDevice::waitIdle() {}
 END_GFX_NAMESPACE

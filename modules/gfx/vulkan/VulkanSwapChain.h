@@ -7,7 +7,7 @@ BEGIN_GFX_NAMESPACE
 
 class SwapChainBuilder;
 
-class VulkanSwapChain : public SwapChain, public GfxObject {
+class VulkanSwapChain : public SwapChain {
 public:
     VulkanSwapChain(const vk::LogicDevice& device, const SurfaceInfo& info);
     virtual ~VulkanSwapChain();

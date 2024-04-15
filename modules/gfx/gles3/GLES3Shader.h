@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3Shader : public Shader, public GfxObject {
+class GLES3Shader : public Shader{
 public:
     GLES3Shader(gles::GLContext& context);
     virtual ~GLES3Shader();

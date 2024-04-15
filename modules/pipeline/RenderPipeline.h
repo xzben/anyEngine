@@ -9,7 +9,7 @@
 
 BEGIN_PIPELINE_NAMESPACE
 
-struct UniformBinding {
+struct BufferBinding {
     std::string name;
     gfx::Buffer* buffer{nullptr};
     uint32_t offset{0};
@@ -25,7 +25,7 @@ struct TextureBinding {
 struct DrawInfo {
     gfx::Viewport viewport;
     gfx::Viewport scissor;
-    std::vector<UniformBinding> uniformBindings;
+    std::vector<BufferBinding> uniformBindings;
     std::vector<TextureBinding> textureBindings;
     std::vector<gfx::InputAssembler*> inputs;
 };
@@ -48,7 +48,7 @@ public:
     void setDrawTarget(RenderTarget* target);
 
     void begin();
-    void setUniform(const UniformBinding& binding);
+    void setUniform(const BufferBinding& binding);
     void setTexture(const TextureBinding& binding);
     void draw(const DrawInfo& info);
     void drawIntances(const DrawInstanceInfo& info);

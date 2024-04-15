@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3InputAssembler : public InputAssembler, public GfxObject {
+class GLES3InputAssembler : public InputAssembler {
 public:
     GLES3InputAssembler(gles::GLContext& context);
     virtual ~GLES3InputAssembler() {}

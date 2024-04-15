@@ -5,7 +5,7 @@
 #include "vulkan_common.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanSemaphore : public Semaphore, public GfxObject {
+class VulkanSemaphore : public Semaphore {
 public:
     VulkanSemaphore(const vk::LogicDevice& device);
     virtual ~VulkanSemaphore();

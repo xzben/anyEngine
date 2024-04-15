@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../base/InputAssembler.h"
+#include "VulkanBuffer.h"
 #include "core/vulkan_core.h"
 #include "vulkan_common.h"
-#include "VulkanBuffer.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanInputAssembler : public InputAssembler, public GfxObject {
+class VulkanInputAssembler : public InputAssembler {
 public:
     VulkanInputAssembler(const vk::LogicDevice& device,
                          const std::vector<Attribute>& attribute,

@@ -5,7 +5,7 @@
 #include "vulkan_common.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanSampler : public Sampler, public GfxObject {
+class VulkanSampler : public Sampler {
 public:
     VulkanSampler(const vk::LogicDevice& device, SamplerInfo info);
     virtual ~VulkanSampler();

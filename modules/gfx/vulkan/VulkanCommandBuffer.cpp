@@ -29,7 +29,7 @@ inline VkCommandBufferUsageFlags map_vk_command_buffer_usage_flags(
 
 VulkanCommandBuffer::VulkanCommandBuffer(VulkanCommandPool& pool,
                                          CommandBufferLevel level)
-    : GfxObject(GfxObjectType::CommandBuffer), m_pool(pool), m_level(level) {
+    : m_pool(pool), m_level(level) {
     VkCommandBufferAllocateInfo allocate_info{
         VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
     allocate_info.commandPool        = pool;
@@ -55,7 +55,9 @@ void VulkanCommandBuffer::begin(CommandBufferUsage usage) {
     vkBeginCommandBuffer(m_handle, &info);
 }
 
-void VulkanCommandBuffer::beginRendPass(RenderPass* renderpass) {}
+void VulkanCommandBuffer::beginRendPass(
+    RenderPass* renderpass, const std::vector<DrawSurface>& attachments,
+    const std::vector<ClearValue>& clearValues) {}
 
 void VulkanCommandBuffer::bindPipeline(Pipeline* pipeline) {
     CCASSERT(pipeline != nullptr, "pipeline to been nullptr");
@@ -140,29 +142,30 @@ void VulkanCommandBuffer::copyBuffer(Buffer* src, Buffer* dst, uint32_t size,
 }
 
 void VulkanCommandBuffer::copyTexture(Texture* src, Texture* dst,
-                                      const RectI& srcRect,
-                                      const RectI& dstRect) {
-    VkImage srcImg = src->getHandle<VkImage>();
-    VkImage dstImg = dst->getHandle<VkImage>();
-    VkImageBlit blit;
-    blit.srcOffsets[0]                 = {srcRect.left, srcRect.bottom, 0};
-    blit.srcOffsets[1]                 = {srcRect.width, srcRect.height, 1};
-    blit.srcSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
-    blit.srcSubresource.mipLevel       = 1;
-    blit.srcSubresource.baseArrayLayer = 0;
-    blit.srcSubresource.layerCount     = 1;
-    blit.dstOffsets[0]                 = {dstRect.left, dstRect.bottom, 0};
-    blit.dstOffsets[1]                 = {dstRect.width, dstRect.height, 1};
-    blit.dstSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
-    blit.dstSubresource.mipLevel       = 1;
-    blit.dstSubresource.baseArrayLayer = 0;
-    blit.dstSubresource.layerCount     = 1;
+                                      const TextureCopyInfo& info) {
+    // VkImage srcImg = src->getHandle<VkImage>();
+    // VkImage dstImg = dst->getHandle<VkImage>();
+    // VkImageBlit blit;
+    // blit.srcOffsets[0] = {info.srcOffset.x, info.srcOffset.y,
+    // info.srcOffset.z}; blit.srcOffsets[1] = {info.range.x, info.range.y,
+    // info.range.z}; blit.srcSubresource.aspectMask     =
+    // VK_IMAGE_ASPECT_COLOR_BIT; blit.srcSubresource.mipLevel       = 1;
+    // blit.srcSubresource.baseArrayLayer = 0;
+    // blit.srcSubresource.layerCount     = 1;
+    // blit.dstOffsets[0] = {info.dstOffset.x, info.dstOffset.y,
+    // info.dstOffset.z}; blit.dstOffsets[1] = {info.range.x, info.range.y,
+    // info.range.z}; blit.dstSubresource.aspectMask     =
+    // VK_IMAGE_ASPECT_COLOR_BIT; blit.dstSubresource.mipLevel       = 1;
+    // blit.dstSubresource.baseArrayLayer = 0;
+    // blit.dstSubresource.layerCount     = 1;
 
-    vkCmdBlitImage(m_handle, srcImg, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                   dstImg, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit,
-                   VK_FILTER_LINEAR);
+    // vkCmdBlitImage(m_handle, srcImg, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+    //                dstImg, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit,
+    //                VK_FILTER_LINEAR);
 }
 
+void VulkanCommandBuffer::blitTexture(Texture* src, Texture* dst,
+                                      const TextureBliteInfo& info) {}
 void VulkanCommandBuffer::generateMipmaps(Texture* textre, uint32_t mipLevels) {
     VkImage imgHandle              = textre->getHandle<VkImage>();
     VkCommandBuffer command_buffer = m_handle;
@@ -177,9 +180,9 @@ void VulkanCommandBuffer::generateMipmaps(Texture* textre, uint32_t mipLevels) {
     barrier.subresourceRange.layerCount     = 1;
     barrier.subresourceRange.levelCount     = 1;
 
-    auto& size        = textre->getSize();
-    int32_t mipWidth  = size.width;
-    int32_t mipHeight = size.height;
+    auto& info        = textre->getInfo();
+    int32_t mipWidth  = info.width;
+    int32_t mipHeight = info.height;
 
     for (uint32_t i = 1; i < mipLevels; i++) {
         barrier.subresourceRange.baseMipLevel = i - 1;

@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3Event : public Event, public GfxObject {
+class GLES3Event : public Event {
 public:
     GLES3Event(gles::GLContext& context);
     virtual ~GLES3Event() {}

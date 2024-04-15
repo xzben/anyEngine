@@ -6,7 +6,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class VulkanFence : public Fence, public GfxObject {
+class VulkanFence : public Fence {
 public:
     VulkanFence(const vk::LogicDevice& device, bool createSignaled = false);
     virtual ~VulkanFence();

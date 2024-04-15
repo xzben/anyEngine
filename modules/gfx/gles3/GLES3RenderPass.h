@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3RenderPass : public RenderPass, public GfxObject {
+class GLES3RenderPass : public RenderPass {
 public:
     GLES3RenderPass(gles::GLContext& context);
     virtual ~GLES3RenderPass() {}

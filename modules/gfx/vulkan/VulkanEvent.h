@@ -5,7 +5,7 @@
 #include "vulkan_common.h"
 BEGIN_GFX_NAMESPACE
 
-class VulkanEvent : public Event, public GfxObject {
+class VulkanEvent : public Event {
 public:
     VulkanEvent(const vk::LogicDevice& device, bool createDeviceOnly = false);
     virtual ~VulkanEvent();

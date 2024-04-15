@@ -3,7 +3,7 @@
 BEGIN_GFX_NAMESPACE
 
 VulkanFence::VulkanFence(const vk::LogicDevice& device, bool createSignaled)
-    : m_logicDevice(device), GfxObject(GfxObjectType::Fence) {
+    : m_logicDevice(device) {
     VkFenceCreateInfo create_info{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
     if (createSignaled) {
         create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;

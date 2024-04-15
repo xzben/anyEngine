@@ -3,7 +3,7 @@
 BEGIN_GFX_NAMESPACE
 
 VulkanSampler::VulkanSampler(const vk::LogicDevice& device, SamplerInfo info)
-    : GfxObject(GfxObjectType::Sampler), m_logicDevice(device), m_info(info) {
+    : m_logicDevice(device), m_info(info) {
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType        = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     samplerInfo.magFilter    = vk::mapVkFilter(m_info.magFilter);

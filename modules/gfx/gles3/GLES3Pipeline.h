@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3Pipeline : public Pipeline, public GfxObject {
+class GLES3Pipeline : public Pipeline {
 public:
     GLES3Pipeline(gles::GLContext& context);
     virtual ~GLES3Pipeline() {}

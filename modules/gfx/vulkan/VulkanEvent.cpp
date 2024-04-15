@@ -3,7 +3,7 @@
 BEGIN_GFX_NAMESPACE
 
 VulkanEvent::VulkanEvent(const vk::LogicDevice& device, bool createDeviceOnly)
-    : m_logicDevice(device), GfxObject(GfxObjectType::Event) {
+    : m_logicDevice(device) {
     VkEventCreateInfo info{VK_STRUCTURE_TYPE_EVENT_CREATE_INFO};
 
     if (createDeviceOnly) {

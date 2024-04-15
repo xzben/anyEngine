@@ -6,8 +6,7 @@ BEGIN_GFX_NAMESPACE
 VulkanCommandPool::VulkanCommandPool(const vk::LogicDevice& logicDevice,
                                      uint32_t queueFamilyIndex,
                                      ResetMode resetMode)
-    : GfxObject(GfxObjectType::CommandPool),
-      m_logicDevice(logicDevice),
+    : m_logicDevice(logicDevice),
       m_queueFamilyIndex(queueFamilyIndex),
       m_resetModel(resetMode) {
     VkCommandPoolCreateFlags flags;
@@ -54,6 +53,7 @@ VulkanCommandBuffer* VulkanCommandPool::alloc(CommandBufferLevel level) {
     return ret;
 }
 
+void VulkanCommandPool::free(CommandBuffer* buffer) {}
 void VulkanCommandPool::reset() {}
 
 END_GFX_NAMESPACE

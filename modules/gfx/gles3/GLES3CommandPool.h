@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3CommandPool : public CommandPool, public GfxObject {
+class GLES3CommandPool : public CommandPool {
 public:
     GLES3CommandPool(gles::GLContext& context);
     virtual ~GLES3CommandPool() {}

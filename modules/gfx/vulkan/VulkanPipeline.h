@@ -8,7 +8,7 @@ BEGIN_GFX_NAMESPACE
 class VulkanShader;
 class VulkanRenderPass;
 
-class VulkanPipeline : public Pipeline, public GfxObject {
+class VulkanPipeline : public Pipeline {
 public:
     VulkanPipeline(vk::LogicDevice& device, const VulkanShader& shader,
                    const VulkanRenderPass& rendpass, const PipelineState& state,

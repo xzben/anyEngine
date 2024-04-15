@@ -6,11 +6,11 @@ BEGIN_GFX_NAMESPACE
 
 class Shader;
 
-class Pipeline {
+class Pipeline: public GfxObject {
 public:
-    Pipeline()          = default;
-    virtual ~Pipeline() = default;
     virtual Shader* getShader();
+
+    virtual const PipelineState& getState() = 0;
 
     template <typename Handle>
     Handle getHandle() {
@@ -18,6 +18,8 @@ public:
     }
 
 protected:
+    Pipeline() : GfxObject(GfxObjectType::Pipeline) {}
+    virtual ~Pipeline()               = default;
     virtual GFX_HANDLE getHandleImp() = 0;
 };
 

@@ -4,12 +4,13 @@
 #include "Handle.h"
 BEGIN_GFX_NAMESPACE
 
-class Fence : public Handle {
+class Fence : public Handle, public GfxObject {
 public:
-    Fence()              = default;
-    virtual ~Fence()     = default;
-    virtual bool reset() = 0;
-    virtual bool wait(
-        uint32_t timeout = std::numeric_limits<uint32_t>::max()) = 0;
+    virtual bool reset()                    = 0;
+    virtual bool wait(uint32_t timeout = 0) = 0;
+
+protected:
+    Fence() : GfxObject(GfxObjectType::Fence) {}
+    virtual ~Fence() = default;
 };
 END_GFX_NAMESPACE

@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3Sampler : public Sampler, public GfxObject {
+class GLES3Sampler : public Sampler {
 public:
     GLES3Sampler(gles::GLContext& context);
     virtual ~GLES3Sampler() {}

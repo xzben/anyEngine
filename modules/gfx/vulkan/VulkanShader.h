@@ -39,7 +39,7 @@ private:
     std::vector<vk::VertexInputBinding> m_inputBindings;
 };
 
-class VulkanShader : public Shader, public GfxObject {
+class VulkanShader : public Shader {
 public:
     VulkanShader(const vk::LogicDevice& device);
 

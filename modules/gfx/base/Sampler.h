@@ -4,9 +4,10 @@
 
 BEGIN_GFX_NAMESPACE
 
-class Sampler {
+class Sampler: public GfxObject {
 public:
-    Sampler()          = default;
+protected:
+    Sampler() : GfxObject(GfxObjectType::Sampler) {}
     virtual ~Sampler() = default;
 };
 

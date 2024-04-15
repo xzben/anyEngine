@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3SwapChain : public SwapChain, public GfxObject {
+class GLES3SwapChain : public SwapChain {
 public:
     GLES3SwapChain(gles::GLContext& context);
     virtual ~GLES3SwapChain() {}

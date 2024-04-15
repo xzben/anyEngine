@@ -3,7 +3,7 @@
 BEGIN_GFX_NAMESPACE
 VulkanSwapChain::VulkanSwapChain(const vk::LogicDevice& device,
                                  const SurfaceInfo& info)
-    : GfxObject(GfxObjectType::SwapChain), m_logicDevice(device) {
+    :  m_logicDevice(device) {
     m_surface = std::make_unique<vk::Surface>(device.getInstance(), info);
     m_builder = std::make_unique<SwapChainBuilder>(m_logicDevice, *m_surface);
     createSwapChainHandle();

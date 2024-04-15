@@ -114,21 +114,19 @@ enum class PixelFormat {
     Depth24Stencil8,
 };
 
-class Attribute {
-public:
-    std::string name{""};
-    DataFormat format;
-    bool isNormalized{false};
-    bool isIntanced{false};
+struct Attribute {
     uint32_t location{0};
+    std::string name{""};
+    DataFormat format{DataFormat::UNDEFINED};
+    bool isNormalized{false};
 };
 
 enum class BufferType : uint32_t {
     INDEX,
     VERTEX,
     UNIFORM,
-    STORAGE,
-    STAGE,
+    SHADER_STORAGE,
+    PIXEL,
 };
 
 enum class TextureUsage {
@@ -590,6 +588,13 @@ struct AttachmentReference {
     ImageLayout layout;
 };
 
+struct SubPass {
+    std::vector<AttachmentReference> colorAttachments;
+    std::vector<AttachmentReference> depthStencilAttachments;
+    std::vector<AttachmentReference> resolveAttachments;
+    std::vector<uint32_t> preserveAttachments;
+};
+
 template <typename T>
 struct RectImp {
     T left;
@@ -616,5 +621,67 @@ using RectF = RectImp<float>;
 
 using SizeI = SizeImp<int32_t>;
 using SizeF = SizeImp<float>;
+
+struct BufferCopyRange {};
+
+struct Offset3D {
+    float x{0.f};
+    float y{0.f};
+    float z{0.f};
+};
+
+struct Range3D {
+    float x{0.f};
+    float y{0.f};
+    float z{0.f};
+};
+
+struct TextureCopyInfo {
+    Offset3D srcOffset{0.f, 0.f, 0.f};
+    Offset3D dstOffset{0.f, 0.f, 0.f};
+    Range3D range{0.f, 0.f, 0.f};
+    uint32_t srcLayerIndex{0};
+    uint32_t dstLayerIndex{0};
+};
+
+struct TextureBliteInfo {
+    Offset3D srcOffset{0.f, 0.f, 0.f};
+    Offset3D dstOffset{0.f, 0.f, 0.f};
+    Range3D srcRange{0.f, 0.f, 0.f};
+    Range3D dstRange{0.f, 0.f, 0.f};
+    uint32_t srcLayerIndex{0};
+    uint32_t dstLayerIndex{0};
+};
+
+struct Color {
+    union {
+        float values[4] = {0.f, 0.f, 0.f, 0.f};
+        struct {
+            float r;
+            float g;
+            float b;
+            float a;
+        };
+    };
+};
+
+struct ClearDepthStencilValue {
+    float depth{1.f};
+    int32_t stencil{0};
+};
+
+struct ClearValue {
+    union {
+        Color color;
+        ClearDepthStencilValue depthStencil;
+    };
+};
+
+class Texture;
+
+struct DrawSurface {
+    Texture *texture{nullptr};
+    uint32_t layerIndex{0};
+};
 
 END_GFX_NAMESPACE

@@ -5,7 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-class GLES3Queue : public Queue, public GfxObject {
+class GLES3Queue : public Queue {
 public:
     GLES3Queue(gles::GLContext& context);
     virtual ~GLES3Queue() {}

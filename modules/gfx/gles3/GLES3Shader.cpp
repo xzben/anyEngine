@@ -2,8 +2,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-GLES3Shader::GLES3Shader(gles::GLContext& context)
-    : GfxObject(GfxObjectType::Shader), m_context(context) {}
+GLES3Shader::GLES3Shader(gles::GLContext& context) : m_context(context) {}
 
 GLES3Shader::~GLES3Shader() {}
 

@@ -171,7 +171,7 @@ bool ShaderModule::reflect(const std::vector<uint8_t>& code) {
 }
 
 VulkanShader::VulkanShader(const vk::LogicDevice& device)
-    : GfxObject(GfxObjectType::Shader), m_logicDevice(device) {}
+    : m_logicDevice(device) {}
 
 bool VulkanShader::addStage(const std::vector<uint8_t>& code,
                             gfx::ShaderStage stage,

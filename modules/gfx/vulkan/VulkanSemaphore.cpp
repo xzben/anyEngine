@@ -3,7 +3,7 @@
 BEGIN_GFX_NAMESPACE
 
 VulkanSemaphore::VulkanSemaphore(const vk::LogicDevice& device)
-    : GfxObject(GfxObjectType::Semaphore), m_logicDevice(device) {
+    : m_logicDevice(device) {
     VkSemaphoreCreateInfo create_info{VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
     VkResult result =
         vkCreateSemaphore(m_logicDevice, &create_info, nullptr, &m_handle);

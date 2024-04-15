@@ -4,19 +4,17 @@
 
 BEGIN_GFX_NAMESPACE
 
-class Texture {
+class Texture : public GfxObject {
 public:
-    Texture()          = default;
-    virtual ~Texture() = default;
-
     template <typename Handle>
     Handle getHandle() {
         return static_cast<Handle>(getHandleImp());
     }
-
-    virtual const SizeI& getSize() = 0;
+    virtual const TextureInfo& getInfo() = 0;
 
 protected:
+    Texture() : GfxObject(GfxObjectType::Texture) {}
+    virtual ~Texture()                = default;
     virtual GFX_HANDLE getHandleImp() = 0;
 };
 

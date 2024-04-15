@@ -32,11 +32,7 @@ VmaAllocationCreateFlags s_vk_createFlags[] = {
 VulkanBuffer::VulkanBuffer(const vk::LogicDevice& logicDevice, BufferType type,
                            uint32_t size,
                            const std::vector<uint32_t>& queue_family_indices)
-    : GfxObject(GfxObjectType::Buffer),
-      m_type(type),
-      m_logicDevice(logicDevice),
-      m_capacity(size),
-      m_size(0) {
+    : m_type(type), m_logicDevice(logicDevice), m_capacity(size), m_size(0) {
     auto allocFlags = s_vk_createFlags[(int)type];
     auto bufUsage   = s_vk_usages[(int)type];
 
