@@ -1,5 +1,0 @@
-#include "GLES3RenderPass.h"
-
-BEGIN_GFX_NAMESPACE
-
-END_GFX_NAMESPACE

@@ -33,6 +33,7 @@ source_group(TREE "${THIRD_LIB_DIR}" FILES
 	${RUNTIME_GLAB} 
 	${RUNTIME_GLAB_HEADS})
 
+	add_definitions (-DGLEW_STATIC)
 add_library(${TARGET_NAME} ${RUNTIME_HEADERS} 
 	${RUNTIME_SOURCES}
     ${RUNTIME_GLAB})
@@ -40,4 +41,4 @@ add_library(${TARGET_NAME} ${RUNTIME_HEADERS}
 target_include_directories(${TARGET_NAME} PUBLIC ${GFX_PUBLIC_INCLUDE})
 target_include_directories(${TARGET_NAME} PRIVATE ${GFX_PRIVATE_INCLUDE})
 
-target_link_libraries(${TARGET_NAME} PUBLIC glfw spirv-reflect-static)
+target_link_libraries(${TARGET_NAME} PUBLIC glfw glew spirv-reflect-static)

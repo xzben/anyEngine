@@ -1,5 +1,0 @@
-#include "gles3_types.h"
-
-BEGIN_GFX_NAMESPACE
-
-END_GFX_NAMESPACE

@@ -15,7 +15,7 @@ static const GFX_HANDLE GFX_NULL_HANDLE = 0;
 enum class GFX_API {
     UNKNOWN,
     OPENGL3,
-    GLES3,
+    GL3,
     VULKAN,
     METAL,
 };
