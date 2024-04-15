@@ -1,8 +1,7 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include "../common/gfx_common.h"
+#include "GL/glew.h"
 #include "core/gl3_core.h"
 #include "gl3_types.h"
 

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include "../common/gfx_common.h"
+#include "GL/glew.h"
 
 BEGIN_GFX_NAMESPACE
 
