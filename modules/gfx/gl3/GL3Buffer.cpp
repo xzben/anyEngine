@@ -18,8 +18,8 @@ static GLenum g_buffer_usage[] = {
     0,                // stage
 };
 
-GL3Buffer::GL3Buffer(gl3::GLContext& context, BufferType type, uint32_t size)
-    : m_context(context), m_type(type), m_capacity(size), m_size(0) {
+GL3Buffer::GL3Buffer(GL3Device& device, BufferType type, uint32_t size)
+    : m_device(device), m_type(type), m_capacity(size), m_size(0) {
     m_target  = g_buffer_tages[int(type)];
     m_glUsage = g_buffer_usage[int(type)];
 

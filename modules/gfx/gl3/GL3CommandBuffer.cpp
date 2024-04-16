@@ -2,7 +2,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-GL3CommandBuffer::GL3CommandBuffer(gl3::GLContext& context) {}
+GL3CommandBuffer::GL3CommandBuffer(GL3Device& device) : m_device(device) {}
 GL3CommandBuffer::~GL3CommandBuffer() {}
 
 bool GL3CommandBuffer::reset() { return true; }

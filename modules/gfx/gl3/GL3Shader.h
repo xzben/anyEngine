@@ -4,10 +4,10 @@
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
-
+class GL3Device;
 class GL3Shader : public Shader {
 public:
-    GL3Shader(gl3::GLContext& context);
+    GL3Shader(GL3Device& device);
     virtual ~GL3Shader();
 
     virtual bool addStage(const std::vector<uint8_t>& code,
@@ -16,7 +16,7 @@ public:
     virtual bool build() override;
 
 private:
-    gl3::GLContext& m_context;
+    GL3Device& m_device;
 };
 
 END_GFX_NAMESPACE

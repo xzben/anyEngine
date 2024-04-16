@@ -4,13 +4,14 @@
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
-
+class GL3Device;
 class GL3Event : public Event {
 public:
-    GL3Event(gl3::GLContext& context);
-    virtual ~GL3Event() {}
+    GL3Event(GL3Device& device);
+    virtual ~GL3Event();
 
 private:
+    GL3Device& m_device;
 };
 
 END_GFX_NAMESPACE

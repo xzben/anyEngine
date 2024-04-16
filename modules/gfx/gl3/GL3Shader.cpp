@@ -2,7 +2,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-GL3Shader::GL3Shader(gl3::GLContext& context) : m_context(context) {}
+GL3Shader::GL3Shader(GL3Device& device) : m_device(device) {}
 
 GL3Shader::~GL3Shader() {}
 

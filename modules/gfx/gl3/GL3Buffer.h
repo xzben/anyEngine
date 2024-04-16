@@ -4,10 +4,10 @@
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
-
+class GL3Device;
 class GL3Buffer : public Buffer {
 public:
-    GL3Buffer(gl3::GLContext& context, BufferType type, uint32_t size);
+    GL3Buffer(GL3Device& device, BufferType type, uint32_t size);
     virtual ~GL3Buffer();
     virtual void update(const void* data, uint32_t size,
                         uint32_t offset = 0) override;
@@ -22,7 +22,7 @@ protected:
     }
 
 private:
-    gl3::GLContext& m_context;
+    GL3Device& m_device;
     uint32_t m_size{0};
     uint32_t m_capacity{0};
     GLenum m_target;

@@ -4,10 +4,10 @@
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
-
+class GL3Device;
 class GL3CommandBuffer : public CommandBuffer {
 public:
-    GL3CommandBuffer(gl3::GLContext& context);
+    GL3CommandBuffer(GL3Device& device);
     virtual ~GL3CommandBuffer();
 
     virtual bool reset() override;
@@ -48,6 +48,7 @@ public:
     virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
 
 private:
+    GL3Device& m_device;
 };
 
 END_GFX_NAMESPACE
