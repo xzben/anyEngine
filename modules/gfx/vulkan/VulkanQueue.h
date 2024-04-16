@@ -11,6 +11,7 @@ public:
                 uint32_t index);
 
     virtual ~VulkanQueue();
+    virtual void destroyCommandPool(CommandPool* pool) override;
 
     virtual bool submit(const std::vector<CommandBuffer*>& cmd,
                         const std::vector<Semaphore*>& wait,

@@ -10,6 +10,8 @@ public:
     GL3Queue(GL3Device& device);
     virtual ~GL3Queue();
 
+    void destroyCommandPool(CommandPool* pool) override;
+
 private:
     GL3Device& m_device;
 };

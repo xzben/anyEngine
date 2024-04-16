@@ -19,4 +19,6 @@ uint32_t VulkanQueue::present(SwapChain* swapChain, uint32_t imageIndex,
 bool VulkanQueue::waitIdle() { return true; }
 
 CommandPool* VulkanQueue::createPool(ResetMode resetModel) { return nullptr; }
+void VulkanQueue::destroyCommandPool(CommandPool* pool) {}
+
 END_GFX_NAMESPACE

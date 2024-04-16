@@ -36,14 +36,8 @@ struct DrawInstanceInfo : public DrawInfo {
 
 class RenderPipeline {
 public:
-    RenderPipeline(gfx::Device& device,
-                   const std::vector<RenderSubpass*>& subpasses,
-                   const std::vector<gfx::Attachment>& attachments,
-                   const std::vector<gfx::SubPassDependency>& dependencies)
-        : m_device(device),
-          m_subpasses(subpasses),
-          m_attachments(attachments),
-          m_dependencies(dependencies) {}
+    RenderPipeline(gfx::Device& device, gfx::RenderPass* renderPass,
+                   const std::vector<RenderSubpass*>& subpasses);
     virtual ~RenderPipeline();
     void setDrawTarget(RenderTarget* target);
 
@@ -56,10 +50,8 @@ public:
 
 private:
     gfx::Device& m_device;
-    std::vector<gfx::Attachment> m_attachments;
-    std::vector<RenderSubpass*> m_subpasses;
-    std::vector<gfx::SubPassDependency> m_dependencies;
     gfx::RenderPass* m_renderPass{nullptr};
+    std::vector<RenderSubpass*> m_subpasses;
     RenderTarget* m_target{nullptr};
 };
 
@@ -70,7 +62,7 @@ public:
                           const std::vector<gfx::Attachment>& attachments)
         : m_device(device), m_attachments(attachments) {}
     RenderSubpass* addSubpass(const std::vector<ShaderCode>& codes,
-                              const gfx::PipelineStage& state) {
+                              const gfx::PipelineState& state) {
         gfx::Shader* shader = m_device.createShader();
         for (const auto& code : codes) {
             shader->addStage(code.code, code.stage, code.entryName);
@@ -90,8 +82,20 @@ public:
     RenderPipeline* build() {
         static_assert(std::is_base_of<RenderPipeline, PipelineType>::value);
 
-        PipelineType* pipeline = new PipelineType(
-            m_device, m_subpasses, m_attachments, m_dependencies);
+        std::vector<gfx::SubPass> subpassInfos;
+        int count = m_subpasses.size();
+        subpassInfos.resize(count);
+        for (int i = 0; i < count; i++) {
+            subpassInfos[i] = m_subpasses[i]->getSubpassInfo();
+        }
+        gfx::RenderPass* renderPass = m_device->createRenderPass(
+            m_attachments, subpassInfos, m_dependencies);
+
+        for (int i = 0; i < count; i++) {
+            m_subpasses[i]->build(renderPass);
+        }
+        PipelineType* pipeline =
+            new PipelineType(m_device, renderPass, m_subpasses);
 
         return pipeline;
     }
@@ -101,6 +105,7 @@ private:
     std::vector<gfx::Attachment> m_attachments;
     std::vector<gfx::SubPassDependency> m_dependencies;
     std::vector<RenderSubpass*> m_subpasses;
+    std::vector<gfx::SubPass> m_subpassInfos;
 };
 
 END_PIPELINE_NAMESPACE

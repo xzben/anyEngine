@@ -591,6 +591,7 @@ struct AttachmentReference {
 struct SubPass {
     std::vector<AttachmentReference> colorAttachments;
     std::vector<AttachmentReference> depthStencilAttachments;
+    std::vector<AttachmentReference> inputAttachments;
     std::vector<AttachmentReference> resolveAttachments;
     std::vector<uint32_t> preserveAttachments;
 };

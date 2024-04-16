@@ -15,7 +15,10 @@ class Semaphore;
 class Queue : public GfxObject {
 public:
     virtual CommandPool* createPool(
-        ResetMode resetModel = ResetMode::ResetPool)               = 0;
+        ResetMode resetModel = ResetMode::ResetPool) = 0;
+
+    virtual void destroyCommandPool(CommandPool* pool) = 0;
+
     virtual bool submit(const std::vector<CommandBuffer*>& cmd,
                         const std::vector<Semaphore*>& wait,
                         const std::vector<Semaphore*>& signal,
