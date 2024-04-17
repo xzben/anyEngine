@@ -2,48 +2,86 @@
 
 #include <mutex>
 
+#include "wgl_config.h"
+
 #if CUR_GL_TYPE == OPENGL_WGL
 
 BEGIN_GFX_NAMESPACE
+BEGIN_GL3_CORE_NAMESPACE
+
+static std::mutex g_context_lock;
 
 bool WGLHelper::init() {
-    HDC hdc         = ::GetDC(NULL);
+    HDC hdc = ::GetDC(NULL);
+    g_context_lock.lock();
     HGLRC tempHglrc = wglCreateContext(hdc);
     wglMakeCurrent(hdc, tempHglrc);
     glewInit();
     wglMakeCurrent(NULL, NULL);
+    g_context_lock.unlock();
     wglDeleteContext(tempHglrc);
-
     return true;
 }
 
-static std::mutex g_context_lock;
-WGlContext* WGLHelper::createContext(HWND window, WGlContext* share) {
-    WGlContext* context = new WGlContext();
-    bool success        = true;
+WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext,
+                                     bool singleBuffer) {
+    bool success = true;
+    int attribs[40];
+    int pixelFormat;
+    PIXELFORMATDESCRIPTOR pfd;
+    HGLRC share = NULL;
+    if (shareContext != nullptr) {
+        share = shareContext->hglrc;
+    }
+    HDC hdc        = NULL;
+    HGLRC newHglrc = NULL;
+    bool selfHdc   = false;
+    if (window == NULL) {
+        hdc     = ::GetDC(NULL);
+        selfHdc = true;
+    } else {
+        hdc = ::GetDC(window);
+    }
+    WLGCtxconfig ctxConfig;
+    WGLConfig pbConfig;
+    pbConfig.doublebuffer = singleBuffer ? WGL_FALSE : WGL_TRUE;
+
+    pixelFormat = choosePixelFormatWGL(hdc, &pbConfig);
+    if (0 == pixelFormat) {
+        CCERROR("can't find pixelFormat for hdc:%d", hdc);
+        return nullptr;
+    }
+    if (!DescribePixelFormat(hdc, pixelFormat, sizeof(pfd), &pfd)) {
+        CCERROR("WGL: Failed to retrieve PFD for selected pixel format");
+        return nullptr;
+    }
+
+    if (!SetPixelFormat(hdc, pixelFormat, &pfd)) {
+        CCERROR("WGL: Failed to set selected pixel format");
+        return nullptr;
+    }
+
     g_context_lock.lock();
 
-    {
-        HDC hdc = NULL;
-        if (window == NULL) {
-            hdc              = ::GetDC(NULL);
-            context->selfHdc = true;
-        } else {
-            hdc = ::GetDC(window);
+    if (WGLEW_ARB_create_context) {
+        setAttribsARB(attribs, ctxConfig);
+        newHglrc = wglCreateContextAttribsARB(hdc, share, attribs);
+        if (!newHglrc) {
+            const DWORD error = GetLastError();
+            CCERROR("create context error[%d]", error);
+            success = false;
         }
-
-        HGLRC shareHglrc = share == nullptr ? NULL : share->hglrc;
-        if (WGL_ARB_create_context) {
-            int attribs[40];
-            context->hglrc =
-                wglCreateContextAttribsARB(hdc, shareHglrc, attribs);
-        } else {
-            context->hglrc = wglCreateContext(hdc);
-
-            if (shareHglrc) {
-                if (!wglShareLists(context->hglrc, shareHglrc)) {
-                    success = false;
-                }
+    } else {
+        newHglrc = wglCreateContext(hdc);
+        if (!newHglrc) {
+            const DWORD error = GetLastError();
+            CCERROR("create context error[%d]", error);
+            success = false;
+        }
+        if (share) {
+            if (!wglShareLists(newHglrc, share)) {
+                CCERROR("failed to share context[%d|%d]", share, newHglrc);
+                success = false;
             }
         }
     }
@@ -51,19 +89,98 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* share) {
     g_context_lock.unlock();
 
     assert(success);
-
-    return context;
+    if (success) {
+        WGlContext* context   = new WGlContext();
+        context->selfHdc      = selfHdc;
+        context->hdc          = hdc;
+        context->hglrc        = newHglrc;
+        context->shareContext = shareContext;
+        context->hwnd         = window;
+        return context;
+    } else {
+        return nullptr;
+    }
 }
 
-void WGLHelper::deleteContext(WGlContext* context) {}
-WGLSwapChain* WGLHelper::createWindowSurface(void* win, uint32_t width,
-                                             uint32_t height) {
-    return nullptr;
+void WGLHelper::deleteContext(WGlContext* context) {
+    if (context && context->hglrc) {
+        wglDeleteContext(context->hglrc);
+        context->hglrc = NULL;
+    }
 }
-void WGLHelper::makeCurrent(WGlContext* context, WGLSwapChain* surface) {}
-void WGLHelper::deleteWindowSurface(WGLSwapChain* surface) {}
-void WGLHelper::swapBuffer(WGlContext* context) {}
 
+thread_local WGlContext* s_lastContext = nullptr;
+
+void WGLHelper::makeCurrent(WGlContext* context) {
+    if (s_lastContext == context) {
+        return;
+    }
+
+    if (context) {
+        g_context_lock.lock();
+        if (!wglMakeCurrent(context->hdc, context->hglrc)) {
+            g_context_lock.unlock();
+            CCERROR("WGL: Failed to make context[ hdc: %d | hglrc: %d] current",
+                    context->hdc, context->hglrc);
+        } else {
+            s_lastContext = context;
+            g_context_lock.unlock();
+        }
+
+    } else {
+        g_context_lock.lock();
+        if (!wglMakeCurrent(NULL, NULL)) {
+            g_context_lock.unlock();
+            CCERROR("WGL: Failed to make context empty");
+        } else {
+            s_lastContext = context;
+            g_context_lock.unlock();
+        }
+    }
+}
+
+WGLSwapChain* WGLHelper::createWindowSurface(GL3Device& device, HWND win,
+                                             uint32_t width, uint32_t height,
+                                             bool singleBuffer,
+                                             WGlContext* mainContext) {
+    return new WGLSwapChain(device, win, width, height, singleBuffer,
+                            mainContext);
+}
+
+void WGLHelper::deleteWindowSurface(WGLSwapChain* surface) { delete surface; }
+void WGLHelper::swapBuffer(WGlContext* context) { SwapBuffers(context->hdc); }
+
+//-----
+
+WGLSwapChain::WGLSwapChain(GL3Device& device, HWND window, uint32_t width,
+                           uint32_t height, bool singleBuffer,
+                           WGlContext* shareContext)
+    : GL3SwapChain(device, width, height, singleBuffer) {
+    m_context = WGLHelper::createContext(window, shareContext, singleBuffer);
+}
+
+void WGLSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info) {
+    WGlContext* shareContext = m_context->shareContext;
+    WGLHelper::deleteContext(m_context);
+
+    m_singleBuffer = info.singleBuffer;
+    m_width        = info.width;
+    m_height       = info.height;
+
+    m_context = WGLHelper::createContext((HWND)info.handle, shareContext,
+                                         m_singleBuffer);
+}
+
+void WGLSwapChain::swapBuffer() { WGLHelper::swapBuffer(m_context); }
+void WGLSwapChain::makeCurrent() { WGLHelper::makeCurrent(m_context); }
+WGLSwapChain::~WGLSwapChain() {
+    if (m_context) {
+        WGLHelper::deleteContext(m_context);
+    }
+    m_context = nullptr;
+}
+
+END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE
 
 #endif  // #if CUR_GL_TYPE == OPENGL_WGL

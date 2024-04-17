@@ -32,6 +32,7 @@ struct SurfaceInfo {
     void *handle{nullptr};
     uint32_t width;
     uint32_t height;
+    bool singleBuffer{false};
 };
 
 struct DeviceInfo {

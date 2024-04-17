@@ -65,19 +65,20 @@ public:
     virtual void waitIdle() override;
 
 public:
-    virtual void destroyBuffer(Buffer* buffer)                override;
-    virtual void destroyEvent(Event* event)                   override;
-    virtual void destroyFence(Fence* fence)                   override;
+    virtual void destroyBuffer(Buffer* buffer) override;
+    virtual void destroyEvent(Event* event) override;
+    virtual void destroyFence(Fence* fence) override;
     virtual void destroyInputAssembler(InputAssembler* input) override;
-    virtual void destroyPipeline(Pipeline* pipeline)          override;
-    virtual void destroyRenderPasss(RenderPass* renderPass)   override;
-    virtual void destroySampler(Sampler* sampler)             override;
-    virtual void destroySemaphore(Semaphore* semaphore)       override;
-    virtual void destroyShader(Shader* shader)                override;
-    virtual void destroySwapChain(SwapChain* swapChain)       override;
-    virtual void destroyTexture(Texture* texture)             override;
+    virtual void destroyPipeline(Pipeline* pipeline) override;
+    virtual void destroyRenderPasss(RenderPass* renderPass) override;
+    virtual void destroySampler(Sampler* sampler) override;
+    virtual void destroySemaphore(Semaphore* semaphore) override;
+    virtual void destroyShader(Shader* shader) override;
+    virtual void destroySwapChain(SwapChain* swapChain) override;
+    virtual void destroyTexture(Texture* texture) override;
 
 private:
+    std::vector<GL3Queue*> m_queues;
     std::unique_ptr<gl3::GLContext> m_pMainContext;
 };
 

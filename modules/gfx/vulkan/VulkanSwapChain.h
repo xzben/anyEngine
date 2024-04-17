@@ -29,12 +29,12 @@ public:
         return m_imageViews;
     }
 
-    std::pair<bool, uint32_t> acquireNextImage(
-        const Fence* fence, const Semaphore* semophore,
-        uint32_t timeout = std::numeric_limits<uint32_t>::max()) override;
+    std::pair<bool, uint32_t> acquireNextImage(Semaphore* semophore,
+                                               Fence* fence     = nullptr,
+                                               uint32_t timeout = 0) override;
 
 protected:
-    void handleUpdateSurfaceInfo(SurfaceInfo info) override;
+    void handleUpdateSurfaceInfo(const SurfaceInfo& info) override;
 
 protected:
     bool createSwapChainHandle();

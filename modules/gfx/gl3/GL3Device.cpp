@@ -2,7 +2,11 @@
 
 BEGIN_GFX_NAMESPACE
 
-bool GL3Device::init(const DeviceInfo& info) { return true; }
+bool GL3Device::init(const DeviceInfo& info) {
+    m_pMainContext = std::make_unique<gl3::GLContext>(*this);
+    return true;
+}
+
 GL3Shader* GL3Device::createShader() { return new GL3Shader(*this); }
 
 GL3Queue* GL3Device::getQueue(QueueType& type, uint32_t index) {

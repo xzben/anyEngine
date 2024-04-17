@@ -3,7 +3,7 @@
 BEGIN_GFX_NAMESPACE
 VulkanSwapChain::VulkanSwapChain(const vk::LogicDevice& device,
                                  const SurfaceInfo& info)
-    :  m_logicDevice(device) {
+    : m_logicDevice(device) {
     m_surface = std::make_unique<vk::Surface>(device.getInstance(), info);
     m_builder = std::make_unique<SwapChainBuilder>(m_logicDevice, *m_surface);
     createSwapChainHandle();
@@ -48,7 +48,7 @@ bool VulkanSwapChain::createSwapChainHandle() {
     return result;
 }
 
-void VulkanSwapChain::handleUpdateSurfaceInfo(SurfaceInfo info) {
+void VulkanSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info) {
     m_surface->update(info);
     m_builder->setSurface(*m_surface);
     createSwapChainHandle();
@@ -59,11 +59,14 @@ VulkanSwapChain::~VulkanSwapChain() {
 }
 
 std::pair<bool, uint32_t> VulkanSwapChain::acquireNextImage(
-    const Fence* fence, const Semaphore* semophore, uint32_t timeout) {
+    Semaphore* semophore, Fence* fence, uint32_t timeout) {
     uint32_t index;
-    VkFence hFence         = fence->getHandle<VkFence>();
+    VkFence hFence = fence ? fence->getHandle<VkFence>() : VK_NULL_HANDLE;
     VkSemaphore hSemaphore = semophore->getHandle<VkSemaphore>();
 
+    if (timeout == 0) {
+        timeout = std::numeric_limits<uint32_t>::max();
+    }
     auto result = vkAcquireNextImageKHR(m_logicDevice, m_handle, timeout,
                                         hSemaphore, hFence, &index);
 
