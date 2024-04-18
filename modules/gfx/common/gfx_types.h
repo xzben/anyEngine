@@ -35,12 +35,18 @@ struct SurfaceInfo {
     bool singleBuffer{false};
 };
 
+struct QueueInfo {
+    QueueType type;
+    float priority{1.0};
+    bool perferSperate{true};  // 是否优先使用专用类型的 farmilyIndex
+};
+
 struct DeviceInfo {
     GFX_API api{GFX_API::OPENGL3};
     std::string name{""};
     bool present{true};
     SurfaceInfo surface;
-    std::unordered_map<QueueType, uint32_t> queues;
+    std::vector<QueueInfo> queues;
     uint32_t requireMemSize{0};
 };
 

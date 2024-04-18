@@ -1,6 +1,9 @@
 #pragma once
 
+#include <type_traits>
+
 #include "../base/CommandBuffer.h"
+#include "core/cmdimpl/CmdBase.h"
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
@@ -47,7 +50,40 @@ public:
                              const TextureBliteInfo& info);
     virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
 
+protected:
+    template <class CmdClass, typename... Params>
+    gl3::CmdBase* allocCmd(Params... params) {
+        gl3::CmdType type = CmdClass::CUR_CMD_TYPE;
+
+        auto it       = m_freeCmds.find(type);
+        CmdClass* cmd = nullptr;
+        if (it == m_freeCmds.end() || it->second.empty()) {
+            cmd = new CmdClass(*this);
+        } else {
+            cmd = dynamic_cast<CmdClass*>(it->second.back());
+            it->second.pop_back();
+        }
+        assert(cmd->getType() == type);
+        cmd->init(params...);
+        return cmd;
+    }
+
+    void freeCmd(gl3::CmdBase* cmd) {
+        auto type = cmd->getType();
+        auto it   = m_freeCmds.find(type);
+        cmd->reset();
+        if (it == m_freeCmds.end()) {
+            m_freeCmds[type] = {cmd};
+        } else {
+            it->second.push_back(cmd);
+        }
+    }
+
+    void clearCmds();
+
 private:
+    std::vector<gl3::CmdBase*> m_cmds;
+    std::unordered_map<gl3::CmdType, std::vector<gl3::CmdBase*>> m_freeCmds;
     GL3Device& m_device;
 };
 

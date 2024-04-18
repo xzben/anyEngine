@@ -1,9 +1,13 @@
 #include "VulkanQueue.h"
 
 BEGIN_GFX_NAMESPACE
-VulkanQueue::VulkanQueue(vk::LogicDevice& logicDeivce, uint32_t familyIndex,
-                         uint32_t index)
-    : m_logicDevice(logicDeivce), m_familyIndex(familyIndex), m_index(index) {
+VulkanQueue::VulkanQueue(vk::LogicDevice& logicDeivce, QueueType queueType,
+                         float priority, uint32_t familyIndex, uint32_t index)
+    : m_logicDevice(logicDeivce),
+      m_queueType(queueType),
+      m_priority(priority),
+      m_familyIndex(familyIndex),
+      m_index(index) {
     vkGetDeviceQueue(m_logicDevice, m_familyIndex, m_index, &m_handle);
 }
 
@@ -19,6 +23,6 @@ uint32_t VulkanQueue::present(SwapChain* swapChain, uint32_t imageIndex,
 bool VulkanQueue::waitIdle() { return true; }
 
 CommandPool* VulkanQueue::createPool(ResetMode resetModel) { return nullptr; }
-void VulkanQueue::destroyCommandPool(CommandPool* pool) {}
+void VulkanQueue::destroyPool(CommandPool* pool) {}
 
 END_GFX_NAMESPACE

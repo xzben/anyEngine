@@ -7,11 +7,11 @@ BEGIN_GFX_NAMESPACE
 
 class VulkanQueue : public Queue {
 public:
-    VulkanQueue(vk::LogicDevice& logicDeivce, uint32_t familyIndex,
-                uint32_t index);
+    VulkanQueue(vk::LogicDevice& logicDeivce, QueueType queueType,
+                float priority, uint32_t familyIndex, uint32_t index);
 
     virtual ~VulkanQueue();
-    virtual void destroyCommandPool(CommandPool* pool) override;
+    virtual void destroyPool(CommandPool* pool) override;
 
     virtual bool submit(const std::vector<CommandBuffer*>& cmd,
                         const std::vector<Semaphore*>& wait,
@@ -34,6 +34,7 @@ public:
 private:
     vk::LogicDevice& m_logicDevice;
     QueueType m_queueType;
+    float m_priority;
     uint32_t m_familyIndex{0};
     uint32_t m_index{0};
     VkQueue m_handle{VK_NULL_HANDLE};

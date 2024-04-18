@@ -12,27 +12,17 @@ BEGIN_VK_NAMESPACE
 
 LogicDevice::LogicDevice(const Instance& instance,
                          const PhysicalDevice& physical_device, VkDevice device,
-                         EmbeddingQueues& embedding_queues,
-                         std::vector<QueueInfo> custom_queues)
+                         EmbeddingQueues& embedding_queues)
     : m_device(device),
       m_instance(instance),
       m_physicalDevice(physical_device) {
     for (auto i = 0; i < QueueType::Count; ++i) {
         auto& info = embedding_queues.queue[i];
         for (auto j = 0; j < info.count; ++j) {
-            auto queue = new VulkanQueue(*this, info.familyIndex, j);
+            auto queue = new VulkanQueue(*this, (QueueType)i, info.prioritys[j],
+                                         info.familyIndex, j);
             m_embeddingQueues[i].emplace_back(queue);
         }
-    }
-
-    for (auto& info : custom_queues) {
-        std::vector<VulkanQueue*> queues;
-        queues.reserve(info.count);
-        for (auto i = 0; i < info.count; ++i) {
-            auto queue = new VulkanQueue(*this, info.familyIndex, i);
-            queues.emplace_back(queue);
-        }
-        m_customQueues.emplace(info.familyIndex, std::move(queues));
     }
 
     // TODO: use reset pool for performance
@@ -105,20 +95,13 @@ std::unique_ptr<LogicDevice> LogicDeviceBuilder::build() {
 
     auto embeddingQueues = buildEmbeddingQueues();
     std::vector<VkDeviceQueueCreateInfo> queueInfos;
-    queueInfos.resize(m_customQueues.size() + embeddingQueues.size(),
+    queueInfos.resize(embeddingQueues.size(),
                       {VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO});
 
-    auto i = 0;
-    for (; i < m_customQueues.size(); i++) {
-        queueInfos[i].queueFamilyIndex = m_customQueues[i].familyIndex;
-        queueInfos[i].queueCount       = m_customQueues[i].priorities.size();
-        queueInfos[i].pQueuePriorities = m_customQueues[i].priorities.data();
-    }
-
-    for (auto j = 0; j < embeddingQueues.size(); i++, j++) {
-        queueInfos[i].queueFamilyIndex = embeddingQueues[j].familyIndex;
-        queueInfos[i].queueCount       = embeddingQueues[j].priorities.size();
-        queueInfos[i].pQueuePriorities = embeddingQueues[j].priorities.data();
+    for (int i = 0; i < embeddingQueues.size(); i++) {
+        queueInfos[i].queueFamilyIndex = embeddingQueues[i].familyIndex;
+        queueInfos[i].queueCount       = embeddingQueues[i].priorities.size();
+        queueInfos[i].pQueuePriorities = embeddingQueues[i].priorities.data();
     }
 
     // device
@@ -137,15 +120,8 @@ std::unique_ptr<LogicDevice> LogicDeviceBuilder::build() {
         return nullptr;
     }
 
-    std::vector<QueueInfo> customQueues(m_customQueues.size());
-    for (auto i = 0; i < m_customQueues.size(); ++i) {
-        customQueues[i].familyIndex = m_customQueues[i].familyIndex;
-        customQueues[i].count       = m_customQueues[i].priorities.size();
-    }
-
     return std::make_unique<LogicDevice>(m_instance, m_physicalDevice, device,
-                                         m_embeddingQueues,
-                                         std::move(customQueues));
+                                         m_embeddingQueues);
 }
 
 LogicDeviceBuilder& LogicDeviceBuilder::requireExtension(
@@ -165,47 +141,40 @@ LogicDeviceBuilder& LogicDeviceBuilder::requireValidationLayer(
 }
 
 LogicDeviceBuilder& LogicDeviceBuilder::requirePresentQueue(
-    uint32_t count, bool perferSperate) {
+    float priority, bool perferSperate) {
     auto index = m_physicalDevice.getPresentQueueFamily(m_surface);
     assert(index);
 
-    m_embeddingQueues.queue[QueueType::Present].count       = count;
+    m_embeddingQueues.queue[QueueType::Present].count++;
+    m_embeddingQueues.queue[QueueType::Present].prioritys.push_back(priority);
     m_embeddingQueues.queue[QueueType::Present].familyIndex = index.value();
     return *this;
 }
 LogicDeviceBuilder& LogicDeviceBuilder::requireGraphicsQueue(
-    uint32_t count, bool perferSperate) {
+    float priority, bool perferSperate) {
     auto index = m_physicalDevice.getGraphicsQueueFamily(perferSperate);
     assert(index);
-    m_embeddingQueues.queue[QueueType::Graphics].count       = count;
+    m_embeddingQueues.queue[QueueType::Graphics].count++;
+    m_embeddingQueues.queue[QueueType::Graphics].prioritys.push_back(priority);
     m_embeddingQueues.queue[QueueType::Graphics].familyIndex = index.value();
     return *this;
 }
 LogicDeviceBuilder& LogicDeviceBuilder::requireComputeQueue(
-    uint32_t count, bool perferSperate) {
+    float priority, bool perferSperate) {
     auto index = m_physicalDevice.getComputeQueueFamily(perferSperate);
     assert(index);
-    m_embeddingQueues.queue[QueueType::Compute].count       = count;
+    m_embeddingQueues.queue[QueueType::Compute].count++;
+    m_embeddingQueues.queue[QueueType::Compute].prioritys.push_back(priority);
     m_embeddingQueues.queue[QueueType::Compute].familyIndex = index.value();
     return *this;
 }
 LogicDeviceBuilder& LogicDeviceBuilder::requireTransferQueue(
-    uint32_t count, bool perferSperate) {
+    float priority, bool perferSperate) {
     auto index = m_physicalDevice.getTransferQueueFamily(perferSperate);
     assert(index);
-    m_embeddingQueues.queue[QueueType::Transfer].count       = count;
+    m_embeddingQueues.queue[QueueType::Transfer].count++;
+    m_embeddingQueues.queue[QueueType::Transfer].prioritys.push_back(priority);
     m_embeddingQueues.queue[QueueType::Transfer].familyIndex = index.value();
-    return *this;
-}
-
-LogicDeviceBuilder& LogicDeviceBuilder::requireQueue(
-    uint32_t queue_index, std::vector<float> priorities) {
-    m_customQueues.emplace_back(queue_index, priorities);
-    return *this;
-}
-LogicDeviceBuilder& LogicDeviceBuilder::requireQueue(uint32_t queue_index,
-                                                     float priorities) {
-    m_customQueues.emplace_back(queue_index, priorities);
     return *this;
 }
 
@@ -215,24 +184,11 @@ LogicDeviceBuilder& LogicDeviceBuilder::requirePresent() {
 }
 
 std::vector<DeviceQueue> LogicDeviceBuilder::buildEmbeddingQueues() {
-    std::unordered_map<uint32_t, uint32_t> indexCount;
-
+    std::vector<DeviceQueue> deviceQueues;
     for (auto i = 0; i < QueueType::Count; i++) {
         auto& queue = m_embeddingQueues.queue[i];
         if (queue.count <= 0) continue;
-
-        auto it = indexCount.find(queue.familyIndex);
-        if (it == indexCount.end()) {
-            indexCount.insert(std::make_pair(queue.familyIndex, queue.count));
-        } else {
-            it->second += queue.count;
-        }
-    }
-
-    std::vector<DeviceQueue> deviceQueues;
-    for (auto it = indexCount.begin(); it != indexCount.end(); it++) {
-        deviceQueues.emplace_back(it->first,
-                                  std::vector<float>(it->second, 1.0f));
+        deviceQueues.emplace_back(queue.familyIndex, queue.prioritys);
     }
 
     return deviceQueues;

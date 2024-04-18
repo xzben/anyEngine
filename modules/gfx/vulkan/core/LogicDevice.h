@@ -2,6 +2,7 @@
 
 #include <array>
 #include <optional>
+
 #include "Surface.h"
 #include "vulkan_core_common.h"
 
@@ -15,6 +16,7 @@ BEGIN_VK_NAMESPACE
 
 struct QueueInfo {
     uint32_t familyIndex{0};
+    std::vector<float> prioritys;
     uint32_t count{0};
 };
 
@@ -27,8 +29,7 @@ class Instance;
 class LogicDevice {
 public:
     LogicDevice(const Instance& instance, const PhysicalDevice& physical_device,
-                VkDevice device, EmbeddingQueues& embedding_queues,
-                std::vector<QueueInfo> custom_queues);
+                VkDevice device, EmbeddingQueues& embedding_queues);
     ~LogicDevice();
 
     const Instance& getInstance() const { return m_instance; }
@@ -88,13 +89,13 @@ public:
         const VkPhysicalDeviceFeatures& features);
     LogicDeviceBuilder& requireValidationLayer(const char* valid_layer);
 
-    LogicDeviceBuilder& requirePresentQueue(uint32_t count      = 1,
+    LogicDeviceBuilder& requirePresentQueue(float priority      = 1.0f,
                                             bool perfer_sperate = true);
-    LogicDeviceBuilder& requireGraphicsQueue(uint32_t count      = 1,
+    LogicDeviceBuilder& requireGraphicsQueue(float priority      = 1.0f,
                                              bool perfer_sperate = true);
-    LogicDeviceBuilder& requireComputeQueue(uint32_t count      = 1,
+    LogicDeviceBuilder& requireComputeQueue(float priority      = 1.0f,
                                             bool perfer_sperate = true);
-    LogicDeviceBuilder& requireTransferQueue(uint32_t count      = 1,
+    LogicDeviceBuilder& requireTransferQueue(float priority      = 1.0f,
                                              bool perfer_sperate = true);
 
     LogicDeviceBuilder& requireQueue(uint32_t queue_index,
@@ -116,7 +117,6 @@ private:
     VkPhysicalDeviceFeatures m_features = {};
     std::vector<const char*> m_extensions;
     std::vector<const char*> m_validationLayers;
-    std::vector<DeviceQueue> m_customQueues;
     EmbeddingQueues m_embeddingQueues;
 };
 END_VK_NAMESPACE

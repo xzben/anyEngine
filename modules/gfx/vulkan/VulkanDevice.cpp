@@ -86,21 +86,25 @@ std::unique_ptr<vk::LogicDevice> createLogicDevice(
 
     builder.requireValidationLayer("VK_LAYER_KHRONOS_validation");
     for (auto queuItem : info.queues) {
-        switch (queuItem.first) {
+        switch (queuItem.type) {
             case QueueType::Graphics: {
-                builder.requireGraphicsQueue(queuItem.second);
+                builder.requireGraphicsQueue(queuItem.priority,
+                                             queuItem.perferSperate);
                 break;
             }
             case QueueType::Present: {
-                builder.requirePresentQueue(queuItem.second);
+                builder.requirePresentQueue(queuItem.priority,
+                                            queuItem.perferSperate);
                 break;
             }
             case QueueType::Compute: {
-                builder.requireComputeQueue(queuItem.second);
+                builder.requireComputeQueue(queuItem.priority,
+                                            queuItem.perferSperate);
                 break;
             }
             case QueueType::Transfer: {
-                builder.requireTransferQueue(queuItem.second);
+                builder.requireTransferQueue(queuItem.priority,
+                                             queuItem.perferSperate);
                 break;
             };
         }
