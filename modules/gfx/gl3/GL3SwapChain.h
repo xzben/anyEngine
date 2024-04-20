@@ -15,6 +15,7 @@ public:
     virtual std::pair<bool, uint32_t> acquireNextImage(Semaphore* semophore,
                                                        Fence* fence = nullptr,
                                                        uint32_t timeout = 0);
+    virtual void swapBuffer() = 0;
 
 protected:
     GL3Device& m_device;

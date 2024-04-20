@@ -29,8 +29,10 @@ public:
     virtual ~WGLSwapChain();
     virtual void handleUpdateSurfaceInfo(const SurfaceInfo& info) override;
 
+    WGlContext* getContext() { return m_context; }
+    void swapBuffer() override;
+
 public:
-    void swapBuffer();
     void makeCurrent();
 
 private:
@@ -50,6 +52,8 @@ public:
     static void makeCurrent(WGlContext* context);
     static void deleteWindowSurface(WGLSwapChain* surface);
     static void swapBuffer(WGlContext* context);
+
+    static void exitCurrent(WGlContext* context);
 };
 
 using GLContextType = WGlContext*;

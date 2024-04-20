@@ -139,6 +139,21 @@ void WGLHelper::makeCurrent(WGlContext* context) {
     }
 }
 
+void WGLHelper::exitCurrent(WGlContext* context) {
+    if (s_lastContext != context) {
+        return;
+    }
+
+    g_context_lock.lock();
+    if (!wglMakeCurrent(NULL, NULL)) {
+        g_context_lock.unlock();
+        CCERROR("WGL: Failed to make context empty");
+    } else {
+        g_context_lock.unlock();
+        s_lastContext = nullptr;
+    }
+}
+
 WGLSwapChain* WGLHelper::createWindowSurface(GL3Device& device, HWND win,
                                              uint32_t width, uint32_t height,
                                              bool singleBuffer,

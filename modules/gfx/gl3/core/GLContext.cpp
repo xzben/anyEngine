@@ -6,8 +6,12 @@ BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
 
 GLContext::GLContext(GL3Device& device) : m_device(device) {
+    m_context = createContext(nullptr);
+}
+
+GLContextType GLContext::createContext(GLContextType share) {
 #if CUR_GL_TYPE == OPENGL_WGL
-    m_context = WGLHelper::createContext(NULL, nullptr, true);
+    return WGLHelper::createContext(NULL, share, true);
 #elif CUR_GL_TYPE == OPENGL_AGL
 
 #elif CUR_GL_TYPE == OPENGL_EGL
@@ -16,7 +20,17 @@ GLContext::GLContext(GL3Device& device) : m_device(device) {
     static_assert(false);  // unsupport OPEN TYPE
 #endif
 }
-GLContext::~GLContext() {}
+GLContext::~GLContext() {
+#if CUR_GL_TYPE == OPENGL_WGL
+    WGLHelper::deleteContext(m_context);
+#elif CUR_GL_TYPE == OPENGL_AGL
+
+#elif CUR_GL_TYPE == OPENGL_EGL
+
+#else
+    static_assert(false);  // unsupport OPEN TYPE
+#endif
+}
 
 GL3SwapChain* GLContext::createSwapChain(void* window, uint32_t width,
                                          uint32_t height, bool singleBuffer) {
@@ -70,5 +84,28 @@ void GLContext::makeCurrent(GL3SwapChain* swapChain) {
     static_assert(false);  // unsupport OPEN TYPE
 #endif
 }
+
+void GLContext::exitCurrent(GL3SwapChain* swapChain) {
+#if CUR_GL_TYPE == OPENGL_WGL
+    if (swapChain == nullptr) {
+        WGLHelper::exitCurrent(m_context);
+    } else {
+        WGLHelper::exitCurrent(
+            dynamic_cast<WGLSwapChain*>(swapChain)->getContext());
+    }
+#elif CUR_GL_TYPE == OPENGL_AGL
+
+#elif CUR_GL_TYPE == OPENGL_EGL
+
+#else
+    static_assert(false);  // unsupport OPEN TYPE
+#endif
+}
+
+GLContext* GLContext::createSubContext() {
+    auto context = createContext(m_context);
+    return new GLContext(m_device, context);
+}
+
 END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE

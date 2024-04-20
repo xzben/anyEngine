@@ -19,10 +19,18 @@ public:
     virtual ~GLContext();
 
     void makeCurrent(GL3SwapChain* swapChain = nullptr);
+    void exitCurrent(GL3SwapChain* swapChain = nullptr);
     GL3SwapChain* createSwapChain(void* winow, uint32_t width, uint32_t height,
                                   bool singleBuffer);
     void destroySwapChain(GL3SwapChain* swapChain);
     void swapBuffer(GL3SwapChain* swapChain);
+
+    GLContext* createSubContext();
+
+protected:
+    GLContextType createContext(GLContextType share);
+    GLContext(GL3Device& device, GLContextType context)
+        : m_device(device), m_context(context) {}
 
 private:
     GLContextType m_context;

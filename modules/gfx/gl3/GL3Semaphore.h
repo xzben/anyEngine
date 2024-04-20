@@ -1,5 +1,8 @@
 #pragma once
 
+#include <atomic>
+#include <mutex>
+
 #include "../base/Semaphore.h"
 #include "gl_common.h"
 
@@ -10,7 +13,14 @@ public:
     GL3Semaphore(GL3Device& device);
     virtual ~GL3Semaphore();
 
+    virtual void wait() override;
+    virtual void signal() override;
+
 private:
+    std::mutex m_conditionLock;
+    std::condition_variable m_condition;
+    std::atomic<int> m_count{0};
+
     GL3Device& m_device;
 };
 

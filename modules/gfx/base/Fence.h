@@ -6,8 +6,11 @@ BEGIN_GFX_NAMESPACE
 
 class Fence : public Handle, public GfxObject {
 public:
-    virtual bool reset()                    = 0;
-    virtual bool wait(uint32_t timeout = 0) = 0;
+    virtual bool reset() = 0;
+    /*
+     *  timeout 单位 纳秒
+     */
+    virtual bool wait(uint64_t timeout = 0) = 0;
 
 protected:
     Fence() : GfxObject(GfxObjectType::Fence) {}

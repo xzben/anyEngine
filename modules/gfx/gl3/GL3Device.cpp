@@ -1,10 +1,63 @@
 #include "GL3Device.h"
 
+static const uint32_t g_RenderThreadNum = 2;
+
 BEGIN_GFX_NAMESPACE
+GL3Device::GL3Device() {}
+GL3Device::~GL3Device() {}
+
+void GL3Device::exit() {
+    m_exit = true;
+    if (m_pRenderThreads) {
+        m_pRenderThreads->exit();
+        delete m_pRenderThreads;
+    }
+
+    for (auto context : m_subContext) {
+        delete context;
+    }
+    m_subContext.clear();
+    m_pMainContext.reset(nullptr);
+}
 
 bool GL3Device::init(const DeviceInfo& info) {
     m_pMainContext = std::make_unique<gl3::GLContext>(*this);
+    initSubRenderThreads(g_RenderThreadNum);
     return true;
+}
+
+void GL3Device::initSubRenderThreads(uint32_t threadNum) {
+    m_subContext.resize(threadNum);
+    for (int i = 0; i < threadNum; i++) {
+        m_subContext[i] = m_pMainContext->createSubContext();
+    }
+    m_pRenderThreads = new RenderThreadPool(
+        threadNum,
+        [&](WorkTask* task, uint32_t threadIndex) {
+            task->execute(m_subContext[threadIndex]);
+        },
+        [&](uint32_t threadIndex) { m_subContext[threadIndex]->makeCurrent(); },
+        [&](uint32_t threadIndex) {
+            m_subContext[threadIndex]->exitCurrent();
+        });
+}
+
+void GL3Device::initResourceThread() {
+    m_syncWorkThread = new std::thread([&]() {
+        m_pMainContext->makeCurrent();
+
+        std::queue<SyncWork*> works;
+        while (!m_exit) {
+            m_syncWorkQueue.wait(works);
+
+            while (!works.empty()) {
+                auto& item = works.front();
+                works.pop();
+                item->func();
+                item->finish = true;
+            }
+        }
+    });
 }
 
 GL3Shader* GL3Device::createShader() { return new GL3Shader(*this); }

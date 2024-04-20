@@ -9,12 +9,11 @@ class GL3Buffer : public Buffer {
 public:
     GL3Buffer(GL3Device& device, BufferType type, uint32_t size);
     virtual ~GL3Buffer();
-    virtual void update(const void* data, uint32_t size,
-                        uint32_t offset = 0) override;
-    virtual uint32_t size() override { return m_size; }
-    virtual uint32_t capacity() override { return m_capacity; }
+    uint32_t size() override { return m_size; }
+    uint32_t capacity() override { return m_capacity; }
 
-    virtual void setSize(uint32_t size) { m_size = size; }
+    void setSize(uint32_t size) override { m_size = size; }
+    void update(const void* data, uint32_t size, uint32_t offset);
 
 protected:
     virtual GFX_HANDLE getHandleImp() const override {

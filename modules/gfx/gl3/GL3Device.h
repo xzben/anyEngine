@@ -14,12 +14,18 @@
 #include "GL3SwapChain.h"
 #include "GL3Texture.h"
 #include "core/GLContext.h"
+#include "core/render/WorkTask.h"
+#include "core/thread/ThreadPool.h"
+#include "core/thread/ThreadQueue.h"
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
 
 class GL3Device : public Device {
 public:
+    GL3Device();
+    virtual ~GL3Device();
+
     virtual bool init(const DeviceInfo& info) override;
     virtual GL3Shader* createShader() override;
 
@@ -64,6 +70,36 @@ public:
 
     virtual void waitIdle() override;
 
+protected:
+    using WorkTask         = gl3::WorkTask;
+    using RenderThreadPool = gl3::ThreadPool<WorkTask*>;
+    RenderThreadPool* m_pRenderThreads;
+    void initSubRenderThreads(uint32_t threadNum);
+    bool addRenderTask(WorkTask* task) {
+        return m_pRenderThreads->addTask(task);
+    }
+
+    using SyncFunc = std::function<void()>;
+
+    struct SyncWork {
+        SyncFunc func;
+        std::atomic<bool> finish;
+    };
+    gl3::ThreadQueue<SyncWork*> m_syncWorkQueue;
+    std::thread* m_syncWorkThread;
+    void initResourceThread();
+    void callSync(SyncFunc func) {
+        SyncWork item;
+        item.func   = func;
+        item.finish = false;
+
+        m_syncWorkQueue.addItem(&item);
+        while (!item.finish)
+            ;
+    }
+
+    void exit();
+
 public:
     virtual void destroyBuffer(Buffer* buffer) override;
     virtual void destroyEvent(Event* event) override;
@@ -80,6 +116,10 @@ public:
 private:
     std::vector<GL3Queue*> m_queues;
     std::unique_ptr<gl3::GLContext> m_pMainContext;
+    std::vector<gl3::GLContext*> m_subContext;
+    bool m_exit{false};
+
+protected:
 };
 
 END_GFX_NAMESPACE

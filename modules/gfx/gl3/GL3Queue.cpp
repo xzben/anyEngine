@@ -17,6 +17,7 @@ bool GL3Queue::submit(const std::vector<CommandBuffer*>& cmd,
                       const std::vector<Semaphore*>& signal, Fence* fence) {
     return true;
 }
+
 uint32_t GL3Queue::present(SwapChain* swapChain, uint32_t imageIndex,
                            const std::vector<Semaphore*>& waits) {
     return 0;

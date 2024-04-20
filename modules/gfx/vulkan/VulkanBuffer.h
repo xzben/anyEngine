@@ -11,8 +11,7 @@ public:
                  uint32_t size,
                  const std::vector<uint32_t>& queue_family_indices);
     virtual ~VulkanBuffer();
-    virtual void update(const void* data, uint32_t size,
-                        uint32_t offset = 0) override;
+
     virtual uint32_t size() override { return m_size; }
     virtual uint32_t capacity() override { return m_capacity; }
 
@@ -20,6 +19,8 @@ public:
     void* map();
     void unmap();
 
+    void setSize(uint32_t size) override { m_size = size; }
+    void update(const void* data, uint32_t size, uint32_t offset = 0);
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkBuffer() const { return m_handle; }
 

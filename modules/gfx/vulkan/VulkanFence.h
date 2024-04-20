@@ -11,14 +11,14 @@ public:
     VulkanFence(const vk::LogicDevice& device, bool createSignaled = false);
     virtual ~VulkanFence();
 
-    bool wait(uint32_t timeout = 0) override;
+    bool wait(uint64_t timeout = 0) override;
     bool reset() override;
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkFence() const { return m_handle; }
 
 public:
     static bool wait(const vk::LogicDevice& device, std::vector<VkFence> fences,
-                     uint32_t timeout = 0);
+                     uint64_t timeout = 0);
     static bool reset(const vk::LogicDevice& device,
                       std::vector<VkFence> fences);
 
