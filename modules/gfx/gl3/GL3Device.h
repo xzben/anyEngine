@@ -27,7 +27,8 @@ public:
     virtual ~GL3Device();
 
     virtual bool init(const DeviceInfo& info) override;
-    virtual GL3Shader* createShader() override;
+    virtual GL3Shader* createShader(ShaderModuleInfo* info,
+                                    uint32_t count) override;
 
     virtual GL3Queue* getQueue(QueueType& type, uint32_t index = 0) override;
 
@@ -88,6 +89,8 @@ protected:
     gl3::ThreadQueue<SyncWork*> m_syncWorkQueue;
     std::thread* m_syncWorkThread;
     void initResourceThread();
+
+public:
     void callSync(SyncFunc func) {
         SyncWork item;
         item.func   = func;

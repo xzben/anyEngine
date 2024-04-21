@@ -122,19 +122,22 @@ static void getDescriptorSets(
 ShaderModule::ShaderModule(const vk::LogicDevice& device,
                            const std::vector<uint8_t>& code,
                            std::string entryName)
+    : ShaderModule(device, code.data(), code.size(), entryName) {}
+
+ShaderModule::ShaderModule(const vk::LogicDevice& device, const uint8_t* code,
+                           uint32_t size, std::string entryName)
     : m_logicDevice(device), m_entryName(std::move(entryName)) {
     VkShaderModuleCreateInfo info{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
-    info.codeSize = code.size();
-    info.pCode    = reinterpret_cast<const uint32_t*>(code.data());
+    info.codeSize = size;
+    info.pCode    = reinterpret_cast<const uint32_t*>(code);
 
     if (vkCreateShaderModule(device, &info, nullptr, &m_handle) != VK_SUCCESS) {
         CCASSERT(false, "create shader module failed");
         m_handle = VK_NULL_HANDLE;
     }
 
-    reflect(code);
+    reflect(code, size);
 }
-
 ShaderModule::~ShaderModule() {
     if (m_handle) vkDestroyShaderModule(m_logicDevice, m_handle, nullptr);
 }
@@ -149,11 +152,10 @@ VkPipelineShaderStageCreateInfo ShaderModule::getStageInfo() {
     return info;
 }
 
-bool ShaderModule::reflect(const std::vector<uint8_t>& code) {
+bool ShaderModule::reflect(const uint8_t* code, uint32_t size) {
     SpvReflectShaderModule spvmodule;
 
-    auto result =
-        spvReflectCreateShaderModule(code.size(), code.data(), &spvmodule);
+    auto result = spvReflectCreateShaderModule(size, code, &spvmodule);
     assert(result == SPV_REFLECT_RESULT_SUCCESS);
 
     m_stage     = static_cast<VkShaderStageFlagBits>(spvmodule.shader_stage);
@@ -176,8 +178,14 @@ VulkanShader::VulkanShader(const vk::LogicDevice& device)
 bool VulkanShader::addStage(const std::vector<uint8_t>& code,
                             gfx::ShaderStage stage,
                             const std::string& entryName) {
+    return addStage(code.data(), code.size(), stage, entryName);
+}
+
+bool VulkanShader::addStage(const uint8_t* code, uint32_t size,
+                            gfx::ShaderStage stage,
+                            const std::string& entryName) {
     ShaderModule* shaderModule =
-        new ShaderModule(m_logicDevice, code, entryName);
+        new ShaderModule(m_logicDevice, code, size, entryName);
 
     if ((VkShaderModule)shaderModule == VK_NULL_HANDLE) {
         delete shaderModule;

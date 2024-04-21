@@ -8,7 +8,7 @@ class Handle {
 public:
     template <typename Handle>
     Handle getHandle() const {
-        return static_cast<Handle>(getHandleImp());
+        return (Handle)(getHandleImp());
     }
 
 protected:

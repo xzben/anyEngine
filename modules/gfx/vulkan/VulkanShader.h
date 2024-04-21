@@ -10,6 +10,8 @@ public:
     ShaderModule(const vk::LogicDevice& device,
                  const std::vector<uint8_t>& code,
                  std::string entryName = "main");
+    ShaderModule(const vk::LogicDevice& device, const uint8_t* code,
+                 uint32_t size, std::string entryName = "main");
     virtual ~ShaderModule();
 
     VkShaderStageFlagBits getStage() { return m_stage; }
@@ -28,7 +30,7 @@ public:
     VkPipelineShaderStageCreateInfo getStageInfo();
 
 protected:
-    bool reflect(const std::vector<uint8_t>& code);
+    bool reflect(const uint8_t* code, uint32_t size);
 
 private:
     const vk::LogicDevice& m_logicDevice;
@@ -43,9 +45,11 @@ class VulkanShader : public Shader {
 public:
     VulkanShader(const vk::LogicDevice& device);
 
-    virtual bool addStage(const std::vector<uint8_t>& code,
-                          gfx::ShaderStage stage,
-                          const std::string& entryName = "main") override;
+    bool addStage(const std::vector<uint8_t>& code, gfx::ShaderStage stage,
+                  const std::string& entryName = "main");
+
+    bool addStage(const uint8_t* code, uint32_t size, gfx::ShaderStage stage,
+                  const std::string& entryName = "main");
 
     virtual bool build() override;
 
@@ -85,6 +89,7 @@ public:
 
 protected:
     const std::vector<ShaderModule*>& getModules() { return m_modules; }
+    virtual GFX_HANDLE getHandleImp() const { return 0; }
 
 protected:
     const vk::DescriptorSetLayout& createDescriptorSetLayout(

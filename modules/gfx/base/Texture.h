@@ -1,21 +1,16 @@
 #pragma once
 
 #include "../common/gfx_common.h"
-
+#include "Handle.h"
 BEGIN_GFX_NAMESPACE
 
-class Texture : public GfxObject {
+class Texture : public Handle, public GfxObject {
 public:
-    template <typename Handle>
-    Handle getHandle() {
-        return static_cast<Handle>(getHandleImp());
-    }
     virtual const TextureInfo& getInfo() = 0;
 
 protected:
     Texture() : GfxObject(GfxObjectType::Texture) {}
-    virtual ~Texture()                = default;
-    virtual GFX_HANDLE getHandleImp() = 0;
+    virtual ~Texture() = default;
 };
 
 END_GFX_NAMESPACE

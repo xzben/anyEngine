@@ -111,13 +111,21 @@ enum class DataFormat {
     Float2,
     Float3,
     Float4,
+    Mat4,
+    Mat3,
 };
 
 enum class PixelFormat {
-    UNDEFINED = 0,
-    RGBA8,
+    RGBA8 = 0,
+    RGBA16,
+    RGBA4,
     RGB8,
-    Depth,
+    RGB565,
+    Depth32,
+    Depth16,
+    Depth24,
+    Stencil8,
+    Depth32Stencil8,
     Depth24Stencil8,
 };
 
@@ -150,17 +158,11 @@ enum class TextureUsage {
 CC_ENUM_BITWISE_OPERATORS(TextureUsage)
 
 enum class ShaderStage {
-    NONE         = 0x0,
-    VERTEX       = 0x1,
-    CONTROL      = 0x2,
-    EVALUATION   = 0x4,
-    GEOMETRY     = 0x8,
-    FRAGMENT     = 0x10,
-    COMPUTE      = 0x20,
-    ALL_GRAPHICS = VERTEX | FRAGMENT,
-    ALL          = 0x3f,
+    VERTEX = 0,
+    GEOMETRY,
+    FRAGMENT,
+    COMPUTE,
 };
-CC_ENUM_BITWISE_OPERATORS(ShaderStage)
 
 enum class PrimitiveType {
     POINT_LIST                    = 0,
@@ -380,19 +382,23 @@ struct PipelineState {
 };
 
 enum class Filter {
-    POINT,
+    NEAREST = 0,
     LINEAR,
+    NEAREST_MIPMAP_NEAREST,
+    LINEAR_MIPMAP_NEAREST,
+    NEAREST_MIPMAP_LINEAR,
+    LINEAR_MIPMAP_LINEAR,
 };
 
 enum class Address {
-    WRAP,
+    WRAP = 0,
     MIRROR,
     CLAMP,
     BORDER,
 };
 
 enum class SamplerBorderColor {
-    TRANSPARENT_BLACK,
+    TRANSPARENT_BLACK = 0,
     OPAQUA_BLACK,
     OPQUA_WHITE,
 };
@@ -415,14 +421,14 @@ public:
     }
 
 public:
-    Filter minFilter{Filter::LINEAR};     // vlaue 0 - 3
-    Filter magFilter{Filter::LINEAR};     // vlaue 0 - 3
-    Filter mipFilter{Filter::LINEAR};     // vlaue 0 - 3
-    Address addressU{Address::WRAP};      // vlaue 0 - 3
-    Address addressV{Address::WRAP};      // vlaue 0 - 3
-    Address addressW{Address::WRAP};      // vlaue 0 - 3
-    uint32_t maxAnisotropy{0};            // vlaue 0 - 15
-    CompareOp cmpFunc{CompareOp::EMPTY};  // value 0 - 8
+    Filter minFilter{Filter::LINEAR};                // vlaue 0 - 3
+    Filter magFilter{Filter::LINEAR};                // vlaue 0 - 3
+    Filter mipFilter{Filter::LINEAR_MIPMAP_LINEAR};  // vlaue 0 - 3
+    Address addressU{Address::WRAP};                 // vlaue 0 - 3
+    Address addressV{Address::WRAP};                 // vlaue 0 - 3
+    Address addressW{Address::WRAP};                 // vlaue 0 - 3
+    uint32_t maxAnisotropy{0};                       // vlaue 0 - 15
+    CompareOp cmpFunc{CompareOp::EMPTY};             // value 0 - 8
     SamplerBorderColor bordercolor{SamplerBorderColor::TRANSPARENT_BLACK};
 };
 
@@ -465,11 +471,9 @@ enum class ImageLayout {
 };
 
 enum class TextureType {
-    TEX1D,
-    TEX2D,
+    TEX2D = 0,
     TEX3D,
     CUBE,
-    TEX1D_ARRAY,
     TEX2D_ARRAY,
 };
 
@@ -477,6 +481,10 @@ struct TextureInfo {
     TextureType type{TextureType::TEX2D};
     uint32_t width{0};
     uint32_t height{0};
+    union {
+        uint32_t arrayCount{0};
+        uint32_t depth;
+    };
     uint32_t miplevels{1};
     SampleCount sampleCount{SampleCount::SAMPLE_COUNT_1_BIT};
     PixelFormat format{PixelFormat::RGBA8};
@@ -580,7 +588,7 @@ enum class MemoryAccess {
 CC_ENUM_BITWISE_OPERATORS(MemoryAccess)
 
 struct Attachment {
-    PixelFormat format = PixelFormat::UNDEFINED;
+    PixelFormat format = PixelFormat::RGBA8;
     SampleCount samples{SampleCount::SAMPLE_COUNT_1_BIT};
     LoadOp load_op{LoadOp::DONT_CARE};
     StoreOp store_op{StoreOp::DONT_CARE};
@@ -690,6 +698,13 @@ class Texture;
 struct DrawSurface {
     Texture *texture{nullptr};
     uint32_t layerIndex{0};
+};
+
+struct ShaderModuleInfo {
+    uint8_t *pData{nullptr};
+    uint32_t size{0};
+    ShaderStage stage;
+    std::string entryName{"main"};
 };
 
 END_GFX_NAMESPACE

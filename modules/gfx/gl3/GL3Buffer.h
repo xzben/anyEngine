@@ -7,7 +7,7 @@ BEGIN_GFX_NAMESPACE
 class GL3Device;
 class GL3Buffer : public Buffer {
 public:
-    GL3Buffer(GL3Device& device, BufferType type, uint32_t size);
+    GL3Buffer(GL3Device& device, BufferType type, uint32_t size, const void* pData = nullptr);
     virtual ~GL3Buffer();
     uint32_t size() override { return m_size; }
     uint32_t capacity() override { return m_capacity; }

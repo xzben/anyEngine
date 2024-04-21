@@ -53,7 +53,7 @@ inline VkFormat mapVkFormat(DataFormat format) {
 std::unordered_map<PixelFormat, VkFormat> g_pixelFormats = {
     {PixelFormat::RGBA8, VK_FORMAT_R8G8B8A8_SRGB},
     {PixelFormat::RGB8, VK_FORMAT_B8G8R8_SRGB},
-    {PixelFormat::Depth, VK_FORMAT_D32_SFLOAT},
+    {PixelFormat::Depth32, VK_FORMAT_D32_SFLOAT},
     {PixelFormat::Depth24Stencil8, VK_FORMAT_D24_UNORM_S8_UINT},
 };
 
@@ -244,10 +244,10 @@ inline VkPipelineStageFlags mapVkPipelineStage(PipelineStage flags) {
 
 inline VkImageViewType mapVkImageViewType(TextureType type) {
     switch (type) {
-        case TextureType::TEX1D:
-            return VK_IMAGE_VIEW_TYPE_1D;
-        case TextureType::TEX1D_ARRAY:
-            return VK_IMAGE_VIEW_TYPE_1D_ARRAY;
+        // case TextureType::TEX1D:
+        //     return VK_IMAGE_VIEW_TYPE_1D;
+        // case TextureType::TEX1D_ARRAY:
+        //     return VK_IMAGE_VIEW_TYPE_1D_ARRAY;
         case TextureType::TEX2D:
             return VK_IMAGE_VIEW_TYPE_2D;
         case TextureType::TEX2D_ARRAY:
@@ -343,7 +343,7 @@ inline VkPrimitiveTopology mapVkPrimitiveType(PrimitiveType type) {
 }
 inline VkFilter mapVkFilter(Filter filter) {
     switch (filter) {
-        case Filter::POINT:
+        case Filter::NEAREST:
             return VK_FILTER_NEAREST;
         case Filter::LINEAR:
             return VK_FILTER_LINEAR;
@@ -696,7 +696,7 @@ inline VkLogicOp mapVkBlendLogicOp(BlendLogicOp op) {
 
 inline VkSamplerMipmapMode mapVkMipmapModel(Filter filter) {
     switch (filter) {
-        case Filter::POINT:
+        case Filter::NEAREST:
             return VK_SAMPLER_MIPMAP_MODE_NEAREST;
         case Filter::LINEAR:
             return VK_SAMPLER_MIPMAP_MODE_LINEAR;

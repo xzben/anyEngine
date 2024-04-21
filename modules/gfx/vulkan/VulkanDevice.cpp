@@ -135,8 +135,16 @@ bool VulkanDevice::init(const DeviceInfo& info) {
     return true;
 }
 
-VulkanShader* VulkanDevice::createShader() {
-    return new VulkanShader(*this->m_logicDevice);
+VulkanShader* VulkanDevice::createShader(ShaderModuleInfo* info,
+                                         uint32_t count) {
+    auto obj = new VulkanShader(*this->m_logicDevice);
+
+    for (int i = 0; i < count; i++) {
+        obj->addStage(info[i].pData, info[i].size, info[i].stage,
+                      info[i].entryName);
+    }
+
+    return obj;
 }
 
 VulkanQueue* VulkanDevice::getQueue(QueueType& type, uint32_t index) {

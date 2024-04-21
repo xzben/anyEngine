@@ -10,6 +10,9 @@ public:
     GL3Pipeline(GL3Device& device);
     virtual ~GL3Pipeline();
 
+protected:
+    virtual GFX_HANDLE getHandleImp() const { return 0; };
+
 private:
     GL3Device& m_device;
 };

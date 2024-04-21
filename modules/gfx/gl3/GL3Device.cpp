@@ -60,7 +60,9 @@ void GL3Device::initResourceThread() {
     });
 }
 
-GL3Shader* GL3Device::createShader() { return new GL3Shader(*this); }
+GL3Shader* GL3Device::createShader(ShaderModuleInfo* info, uint32_t count) {
+    return new GL3Shader(*this, info, count);
+}
 
 GL3Queue* GL3Device::getQueue(QueueType& type, uint32_t index) {
     return nullptr;

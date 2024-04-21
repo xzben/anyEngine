@@ -11,7 +11,7 @@ public:
     virtual const TextureInfo& getInfo() override { return m_info; }
 
 protected:
-    virtual GFX_HANDLE getHandleImp() override {
+    virtual GFX_HANDLE getHandleImp() const override {
         return (GFX_HANDLE)m_image->getHandle();
     }
 

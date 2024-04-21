@@ -1,26 +1,20 @@
 #pragma once
 
 #include "../common/gfx_common.h"
-
+#include "Handle.h"
 BEGIN_GFX_NAMESPACE
 
 class Shader;
 
-class Pipeline: public GfxObject {
+class Pipeline : public Handle, public GfxObject {
 public:
     virtual Shader* getShader();
 
     virtual const PipelineState& getState() = 0;
 
-    template <typename Handle>
-    Handle getHandle() {
-        return static_cast<Handle>(getHandleImp());
-    }
-
 protected:
     Pipeline() : GfxObject(GfxObjectType::Pipeline) {}
-    virtual ~Pipeline()               = default;
-    virtual GFX_HANDLE getHandleImp() = 0;
+    virtual ~Pipeline() = default;
 };
 
 END_GFX_NAMESPACE

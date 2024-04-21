@@ -3,12 +3,8 @@
 BEGIN_GFX_NAMESPACE
 
 VulkanInputAssembler::VulkanInputAssembler(
-    const vk::LogicDevice& device, const std::vector<Attribute>& attributes,
-    PrimitiveType primitive)
-    : 
-      m_logicDevice(device),
-      m_attributes(attributes),
-      m_primiitiveModel(primitive) {
+    const vk::LogicDevice& device, const std::vector<Attribute>& attributes)
+    : m_logicDevice(device), m_attributes(attributes) {
     uint32_t index  = 0;
     uint32_t offset = 0;
     for (const auto& attr : m_attributes) {

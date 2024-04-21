@@ -59,11 +59,12 @@ public:
                                      Shader* shader,
                                      const PipelineState& state) = 0;
     /*
-     *  创建一个着色器对象, 此处只是创建一个对象
-     *  创建完后需要再调用 1、addStage 添加各个阶段的 shaderModule
-     *                     2、build
+     *  创建一个着色器对象
+     *  info shaderModule 信息数组指针
+     *  count info 数组的size
      */
-    virtual Shader* createShader() = 0;
+    virtual Shader* createShader(ShaderModuleInfo* info, uint32_t count) = 0;
+
     // resource interface
     virtual Texture* createTexture(const TextureInfo& info,
                                    const void* pData = nullptr)  = 0;
