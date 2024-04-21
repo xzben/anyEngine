@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../CmdBase.h"
 
 BEGIN_GFX_NAMESPACE
@@ -12,12 +14,21 @@ public:
         : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
     virtual ~CmdGenerateMipmap() {}
 
-    void init() {}
+    void init(Texture* texture, uint32_t mipLevels) {
+        m_texture = texture;
+        m_texture->addRef();
+        m_mipLevels = mipLevels;
+    }
 
-    virtual void reset() override {}
+    virtual void reset() override {
+        m_texture->delRef();
+        m_texture = nullptr;
+    }
     virtual void execute() override {}
 
 private:
+    Texture* m_texture{nullptr};
+    uint32_t m_mipLevels;
 };
 END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE

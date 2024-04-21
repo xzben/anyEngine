@@ -26,12 +26,13 @@ public:
     virtual ~VulkanDevice();
 
     virtual bool init(const DeviceInfo& info) override;
-    virtual VulkanShader* createShader(ShaderModuleInfo* info, uint32_t count) override;
+    virtual VulkanShader* createShader(ShaderModuleInfo* info,
+                                       uint32_t count) override;
 
     virtual VulkanQueue* getQueue(QueueType& type, uint32_t index = 0) override;
 
     virtual VulkanRenderPass* createRenderPass(
-        std::vector<Attachment>& attachments,
+        const std::vector<Attachment>& attachments,
         const std::vector<SubPass>& subpass,
         const std::vector<SubPassDependency>& dependencies) override;
 

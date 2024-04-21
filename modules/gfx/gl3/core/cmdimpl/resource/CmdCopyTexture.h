@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../CmdBase.h"
 
 BEGIN_GFX_NAMESPACE
@@ -12,12 +14,28 @@ public:
 
     virtual ~CmdCopyTexture() {}
 
-    void init() {}
+    void init(Texture* src, Texture* dst, const TextureCopyInfo& info) {
+        m_src = src;
+        m_src->addRef();
 
-    virtual void reset() override {}
+        m_dst = dst;
+        m_dst->addRef();
+        m_info = info;
+    }
+
+    virtual void reset() override {
+        m_src->delRef();
+        m_src = nullptr;
+
+        m_dst->delRef();
+        m_dst = nullptr;
+    }
     virtual void execute() override {}
 
 private:
+    Texture* m_src{nullptr};
+    Texture* m_dst{nullptr};
+    TextureCopyInfo m_info;
 };
 END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE

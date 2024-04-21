@@ -44,7 +44,7 @@ public:
      * @param dependencies 渲染过程中 subpass 之间的依赖关系
      */
     virtual RenderPass* createRenderPass(
-        std::vector<Attachment>& attachments,
+        const std::vector<Attachment>& attachments,
         const std::vector<SubPass>& subpass,
         const std::vector<SubPassDependency>& dependencies) = 0;
 

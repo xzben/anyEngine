@@ -8,9 +8,9 @@ class Shader;
 
 class Pipeline : public Handle, public GfxObject {
 public:
-    virtual Shader* getShader();
+    virtual Shader* getShader() = 0;
 
-    virtual const PipelineState& getState() = 0;
+    virtual const PipelineState& getState() const = 0;
 
 protected:
     Pipeline() : GfxObject(GfxObjectType::Pipeline) {}

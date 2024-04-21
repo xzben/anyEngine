@@ -9,7 +9,7 @@ GL3Queue::~GL3Queue() {}
 
 void GL3Queue::destroyPool(CommandPool* pool) { pool->delRef(); }
 CommandPool* GL3Queue::createPool(ResetMode resetModel) {
-    return new GL3CommandPool(m_device, *this);
+    return new GL3CommandPool(m_device, *this, resetModel);
 }
 
 bool GL3Queue::submit(const std::vector<CommandBuffer*>& cmd,

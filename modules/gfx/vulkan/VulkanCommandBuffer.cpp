@@ -111,6 +111,11 @@ void VulkanCommandBuffer::draw() {
     }
 }
 
+void VulkanCommandBuffer::enable(RenderState state) {}
+void VulkanCommandBuffer::disable(RenderState state) {}
+void VulkanCommandBuffer::draw(const DrawMeshInfo& info) {}
+void VulkanCommandBuffer::compute(const ComputeInfo& info) {}
+
 void VulkanCommandBuffer::nextSubPass() {
     vkCmdNextSubpass(m_handle, VK_SUBPASS_CONTENTS_INLINE);
 }
@@ -118,14 +123,14 @@ void VulkanCommandBuffer::nextSubPass() {
 void VulkanCommandBuffer::endRendPass() { vkCmdEndRenderPass(m_handle); }
 void VulkanCommandBuffer::end() { vkEndCommandBuffer(m_handle); }
 
-void VulkanCommandBuffer::setViewport(uint32_t x, uint32_t y, uint32_t width,
-                                      uint32_t height) {
+void VulkanCommandBuffer::setViewport(float x, float y, float width,
+                                      float height) {
     VkViewport viewport{x, y, width, height, 0.f, 1.f};
     vkCmdSetViewport(m_handle, 0, 1, &viewport);
 }
 
-void VulkanCommandBuffer::setScissor(uint32_t x, uint32_t y, uint32_t width,
-                                     uint32_t height) {
+void VulkanCommandBuffer::setScissor(float x, float y, float width,
+                                     float height) {
     VkRect2D rect{{x, y}, {width, height}};
     vkCmdSetScissor(m_handle, 0, 1, &rect);
 }

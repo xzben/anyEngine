@@ -29,6 +29,10 @@ private:
     GL3Device& m_device;
     QueueType m_queueType;
     float m_priority;
+
+    std::atomic<uint32_t> m_workCount{0};
+    std::condition_variable m_condition;
+    std::mutex m_lock;
 };
 
 END_GFX_NAMESPACE

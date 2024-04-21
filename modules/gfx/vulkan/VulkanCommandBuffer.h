@@ -18,27 +18,31 @@ public:
     virtual void beginRendPass(
         RenderPass* renderpass, const std::vector<DrawSurface>& attachments,
         const std::vector<ClearValue>& clearValues) override;
-    virtual void bindPipeline(Pipeline* pipeline) override;
-    virtual void bindInputAssembler(InputAssembler* input) override;
-    virtual void bindTexture(const std::string& name, Texture* tex);
-    virtual void bindUniformBuffer(const std::string& name, Buffer* buf);
-    virtual void bindStorageBuffer(const std::string& name, Buffer* buf);
-    virtual void draw() override;
-    virtual void dispatch(uint32_t groupNumX, uint32_t groupNumY,
-                          uint32_t groupNumZ) override;
+    void bindPipeline(Pipeline* pipeline);
+    void bindInputAssembler(InputAssembler* input);
+    void bindTexture(const std::string& name, Texture* tex);
+    void bindUniformBuffer(const std::string& name, Buffer* buf);
+    void bindStorageBuffer(const std::string& name, Buffer* buf);
+    void draw();
+    void dispatch(uint32_t groupNumX, uint32_t groupNumY, uint32_t groupNumZ);
+    virtual void enable(RenderState state) override;
+    virtual void disable(RenderState state) override;
+    virtual void draw(const DrawMeshInfo& info) override;
+    virtual void compute(const ComputeInfo& info) override;
+
     virtual void nextSubPass() override;
     virtual void endRendPass() override;
     virtual void end() override;
 
-    virtual void setViewport(uint32_t x, uint32_t y, uint32_t width,
-                             uint32_t height) override;
-    virtual void setScissor(uint32_t x, uint32_t y, uint32_t width,
-                            uint32_t height) override;
+    virtual void setViewport(float x, float y, float width,
+                             float height) override;
+    virtual void setScissor(float x, float y, float width,
+                            float height) override;
 
     virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size,
                               uint32_t offset = 0) override;
 
-    virtual void updateTexture(Texture* texture, const void* pData,
+    virtual void updateTexture(Texture* texture, const void* pData, uint32_t size,
                                uint32_t width, uint32_t height) override;
 
     virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size,

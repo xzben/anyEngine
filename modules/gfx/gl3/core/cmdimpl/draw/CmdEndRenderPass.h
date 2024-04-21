@@ -1,4 +1,7 @@
+#pragma once
+
 #include "../CmdBase.h"
+#include "CmdBeginRenderPass.h"
 
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
@@ -12,12 +15,13 @@ public:
         : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
     virtual ~CmdEndRenderPass() {}
 
-    void init() {}
+    void init(CmdBeginRenderPass* beginPass) { m_beginPass = beginPass; }
 
-    virtual void reset() override {}
+    virtual void reset() override { m_beginPass = nullptr; }
     virtual void execute() override {}
 
 private:
+    CmdBeginRenderPass* m_beginPass;
 };
 END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE

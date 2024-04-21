@@ -2,6 +2,7 @@
 
 #include "../gl3_core_common.h"
 #include "NoCopy.h"
+#include "base/CommandBuffer.h"
 
 BEGIN_GFX_NAMESPACE
 
@@ -16,7 +17,7 @@ enum class CmdType {
     BIND_TEXTURE,
     BIND_BUFFER,
     DRAW,
-    DISPATCH,
+    COMPUTE,
     NEXT_SUBPASS,
     END_RENDERPASS,
     SET_VIEWPORT,
@@ -27,6 +28,9 @@ enum class CmdType {
     COPY_TEXTURE,
     BLIT_TEXTURE,
     GENERATE_MIPMAP,
+
+    ENABLE,
+    DISABLE,
 };
 
 class CmdBase : public NoCopy {

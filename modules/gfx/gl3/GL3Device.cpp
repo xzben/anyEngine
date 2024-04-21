@@ -69,15 +69,16 @@ GL3Queue* GL3Device::getQueue(QueueType& type, uint32_t index) {
 }
 
 GL3RenderPass* GL3Device::createRenderPass(
-    std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+    const std::vector<Attachment>& attachments,
+    const std::vector<SubPass>& subpass,
     const std::vector<SubPassDependency>& dependencies) {
-    return nullptr;
+    return new GL3RenderPass(*this, attachments, subpass, dependencies);
 }
 
 GL3Pipeline* GL3Device::createPipeline(RenderPass* renderPass, uint32_t subpass,
                                        Shader* shader,
                                        const PipelineState& state) {
-    return nullptr;
+    return new GL3Pipeline(*this, renderPass, subpass, shader, state);
 }
 
 GL3Texture* GL3Device::createTexture(const TextureInfo& info,

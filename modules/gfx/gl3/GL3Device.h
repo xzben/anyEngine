@@ -33,7 +33,7 @@ public:
     virtual GL3Queue* getQueue(QueueType& type, uint32_t index = 0) override;
 
     virtual GL3RenderPass* createRenderPass(
-        std::vector<Attachment>& attachments,
+        const std::vector<Attachment>& attachments,
         const std::vector<SubPass>& subpass,
         const std::vector<SubPassDependency>& dependencies) override;
 

@@ -152,7 +152,8 @@ VulkanQueue* VulkanDevice::getQueue(QueueType& type, uint32_t index) {
 }
 
 VulkanRenderPass* VulkanDevice::createRenderPass(
-    std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+    const std::vector<Attachment>& attachments,
+    const std::vector<SubPass>& subpass,
     const std::vector<SubPassDependency>& dependencies) {
     return nullptr;
 }

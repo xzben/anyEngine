@@ -1,13 +1,11 @@
 #pragma once
-
-#include "compute/CmdDispatch.h"
+#include "compute/CmdCompute.h"
 #include "draw/CmdBeginRenderPass.h"
-#include "draw/CmdBindBuffer.h"
-#include "draw/CmdBindInputAssembler.h"
-#include "draw/CmdBindTexture.h"
 #include "draw/CmdDraw.h"
 #include "draw/CmdEndRenderPass.h"
 #include "draw/CmdNextSubPass.h"
+#include "other/CmdDisable.h"
+#include "other/CmdEnable.h"
 #include "other/CmdSetScissor.h"
 #include "other/CmdSetViewport.h"
 #include "resource/CmdBlitTexture.h"

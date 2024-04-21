@@ -698,6 +698,9 @@ class Texture;
 struct DrawSurface {
     Texture *texture{nullptr};
     uint32_t layerIndex{0};
+
+    void addRef();
+    void delRef();
 };
 
 struct ShaderModuleInfo {
