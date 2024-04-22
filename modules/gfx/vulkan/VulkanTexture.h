@@ -8,7 +8,7 @@ BEGIN_GFX_NAMESPACE
 class VulkanTexture : public Texture {
 public:
     VulkanTexture(const vk::LogicDevice& device, const TextureInfo& info);
-    virtual const TextureInfo& getInfo() override { return m_info; }
+    virtual const TextureInfo& getInfo() const override { return m_info; }
 
 protected:
     virtual GFX_HANDLE getHandleImp() const override {

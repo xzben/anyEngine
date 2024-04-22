@@ -67,9 +67,10 @@ public:
 
     // resource interface
     virtual Texture* createTexture(const TextureInfo& info,
-                                   const void* pData = nullptr)  = 0;
-    virtual Buffer* createBuffer(BufferType type, uint32_t size) = 0;
-    virtual Sampler* createSampler(const SamplerInfo& info)      = 0;
+                                   const void* pData = nullptr) = 0;
+    virtual Buffer* createBuffer(BufferType type, uint32_t size,
+                                 const void* pData = nullptr)   = 0;
+    virtual Sampler* createSampler(const SamplerInfo& info)     = 0;
 
     /*
      *  创建渲染几何物体对象，包含了物体的顶点属性描述、顶点buffer、索引buffer
@@ -115,9 +116,8 @@ public:
     virtual Fence* createFence(bool signaled = false) = 0;
     /*
      * 创建用于 GPU 同步使用的信号量对象
-     * @param count 创建后初始的信号 ready 的数量
      */
-    virtual Semaphore* createSemaphore(uint32_t count = 0) = 0;
+    virtual Semaphore* createSemaphore() = 0;
     /*
      *  创建用于 commandBuffer 内部同步使用的时间对象
      */

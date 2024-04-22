@@ -11,6 +11,8 @@ public:
                const void* pData = nullptr);
     virtual ~GL3Texture();
 
+    const TextureInfo& getInfo() const override { return m_info; };
+
 public:
     static GLenum getTarget(TextureType type);
 

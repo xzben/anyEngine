@@ -168,7 +168,8 @@ VulkanTexture* VulkanDevice::createTexture(const TextureInfo& info,
                                            const void* pData) {
     return nullptr;
 }
-VulkanBuffer* VulkanDevice::createBuffer(BufferType type, uint32_t size) {
+VulkanBuffer* VulkanDevice::createBuffer(BufferType type, uint32_t size,
+                                         const void* pData) {
     return nullptr;
 }
 VulkanSampler* VulkanDevice::createSampler(const SamplerInfo& info) {
@@ -197,9 +198,7 @@ VulkanSwapChain* VulkanDevice::createSwapChain(void* nativeWindow,
 }
 VulkanFence* VulkanDevice::createFence(bool signaled) { return nullptr; }
 
-VulkanSemaphore* VulkanDevice::createSemaphore(uint32_t count) {
-    return nullptr;
-}
+VulkanSemaphore* VulkanDevice::createSemaphore() { return nullptr; }
 
 VulkanEvent* VulkanDevice::createEvent() { return nullptr; }
 

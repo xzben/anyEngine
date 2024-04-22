@@ -16,6 +16,9 @@ public:
     virtual bool wait(uint64_t timeout = 0) override;
     void signal();
 
+protected:
+    virtual GFX_HANDLE getHandleImp() const { return 0; };
+
 private:
     GL3Device& m_device;
 

@@ -23,6 +23,9 @@ BEGIN_GFX_NAMESPACE
 
 class GL3Device : public Device {
 public:
+    friend class GL3Queue;
+
+public:
     GL3Device();
     virtual ~GL3Device();
 
@@ -43,7 +46,8 @@ public:
 
     virtual GL3Texture* createTexture(const TextureInfo& info,
                                       const void* pData = nullptr) override;
-    virtual GL3Buffer* createBuffer(BufferType type, uint32_t size) override;
+    virtual GL3Buffer* createBuffer(BufferType type, uint32_t size,
+                                    const void* pData = nullptr) override;
     virtual GL3Sampler* createSampler(const SamplerInfo& info) override;
 
     virtual GL3InputAssembler* createInputAssembler(
@@ -65,7 +69,7 @@ public:
                                           bool singleBuffer) override;
     virtual GL3Fence* createFence(bool signaled = false) override;
 
-    virtual GL3Semaphore* createSemaphore(uint32_t count = 0) override;
+    virtual GL3Semaphore* createSemaphore() override;
 
     virtual GL3Event* createEvent() override;
 
@@ -118,6 +122,7 @@ public:
 
 private:
     std::vector<GL3Queue*> m_queues;
+    std::unordered_map<QueueType, std::vector<GL3Queue*>> m_queueMapInfo;
     std::unique_ptr<gl3::GLContext> m_pMainContext;
     std::vector<gl3::GLContext*> m_subContext;
     bool m_exit{false};

@@ -15,6 +15,8 @@ END_GL3_CORE_NAMESPACE
 class GL3Device;
 class GL3CommandPool;
 class GL3CommandBuffer : public CommandBuffer {
+    friend class RenderWorkTask;
+
 public:
     GL3CommandBuffer(GL3Device& device, GL3CommandPool& pool, uint32_t index);
     virtual ~GL3CommandBuffer();
@@ -53,6 +55,9 @@ public:
     virtual void blitTexture(Texture* src, Texture* dst,
                              const TextureBliteInfo& info);
     virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
+
+public:
+    void execute();
 
 protected:
     template <class CmdClass, typename... Params>

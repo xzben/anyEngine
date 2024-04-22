@@ -42,7 +42,8 @@ public:
 
     virtual VulkanTexture* createTexture(const TextureInfo& info,
                                          const void* pData = nullptr) override;
-    virtual VulkanBuffer* createBuffer(BufferType type, uint32_t size) override;
+    virtual VulkanBuffer* createBuffer(BufferType type, uint32_t size,
+                                       const void* pData = nullptr) override;
     virtual VulkanSampler* createSampler(const SamplerInfo& info) override;
 
     virtual VulkanInputAssembler* createInputAssembler(
@@ -64,7 +65,7 @@ public:
                                              bool singleBuffer) override;
     virtual VulkanFence* createFence(bool signaled = false) override;
 
-    virtual VulkanSemaphore* createSemaphore(uint32_t count = 0) override;
+    virtual VulkanSemaphore* createSemaphore() override;
 
     virtual VulkanEvent* createEvent() override;
 

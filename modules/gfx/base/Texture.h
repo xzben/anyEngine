@@ -6,7 +6,7 @@ BEGIN_GFX_NAMESPACE
 
 class Texture : public Handle, public GfxObject {
 public:
-    virtual const TextureInfo& getInfo() = 0;
+    virtual const TextureInfo& getInfo() const = 0;
 
 protected:
     Texture() : GfxObject(GfxObjectType::Texture) {}

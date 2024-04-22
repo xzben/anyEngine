@@ -16,6 +16,9 @@ public:
     virtual void wait() override;
     virtual void signal() override;
 
+protected:
+    virtual GFX_HANDLE getHandleImp() const override { return 0; }
+
 private:
     std::mutex m_conditionLock;
     std::condition_variable m_condition;

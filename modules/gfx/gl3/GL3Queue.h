@@ -4,11 +4,14 @@
 #include <mutex>
 
 #include "../base/Queue.h"
+#include "core/render/WorkTask.h"
 #include "gl_common.h"
-
 BEGIN_GFX_NAMESPACE
 class GL3Device;
+
 class GL3Queue : public Queue {
+    friend class gl3::WorkTask;
+
 public:
     GL3Queue(GL3Device& device, QueueType queueType, float priority);
     virtual ~GL3Queue();
@@ -24,6 +27,9 @@ public:
                              const std::vector<Semaphore*>& waits) override;
     virtual bool waitIdle() override;
     virtual QueueType getType() override { return m_queueType; }
+
+protected:
+    void handleTaskFinish(gl3::WorkTask* task);
 
 private:
     GL3Device& m_device;
