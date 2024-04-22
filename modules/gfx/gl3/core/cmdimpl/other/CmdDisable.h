@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../CmdBase.h"
+#include "CmdEnable.h"
 
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
@@ -16,7 +17,11 @@ public:
     void init(RenderState state) { m_state = state; }
 
     virtual void reset() override {}
-    virtual void execute() override {}
+
+    virtual void execute(gl3::GLContext* context) override {
+        GLenum cap = CmdEnable::getGlStateCap(m_state);
+        GL_CHECK(glDisable(cap));
+    }
 
 private:
     RenderState m_state;

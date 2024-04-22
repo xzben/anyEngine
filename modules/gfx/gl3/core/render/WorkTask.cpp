@@ -51,7 +51,7 @@ void RenderWorkTask::execute(GLContext* context) {
     }
     //---------------------------------
     for (auto& cmd : m_cmds) {
-        dynamic_cast<GL3CommandBuffer*>(cmd)->execute();
+        dynamic_cast<GL3CommandBuffer*>(cmd)->execute(context);
     }
     //-------------------------------
     for (auto& item : m_waits) {

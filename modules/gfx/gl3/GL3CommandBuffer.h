@@ -10,6 +10,7 @@ BEGIN_GFX_NAMESPACE
 
 BEGIN_GL3_CORE_NAMESPACE
 class CmdBeginRenderPass;
+class GLContext;
 END_GL3_CORE_NAMESPACE
 
 class GL3Device;
@@ -57,7 +58,7 @@ public:
     virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
 
 public:
-    void execute();
+    void execute(gl3::GLContext* context);
 
 protected:
     template <class CmdClass, typename... Params>

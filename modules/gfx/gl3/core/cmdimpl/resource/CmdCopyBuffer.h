@@ -33,7 +33,17 @@ public:
         m_dst->delRef();
         m_dst = nullptr;
     }
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {
+        OGL_HANDLE srcHandle = m_src->getHandle<OGL_HANDLE>();
+        OGL_HANDLE dstHandle = m_src->getHandle<OGL_HANDLE>();
+
+        GL_CHECK(glBindBuffer(GL_COPY_READ_BUFFER, srcHandle));
+        GL_CHECK(glBindBuffer(GL_COPY_WRITE_BUFFER, dstHandle));
+        GL_CHECK(glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+                                     m_srcOffset, m_dstOffset, m_size));
+        GL_CHECK(glBindBuffer(GL_COPY_READ_BUFFER, 0));
+        GL_CHECK(glBindBuffer(GL_COPY_WRITE_BUFFER, 0));
+    }
 
 private:
     Buffer* m_src{nullptr};

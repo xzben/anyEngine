@@ -56,7 +56,7 @@ public:
         m_storageBuffers.clear();
         m_textures.clear();
     }
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {}
 
 private:
     std::vector<BufferBindingInfo> m_uniformBuffers;

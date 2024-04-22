@@ -18,7 +18,10 @@ public:
     }
 
     virtual void reset() override {}
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {
+        GL_CHECK(glScissor(m_viewport.x, m_viewport.y, m_viewport.width,
+                           m_viewport.height));
+    }
 
 private:
     Viewport m_viewport;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../GLContext.h"
 #include "../gl3_core_common.h"
 #include "NoCopy.h"
 #include "base/CommandBuffer.h"
@@ -38,8 +39,8 @@ public:
     CmdBase(GL3CommandBuffer& cmdBuf, CmdType type);
     virtual ~CmdBase();
 
-    virtual void reset()   = 0;
-    virtual void execute() = 0;
+    virtual void reset()                          = 0;
+    virtual void execute(gl3::GLContext* context) = 0;
 
     CmdType getType() { return m_type; }
 

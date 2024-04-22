@@ -30,7 +30,7 @@ public:
         m_dst->delRef();
         m_dst = nullptr;
     }
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {}
 
 private:
     Texture* m_src{nullptr};

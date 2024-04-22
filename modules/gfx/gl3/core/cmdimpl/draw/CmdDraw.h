@@ -77,7 +77,7 @@ public:
         m_pipeline->delRef();
         m_pipeline = nullptr;
     }
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {}
 
 private:
     std::vector<BufferBindingInfo> m_uniformBuffers;

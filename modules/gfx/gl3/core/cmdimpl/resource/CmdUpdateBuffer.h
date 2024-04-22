@@ -30,7 +30,24 @@ public:
         m_data.swap(std::vector<uint8_t>());
     }
 
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {
+        OGL_HANDLE handle = m_buffer->getHandle<OGL_HANDLE>();
+        uint32_t size     = m_data.size();
+        const void* data  = m_data.data();
+        GL_CHECK(glBindBuffer(GL_COPY_WRITE_BUFFER, handle));
+        void* dst{nullptr};
+        GL_CHECK(dst = glMapBufferRange(
+                     GL_COPY_WRITE_BUFFER, m_offset, size,
+                     GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
+        if (!dst) {
+            GL_CHECK(
+                glBufferSubData(GL_COPY_WRITE_BUFFER, m_offset, size, data));
+            return;
+        }
+        memcpy(dst, data, size);
+        GL_CHECK(glUnmapBuffer(GL_COPY_WRITE_BUFFER));
+        GL_CHECK(glBindBuffer(GL_COPY_WRITE_BUFFER, 0));
+    }
 
 private:
     Buffer* m_buffer{nullptr};

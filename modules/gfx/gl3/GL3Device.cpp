@@ -52,8 +52,12 @@ void GL3Device::initSubRenderThreads(uint32_t threadNum) {
             task->execute(m_subContext[threadIndex]);
             task->finish();
         },
-        [&](uint32_t threadIndex) { m_subContext[threadIndex]->makeCurrent(); },
         [&](uint32_t threadIndex) {
+            m_subContext[threadIndex]->makeCurrent();
+            m_subContext[threadIndex]->initContextRes();
+        },
+        [&](uint32_t threadIndex) {
+            m_subContext[threadIndex]->clearContextRes();
             m_subContext[threadIndex]->exitCurrent();
         });
 }
@@ -61,7 +65,7 @@ void GL3Device::initSubRenderThreads(uint32_t threadNum) {
 void GL3Device::initResourceThread() {
     m_syncWorkThread = new std::thread([&]() {
         m_pMainContext->makeCurrent();
-
+        m_pMainContext->initContextRes();
         std::queue<SyncWork*> works;
         while (!m_exit) {
             m_syncWorkQueue.wait(works);
@@ -73,6 +77,7 @@ void GL3Device::initResourceThread() {
                 item->finish = true;
             }
         }
+        m_pMainContext->clearContextRes();
     });
 }
 

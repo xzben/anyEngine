@@ -18,7 +18,7 @@ public:
     void init(CmdBeginRenderPass* beginPass) { m_beginPass = beginPass; }
 
     virtual void reset() override { m_beginPass = nullptr; }
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {}
 
 private:
     CmdBeginRenderPass* m_beginPass;

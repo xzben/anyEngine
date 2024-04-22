@@ -38,7 +38,7 @@ public:
         m_attachments.clear();
         m_clearValues.clear();
     }
-    virtual void execute() override {}
+    virtual void execute(gl3::GLContext* context) override {}
 
 private:
     RenderPass* m_renderpass;

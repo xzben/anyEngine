@@ -107,5 +107,15 @@ GLContext* GLContext::createSubContext() {
     return new GLContext(m_device, context);
 }
 
+void GLContext::initContextRes() {
+    GL_CHECK(glGenFramebuffers(m_fbos.size(), m_fbos.data()));
+    GL_CHECK(glGenVertexArrays(m_fbos.size(), m_vaos.data()));
+}
+
+void GLContext::clearContextRes() {
+    GL_CHECK(glDeleteFramebuffers(m_fbos.size(), m_fbos.data()));
+    GL_CHECK(glDeleteVertexArrays(m_vaos.size(), m_vaos.data()));
+}
+
 END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE

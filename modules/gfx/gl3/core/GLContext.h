@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cassert>
 #include <type_traits>
 
@@ -18,6 +19,9 @@ public:
     GLContext(GL3Device& device);
     virtual ~GLContext();
 
+    void initContextRes();
+    void clearContextRes();
+
     void makeCurrent(GL3SwapChain* swapChain = nullptr);
     void exitCurrent(GL3SwapChain* swapChain = nullptr);
     GL3SwapChain* createSwapChain(void* winow, uint32_t width, uint32_t height,
@@ -27,12 +31,17 @@ public:
 
     GLContext* createSubContext();
 
+    OGL_HANDLE getFbo(uint32_t index) { return m_fbos[index]; }
+    OGL_HANDLE getVao(uint32_t index) { return m_vaos[index]; }
+
 protected:
     GLContextType createContext(GLContextType share);
     GLContext(GL3Device& device, GLContextType context)
         : m_device(device), m_context(context) {}
 
 private:
+    std::array<OGL_HANDLE, 2> m_fbos;
+    std::array<OGL_HANDLE, 1> m_vaos;
     GLContextType m_context;
     GL3Device& m_device;
 };

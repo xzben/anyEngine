@@ -114,9 +114,9 @@ void GL3CommandBuffer::clearCmds() {
     m_freeCmds.clear();
 }
 
-void GL3CommandBuffer::execute() {
+void GL3CommandBuffer::execute(gl3::GLContext* context) {
     for (auto& cmd : m_cmds) {
-        cmd->execute();
+        cmd->execute(context);
     }
 }
 END_GFX_NAMESPACE
