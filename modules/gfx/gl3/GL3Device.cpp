@@ -159,7 +159,8 @@ void GL3Device::waitIdle() {
         queue->waitIdle();
     }
 }
-
+void GL3Device::withOneTimeCmd(
+    std::function<void(CommandBuffer& cmd)> callback) {}
 //-------------------------------------------------------------
 void GL3Device::destroyBuffer(Buffer* buffer) { buffer->delRef(); }
 void GL3Device::destroyEvent(Event* event) { event->delRef(); }

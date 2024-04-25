@@ -13,7 +13,7 @@ public:
     GL3Semaphore(GL3Device& device);
     virtual ~GL3Semaphore();
 
-    virtual void wait() override;
+    virtual WaitResult wait(uint64_t timeout = 0) override;
     virtual void signal() override;
 
 protected:

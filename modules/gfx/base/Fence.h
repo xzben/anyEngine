@@ -10,7 +10,7 @@ public:
     /*
      *  timeout 单位 纳秒
      */
-    virtual bool wait(uint64_t timeout = 0) = 0;
+    virtual WaitResult wait(uint64_t timeout = 0) = 0;
 
 protected:
     Fence() : GfxObject(GfxObjectType::Fence) {}

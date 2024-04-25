@@ -8,7 +8,10 @@
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
 
-void WorkTask::finish() { m_queue->handleTaskFinish(this); }
+void WorkTask::finish() {
+    m_queue->handleTaskFinish(this);
+    m_finish.store(true);
+}
 //-----------------RenderWorkTask-----------------
 RenderWorkTask::RenderWorkTask(GL3Queue* queue,
                                const std::vector<CommandBuffer*>& cmds,

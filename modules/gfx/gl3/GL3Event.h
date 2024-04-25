@@ -13,7 +13,7 @@ public:
     GL3Event(GL3Device& device);
     virtual ~GL3Event();
 
-    void wait();
+    WaitResult wait();
     void signal();
 
 private:

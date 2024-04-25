@@ -16,13 +16,19 @@ class GLContext;
 class WorkTask {
 public:
     WorkTask(GL3Queue* queue) : m_queue(queue) {}
-    virtual ~WorkTask()                      = default;
+    virtual ~WorkTask() = default;
+
     virtual void execute(GLContext* context) = 0;
 
     void finish();
+    void waitFinish() {
+        while (!m_finish.load())
+            ;
+    }
 
 protected:
     GL3Queue* m_queue{nullptr};
+    std::atomic<bool> m_finish{false};
 };
 
 class RenderWorkTask : public WorkTask {
@@ -50,6 +56,20 @@ public:
 private:
     SwapChain* m_swapChain{nullptr};
     std::vector<Semaphore*> m_waits;
+};
+
+class CustomWorkTask : public WorkTask {
+public:
+    using WorkFunc = std::function<void(GLContext* ctx)>;
+
+public:
+    CustomWorkTask(GL3Queue* queue, WorkFunc func)
+        : WorkTask(queue), m_func(func) {}
+
+    void execute(GLContext* context) override { m_func(context); }
+
+private:
+    WorkFunc m_func;
 };
 
 END_GL3_CORE_NAMESPACE

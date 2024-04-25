@@ -18,12 +18,12 @@ VulkanFence::~VulkanFence() {
     vkDestroyFence(m_logicDevice, m_handle, nullptr);
 }
 
-bool VulkanFence::wait(uint64_t timeout) {
+WaitResult VulkanFence::wait(uint64_t timeout) {
     if (timeout == 0) {
         timeout = std::numeric_limits<uint64_t>::max();
     }
     auto result = vkWaitForFences(m_logicDevice, 1, &m_handle, true, timeout);
-    return result == VK_SUCCESS;
+    return result == VK_SUCCESS ? WaitResult::SUCCESS : WaitResult::TIMEOUT;
 }
 
 bool VulkanFence::reset() {
@@ -31,14 +31,15 @@ bool VulkanFence::reset() {
     return result == VK_SUCCESS;
 }
 
-bool VulkanFence::wait(const vk::LogicDevice& device,
-                       std::vector<VkFence> fences, uint64_t timeout) {
+WaitResult VulkanFence::wait(const vk::LogicDevice& device,
+                             std::vector<VkFence> fences, uint64_t timeout) {
     if (timeout == 0) {
         timeout = std::numeric_limits<uint64_t>::max();
     }
+
     auto result =
         vkWaitForFences(device, fences.size(), fences.data(), true, timeout);
-    return result == VK_SUCCESS;
+    return result == VK_SUCCESS ? WaitResult::SUCCESS : WaitResult::TIMEOUT;
 }
 
 bool VulkanFence::reset(const vk::LogicDevice& device,

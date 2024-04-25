@@ -13,17 +13,21 @@ bool GL3Fence::reset() {
     return true;
 }
 
-bool GL3Fence::wait(uint64_t timeout) {
+WaitResult GL3Fence::wait(uint64_t timeout) {
     if (!m_signed.load()) {
         std::unique_lock<std::mutex> locker(m_conditionLock);
         if (timeout > 0) {
-            m_condition.wait_for(locker, std::chrono::nanoseconds(timeout),
-                                 [&]() { return m_signed.load(); });
+            bool success =
+                m_condition.wait_for(locker, std::chrono::nanoseconds(timeout),
+                                     [&]() { return m_signed.load(); });
+
+            return success ? WaitResult::SUCCESS : WaitResult::TIMEOUT;
         } else {
             m_condition.wait(locker, [&]() { return m_signed.load(); });
         }
     }
-    return true;
+
+    return WaitResult::SUCCESS;
 }
 
 void GL3Fence::signal() {

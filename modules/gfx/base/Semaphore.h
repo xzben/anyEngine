@@ -7,8 +7,8 @@ BEGIN_GFX_NAMESPACE
 
 class Semaphore : public Handle, public GfxObject {
 public:
-    virtual void wait()   = 0;
-    virtual void signal() = 0;
+    virtual WaitResult wait(uint64_t timeout = 0) = 0;
+    virtual void signal()                         = 0;
 
 protected:
     Semaphore() : GfxObject(GfxObjectType::Semaphore) {}

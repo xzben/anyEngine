@@ -50,6 +50,11 @@ struct DeviceInfo {
     uint32_t requireMemSize{0};
 };
 
+enum class WaitResult {
+    SUCCESS = 0,
+    TIMEOUT,
+};
+
 enum class GfxObjectType : uint8_t {
     UnKnown = 0,
     SwapChain,

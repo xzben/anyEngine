@@ -203,7 +203,8 @@ VulkanSemaphore* VulkanDevice::createSemaphore() { return nullptr; }
 VulkanEvent* VulkanDevice::createEvent() { return nullptr; }
 
 void VulkanDevice::waitIdle() {}
-
+void VulkanDevice::withOneTimeCmd(
+    std::function<void(CommandBuffer& cmd)> callback) {}
 //------------------
 
 //-------------------------------------------------------------

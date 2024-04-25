@@ -71,6 +71,9 @@ public:
 
     virtual void waitIdle() override;
 
+    virtual void withOneTimeCmd(
+        std::function<void(CommandBuffer& cmd)> callback) override;
+
 public:
     virtual void destroyBuffer(Buffer* buffer) override;
     virtual void destroyEvent(Event* event) override;

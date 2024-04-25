@@ -128,6 +128,12 @@ public:
      */
     virtual void waitIdle() = 0;
 
+    /*
+     * 执行一次一次性的命令，并且立即提交执行等待执行完成
+     */
+    virtual void withOneTimeCmd(
+        std::function<void(CommandBuffer& cmd)> callback) = 0;
+
 public:
     virtual void destroyBuffer(Buffer* buffer)                = 0;
     virtual void destroyEvent(Event* event)                   = 0;

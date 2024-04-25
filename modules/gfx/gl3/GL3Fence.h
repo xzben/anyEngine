@@ -13,7 +13,7 @@ public:
     GL3Fence(GL3Device& device, bool createSignaled = false);
     virtual ~GL3Fence();
     virtual bool reset() override;
-    virtual bool wait(uint64_t timeout = 0) override;
+    virtual WaitResult wait(uint64_t timeout = 0) override;
     void signal();
 
 protected:

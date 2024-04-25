@@ -74,6 +74,8 @@ public:
     virtual GL3Event* createEvent() override;
 
     virtual void waitIdle() override;
+    virtual void withOneTimeCmd(
+        std::function<void(CommandBuffer& cmd)> callback) override;
 
 protected:
     using WorkTask         = gl3::WorkTask;
