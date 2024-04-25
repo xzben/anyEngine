@@ -80,8 +80,8 @@ protected:
     using RenderThreadPool = gl3::ThreadPool<WorkTask*>;
     RenderThreadPool* m_pRenderThreads;
     void initSubRenderThreads(uint32_t threadNum);
-    bool addRenderTask(WorkTask* task) {
-        return m_pRenderThreads->addTask(task);
+    bool addTask(WorkTask* task, float priority = 1.0) {
+        return m_pRenderThreads->addTask(task, priority);
     }
 
     using SyncFunc = std::function<void()>;

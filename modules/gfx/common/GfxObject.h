@@ -14,10 +14,9 @@ public:
 
     void addRef() { m_refCount++; }
     void delRef() {
-        assert(m_refCount > 0);
+        assert(m_refCount.load() > 0);
 
-        m_refCount--;
-        if (m_refCount <= 0) {
+        if (--m_refCount <= 0) {
             delete this;
         }
     }
@@ -31,7 +30,7 @@ public:
 protected:
     virtual ~GfxObject() = default;
     GfxObjectType m_type{GfxObjectType::UnKnown};
-    std::atomic<uint32_t> m_refCount{1};
+    std::atomic<int32_t> m_refCount{1};
 };
 
 END_GFX_NAMESPACE

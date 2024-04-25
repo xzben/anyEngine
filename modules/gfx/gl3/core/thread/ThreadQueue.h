@@ -32,38 +32,58 @@ public:
         m_itemLock.unlock();
     }
 
-    void wait(std::queue<ItemType>& queue) {
+    bool wait(std::queue<ItemType>& queue) {
         assert(queue.empty());
 
-        if (m_count <= 0) {
+        if (m_count.load() <= 0) {
             std::unique_lock<std::mutex> locker(m_lock);
-            m_condition.wait(locker, [&]() { return m_count > 0; });
+            m_condition.wait(
+                locker, [&]() { return m_count.load() > 0 || m_exit.load(); });
+        }
+
+        if (m_exit.load()) {
+            return false;
         }
 
         m_itemLock.lock();
         m_items.swap(queue);
+        m_count = 0;
         m_itemLock.unlock();
+
+        return true;
     }
 
-    ItemType wait() {
-        if (m_count <= 0) {
+    bool wait(ItemType& out) {
+        if (m_count.load() <= 0) {
             std::unique_lock<std::mutex> locker(m_lock);
-            m_condition.wait(locker, [&]() { return m_count > 0; });
+            m_condition.wait(
+                locker, [&]() { return m_count.load() > 0 || m_exit.load(); });
+        }
+
+        if (m_exit.load()) {
+            return false;
         }
 
         m_itemLock.lock();
-        ItemType item = m_items.front();
+        out = m_items.front();
         m_items.pop();
+        m_count--;
         m_itemLock.unlock();
 
-        return std::move(item);
+        return true;
+    }
+
+    void exit() {
+        m_exit.store(true);
+        m_condition.notify_all();
     }
 
 private:
     std::mutex m_lock;
-    std::atomic_uint32_t m_count{0};
+    std::atomic<uint32_t> m_count{0};
     std::condition_variable m_condition;
 
+    std::atomic<bool> m_exit{false};
     std::mutex m_itemLock;
     std::queue<ItemType> m_items;
 };

@@ -30,20 +30,31 @@ public:
         m_itemLock.unlock();
     }
 
-    ItemType wait() {
-        if (m_count <= 0) {
+    bool wait(ItemType& out) {
+        if (m_count.load() <= 0) {
             std::unique_lock<std::mutex> locker(m_lock);
-            m_condition.wait(locker, [&]() { return m_count > 0; });
+            m_condition.wait(
+                locker, [&]() { return m_count.load() > 0 || m_exit.load(); });
+        }
+
+        if (m_exit.load()) {
+            return false;
         }
 
         m_itemLock.lock();
         auto queuItem = m_items.top();
-        ItemType item = std::move(queuItem.data);
-
         m_items.pop();
+        m_count--;
         m_itemLock.unlock();
 
-        return std::move(item);
+        out = std::move(queuItem.data);
+
+        return true;
+    }
+
+    void exit() {
+        m_exit.store(true);
+        m_condition.notify_all();
     }
 
 protected:
@@ -59,18 +70,19 @@ protected:
 
     struct QueueTypeLess {
         bool operator()(QueueItem& lhs, QueueItem& rhs) const {
-            return lhs.priority > rhs.priority;
+            return lhs.priority < rhs.priority;
         }
     };
 
 private:
     std::mutex m_lock;
-    std::atomic_uint32_t m_count{0};
+    std::atomic<uint32_t> m_count{0};
     std::condition_variable m_condition;
 
     std::mutex m_itemLock;
     std::priority_queue<QueueItem, std::vector<QueueItem>, QueueTypeLess>
         m_items;
+    std::atomic<bool> m_exit{false};
 };
 
 END_GL3_CORE_NAMESPACE

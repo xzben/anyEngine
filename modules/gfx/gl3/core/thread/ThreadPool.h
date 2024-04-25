@@ -16,8 +16,10 @@ protected:
     void threadFunc(uint32_t index) {
         m_threaPrepareFunc(index);
         while (!m_exit) {
-            auto task = m_queue.wait();
-            m_taskExcuteFunc(task, index);
+            WorkTaskType task;
+            if (m_queue.wait(task)) {
+                m_taskExcuteFunc(task, index);
+            }
         }
         m_threadExitFunc(index);
     }
@@ -50,7 +52,8 @@ public:
     }
 
     void exit() {
-        m_exit = true;
+        m_exit.store(true);
+        m_queue.exit();
         for (auto thd : m_threads) {
             thd->join();
             delete thd;
@@ -58,16 +61,16 @@ public:
         m_threads.clear();
     }
 
-    bool addTask(const WorkTaskType& task) {
-        if (m_exit) return false;
-        m_queue.addItem(task);
+    bool addTask(const WorkTaskType& task, float priority) {
+        if (m_exit.load()) return false;
+        m_queue.addItem(task, priority);
 
         return true;
     }
 
-    bool addTask(const WorkTaskType&& task) {
-        if (m_exit) return false;
-        m_queue.addItem(task);
+    bool addTask(const WorkTaskType&& task, float priority) {
+        if (m_exit.load()) return false;
+        m_queue.addItem(task, priority);
 
         return true;
     }

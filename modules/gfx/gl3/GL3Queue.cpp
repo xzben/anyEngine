@@ -10,6 +10,7 @@ GL3Queue::GL3Queue(GL3Device& device, QueueType queueType, float priority)
 GL3Queue::~GL3Queue() {}
 
 void GL3Queue::destroyPool(CommandPool* pool) { pool->delRef(); }
+
 CommandPool* GL3Queue::createPool(ResetMode resetModel) {
     return new GL3CommandPool(m_device, *this, resetModel);
 }
@@ -17,36 +18,38 @@ CommandPool* GL3Queue::createPool(ResetMode resetModel) {
 bool GL3Queue::submit(const std::vector<CommandBuffer*>& cmd,
                       const std::vector<Semaphore*>& wait,
                       const std::vector<Semaphore*>& signal, Fence* fence) {
-    m_workCount++;
     gl3::WorkTask* task =
         new gl3::RenderWorkTask(this, cmd, wait, signal, fence);
-
-    m_device.addRenderTask(task);
+    addTask(task);
     return true;
 }
 
 uint32_t GL3Queue::present(SwapChain* swapChain, uint32_t imageIndex,
                            const std::vector<Semaphore*>& waits) {
-    m_workCount++;
     gl3::WorkTask* task =
         new gl3::PresentWorkTask(this, swapChain, imageIndex, waits);
-    m_device.addRenderTask(task);
+
+    addTask(task);
     return 0;
 }
 
+void GL3Queue::addTask(gl3::WorkTask* task) {
+    m_workCount++;
+    m_device.addTask(task);
+}
+
 void GL3Queue::handleTaskFinish(gl3::WorkTask* task) {
-    std::lock_guard<std::mutex> locker(m_lock);
-    m_workCount--;
-    if (m_workCount <= 0) {
-        m_condition.notify_all();
+    std::lock_guard<std::mutex> locker(m_idleConditionlock);
+    if (--m_workCount <= 0) {
+        m_idleCondition.notify_all();
     }
 }
 
 bool GL3Queue::waitIdle() {
-    if (m_workCount <= 0) return true;
+    if (m_workCount.load() <= 0) return true;
 
-    std::unique_lock<std::mutex> locker(m_lock);
-    m_condition.wait(locker, [&]() { return m_workCount <= 0; });
+    std::unique_lock<std::mutex> locker(m_idleConditionlock);
+    m_idleCondition.wait(locker, [&]() { return m_workCount <= 0; });
 
     return true;
 }

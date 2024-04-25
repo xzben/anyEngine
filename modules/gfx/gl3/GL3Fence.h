@@ -24,7 +24,7 @@ private:
 
     std::mutex m_conditionLock;
     std::condition_variable m_condition;
-    std::atomic<int> m_count{0};
+    std::atomic<bool> m_signed;
 };
 
 END_GFX_NAMESPACE

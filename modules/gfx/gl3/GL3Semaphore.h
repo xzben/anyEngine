@@ -22,7 +22,7 @@ protected:
 private:
     std::mutex m_conditionLock;
     std::condition_variable m_condition;
-    std::atomic<int> m_count{0};
+    std::atomic<int32_t> m_count{0};
 
     GL3Device& m_device;
 };

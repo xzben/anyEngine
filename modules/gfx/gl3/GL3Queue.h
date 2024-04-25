@@ -29,6 +29,7 @@ public:
     virtual QueueType getType() override { return m_queueType; }
 
 protected:
+    void addTask(gl3::WorkTask* task);
     void handleTaskFinish(gl3::WorkTask* task);
 
 private:
@@ -37,8 +38,8 @@ private:
     float m_priority;
 
     std::atomic<uint32_t> m_workCount{0};
-    std::condition_variable m_condition;
-    std::mutex m_lock;
+    std::condition_variable m_idleCondition;
+    std::mutex m_idleConditionlock;
 };
 
 END_GFX_NAMESPACE
