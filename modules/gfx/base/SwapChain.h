@@ -5,6 +5,7 @@
 #include "Semaphore.h"
 
 BEGIN_GFX_NAMESPACE
+class Texture;
 
 class SwapChain : public GfxObject {
 public:
@@ -12,6 +13,11 @@ public:
         Semaphore* semophore, Fence* fence = nullptr, uint32_t timeout = 0) = 0;
 
     virtual void handleUpdateSurfaceInfo(const SurfaceInfo& info) = 0;
+
+    virtual void setActiveImageIndex(uint32_t imageIndex) = 0;
+    virtual uint32_t getCurImageIndex()                   = 0;
+    virtual Texture* getColorTexture(uint32_t imageIndex) = 0;
+    virtual Texture* getDepthTexture(uint32_t imageIndex) = 0;
 
 protected:
     SwapChain() : GfxObject(GfxObjectType::SwapChain) {}

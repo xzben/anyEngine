@@ -5,6 +5,7 @@
 #include "base/CommandBuffer.h"
 #include "base/CommandPool.h"
 #include "base/Device.h"
+#include "base/DrawSurface.h"
 #include "base/Event.h"
 #include "base/Fence.h"
 #include "base/InputAssembler.h"

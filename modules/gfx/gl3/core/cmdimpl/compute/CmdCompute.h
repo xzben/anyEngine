@@ -41,7 +41,7 @@ public:
             }
         }
 
-        m_pipeline = info.pipeline;
+        m_pipeline = dynamic_cast<GL3Pipeline*>(info.pipeline);
         m_pipeline->addRef();
         m_groupNumX = info.groupNumX;
         m_groupNumY = info.groupNumY;
@@ -56,7 +56,23 @@ public:
         m_storageBuffers.clear();
         m_textures.clear();
     }
-    virtual void execute(gl3::GLContext* context) override {}
+    virtual void execute(gl3::GLContext* context) override {
+        auto shader = m_pipeline->getShader();
+        for (auto& item : m_uniformBuffers) {
+            shader->setUniformBuffer(item.name, item.buffer, item.offset,
+                                     item.size);
+        }
+        for (auto& item : m_storageBuffers) {
+            shader->setShaderStorageBuffer(item.name, item.buffer, item.offset,
+                                           item.size);
+        }
+        for (auto& item : m_textures) {
+            shader->setTexture(item.name, item.texture, item.sampler);
+        }
+        // context->updateState(m_pipeline->getState());
+        shader->bind();
+        GL_CHECK(glDispatchCompute(m_groupNumX, m_groupNumY, m_groupNumZ));
+    }
 
 private:
     std::vector<BufferBindingInfo> m_uniformBuffers;
@@ -67,7 +83,7 @@ private:
     uint32_t m_groupNumY{1};
     uint32_t m_groupNumZ{1};
 
-    Pipeline* m_pipeline{nullptr};
+    GL3Pipeline* m_pipeline{nullptr};
 };
 END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE

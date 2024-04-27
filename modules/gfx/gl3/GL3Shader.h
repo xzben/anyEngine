@@ -44,9 +44,10 @@ public:
     void setTexture(const std::string& name, Texture* texture,
                     Sampler* sampler = nullptr);
 
-    void activeBinding();
+    void bind();
 
 protected:
+    void activeBinding();
     virtual GFX_HANDLE getHandleImp() const override {
         return (GFX_HANDLE)m_handle;
     }

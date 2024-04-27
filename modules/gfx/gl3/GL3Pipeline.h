@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../base/Pipeline.h"
+#include "GL3Shader.h"
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
@@ -13,7 +14,7 @@ public:
                 Shader* shader, const PipelineState& state);
     virtual ~GL3Pipeline();
 
-    virtual Shader* getShader() override { return m_shader; }
+    virtual GL3Shader* getShader() override { return m_shader; }
 
     virtual const PipelineState& getState() const { return m_state; };
 
@@ -24,7 +25,7 @@ private:
     GL3Device& m_device;
     RenderPass* m_renderPass{nullptr};
     uint32_t m_subpassIndex;
-    Shader* m_shader{nullptr};
+    GL3Shader* m_shader{nullptr};
     PipelineState m_state;
 };
 

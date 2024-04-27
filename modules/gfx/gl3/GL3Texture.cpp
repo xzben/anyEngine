@@ -67,6 +67,15 @@ static const uint32_t g_pixelSize[] = {
     4,  // Depth24Stencil8
 };
 
+void GL3Texture::getPixelFormatInfo(PixelFormat format, GLenum* innerFormat,
+                                    GLenum* pixelFomrat, GLenum* dataType,
+                                    uint32_t* pixelSize) {
+    if (innerFormat != nullptr) *innerFormat = g_interformat[(int)format];
+    if (pixelFomrat != nullptr) *pixelFomrat = g_pixleFormat[(int)format];
+    if (dataType != nullptr) *dataType = g_dataTypeFormat[(int)format];
+    if (pixelSize != nullptr) *pixelSize = g_pixelSize[(int)format];
+}
+
 GLenum GL3Texture::getTarget(TextureType type) {
     GLenum target = g_type2OGLTextureType[(int)type];
     return target;

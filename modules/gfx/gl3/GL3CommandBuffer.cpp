@@ -19,7 +19,7 @@ bool GL3CommandBuffer::reset() {
 }
 void GL3CommandBuffer::begin(CommandBufferUsage usage) {}
 void GL3CommandBuffer::beginRendPass(
-    RenderPass* renderpass, const std::vector<DrawSurface>& attachments,
+    RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
     const std::vector<ClearValue>& clearValues) {
     auto cmd =
         allocCmd<gl3::CmdBeginRenderPass>(renderpass, attachments, clearValues);
@@ -66,16 +66,19 @@ void GL3CommandBuffer::setScissor(float x, float y, float width, float height) {
 }
 
 void GL3CommandBuffer::updateBuffer(Buffer* buffer, const void* pData,
-                                    uint32_t size, uint32_t offset) {
-    auto cmd = allocCmd<gl3::CmdUpdateBuffer>(buffer, pData, size, offset);
+                                    uint32_t size, uint32_t offset,
+                                    bool staticData) {
+    auto cmd =
+        allocCmd<gl3::CmdUpdateBuffer>(buffer, pData, size, offset, staticData);
     m_cmds.push_back(cmd);
 }
 
-void GL3CommandBuffer::updateTexture(Texture* texture, const void* pData,
-                                     uint32_t size, uint32_t width,
-                                     uint32_t height) {
+void GL3CommandBuffer::updateTexture(Texture* texture,
+                                     const TextureUpdateInfo& info,
+                                     const void* pData, uint32_t size,
+                                     bool staticData) {
     auto cmd =
-        allocCmd<gl3::CmdUpdateTexture>(texture, pData, size, width, height);
+        allocCmd<gl3::CmdUpdateTexture>(texture, info, pData, size, staticData);
     m_cmds.push_back(cmd);
 }
 

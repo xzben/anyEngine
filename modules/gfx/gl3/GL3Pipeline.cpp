@@ -10,7 +10,7 @@ GL3Pipeline::GL3Pipeline(GL3Device& device, RenderPass* renderPass,
     : m_device(device),
       m_renderPass(renderPass),
       m_subpassIndex(subpass),
-      m_shader(shader),
+      m_shader(dynamic_cast<GL3Shader*>(shader)),
       m_state(state) {
     m_renderPass->addRef();
     m_shader->addRef();
@@ -20,4 +20,5 @@ GL3Pipeline::~GL3Pipeline() {
     m_renderPass->delRef();
     m_shader->delRef();
 }
+
 END_GFX_NAMESPACE

@@ -4,6 +4,7 @@
 #include "../gl3_core_common.h"
 #include "NoCopy.h"
 #include "base/CommandBuffer.h"
+#include "base/DrawSurface.h"
 
 BEGIN_GFX_NAMESPACE
 

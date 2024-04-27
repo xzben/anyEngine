@@ -124,27 +124,30 @@ GL3Sampler* GL3Device::createSampler(const SamplerInfo& info) {
 }
 
 GL3InputAssembler* GL3Device::createInputAssembler(
-    const std::vector<Attribute>& attributes, const void* pVertexData,
-    uint32_t vertexCount, const void* pIndexData, uint32_t indexCount,
-    uint32_t indexItemSize) {
-    return new GL3InputAssembler(*this, attributes, pVertexData, vertexCount,
-                                 pIndexData, indexCount, indexItemSize);
+    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+    const void* pVertexData, uint32_t vertexCount, const void* pIndexData,
+    uint32_t indexCount, uint32_t indexItemSize) {
+    return new GL3InputAssembler(*this, primitiveType, attributes, pVertexData,
+                                 vertexCount, pIndexData, indexCount,
+                                 indexItemSize);
 }
 
 GL3InputAssembler* GL3Device::createInputAssembler(
-    const std::vector<Attribute>& attributes,
+    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
     const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
     uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
     const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
-    return new GL3InputAssembler(
-        *this, attributes, InstanceAttributes, pVertexData, vertexCount,
-        pInstanceData, instanceCount, pIndexData, indexCount, indexItemSize);
+    return new GL3InputAssembler(*this, primitiveType, attributes,
+                                 InstanceAttributes, pVertexData, vertexCount,
+                                 pInstanceData, instanceCount, pIndexData,
+                                 indexCount, indexItemSize);
 }
 
 GL3SwapChain* GL3Device::createSwapChain(void* nativeWindow, uint32_t width,
-                                         uint32_t height, bool singleBuffer) {
+                                         uint32_t height, bool singleBuffer,
+                                         bool needDepthStencil) {
     return m_pMainContext->createSwapChain(nativeWindow, width, height,
-                                           singleBuffer);
+                                           singleBuffer, needDepthStencil);
 }
 GL3Fence* GL3Device::createFence(bool signaled) {
     return new GL3Fence(*this, signaled);

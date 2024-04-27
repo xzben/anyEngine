@@ -8,12 +8,17 @@ BEGIN_GFX_NAMESPACE
 class GL3Device;
 class GL3InputAssembler : public InputAssembler {
 public:
-    GL3InputAssembler(GL3Device& device,
+    static void GetAttributeDataInfo(DataFormat format, uint32_t& count,
+                                     uint32_t& size, GLenum& gltype);
+    static GLenum GetPrimivteGLType(PrimitiveType type);
+
+public:
+    GL3InputAssembler(GL3Device& device, PrimitiveType primitiveType,
                       const std::vector<Attribute>& attributes,
                       const void* pVertexData, uint32_t vertexCount,
                       const void* pIndexData = nullptr, uint32_t indexCount = 0,
                       uint32_t indexItemSize = sizeof(uint32_t));
-    GL3InputAssembler(GL3Device& device,
+    GL3InputAssembler(GL3Device& device, PrimitiveType primitiveType,
                       const std::vector<Attribute>& attributes,
                       const std::vector<Attribute>& InstanceAttributes,
                       const void* pVertexData, uint32_t vertexCount,
@@ -25,6 +30,11 @@ public:
     virtual const std::vector<Attribute>& getAttributes() const override {
         return m_attributes;
     }
+    virtual const std::vector<Attribute>& getInstanceAttributes()
+        const override {
+        return m_instanceAttributes;
+    }
+
     virtual GL3Buffer* getVertexBuffer() const override {
         return m_vertexBuffer;
     }
@@ -34,8 +44,9 @@ public:
     }
     virtual uint32_t getVertexCount() const override { return m_vertexCount; }
     virtual uint32_t getIndexCount() const override { return m_indexCount; }
-    virtual uint32_t getVertexItemSize() const override {
-        return m_vertexStripe;
+    virtual uint32_t getVertexAttribteStride() const { return m_vertexStripe; }
+    virtual uint32_t getInstanceAttribteStride() const {
+        return m_instanceStrip;
     }
     virtual uint32_t getIndexItemSize() const override { return m_indexSize; }
 
@@ -46,9 +57,12 @@ public:
     virtual void updateInstanceData(const void* pData, uint32_t size,
                                     uint32_t instanceCount) override;
 
+    virtual PrimitiveType getPrimitiveType() { return m_primitiveType; };
+
 private:
     GL3Device& m_device;
 
+    PrimitiveType m_primitiveType;
     std::vector<Attribute> m_attributes;
     std::vector<Attribute> m_instanceAttributes;
 

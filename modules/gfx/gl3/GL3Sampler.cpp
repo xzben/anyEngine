@@ -21,7 +21,6 @@ static const GLenum g_addressType[] = {
 };
 
 static const GLenum g_textureCmpFunc[] = {
-    0,            // CompareOp::EMPTY
     GL_NEVER,     // CompareOp::NEVER
     GL_LESS,      // CompareOp::LESS
     GL_EQUAL,     // CompareOp::EQUAL

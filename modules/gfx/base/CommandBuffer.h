@@ -9,6 +9,7 @@ class Buffer;
 class InputAssembler;
 class Pipeline;
 class Sampler;
+class DrawSurface;
 class RenderPass;
 
 struct BufferBindingInfo {
@@ -26,6 +27,9 @@ struct TextureBindingInfo {
 
 struct MeshInfo {
     InputAssembler* input{nullptr};
+    uint32_t offset{0};
+    uint32_t count{0};
+    uint32_t instanceCount{1};
 };
 
 struct DrawMeshInfo {
@@ -70,7 +74,7 @@ public:
     virtual bool reset()                                                   = 0;
     virtual void begin(CommandBufferUsage usage)                           = 0;
     virtual void beginRendPass(RenderPass* renderpass,
-                               const std::vector<DrawSurface>& attachments,
+                               const std::vector<DrawSurface*>& attachments,
                                const std::vector<ClearValue>& clearValues) = 0;
     virtual void draw(const DrawMeshInfo& info)                            = 0;
     virtual void compute(const ComputeInfo& info)                          = 0;
@@ -84,11 +88,11 @@ public:
     virtual void setScissor(float x, float y, float width, float height) = 0;
 
     virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size,
-                              uint32_t offset = 0) = 0;
+                              uint32_t offset = 0, bool staticData = false) = 0;
 
-    virtual void updateTexture(Texture* texture, const void* pData,
-                               uint32_t size, uint32_t width,
-                               uint32_t height) = 0;
+    virtual void updateTexture(Texture* texture, const TextureUpdateInfo& info,
+                               const void* pData, uint32_t size,
+                               bool staticData = false) = 0;
 
     virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size,
                             uint32_t srcOffset = 0, uint32_t dstOffset = 0) = 0;

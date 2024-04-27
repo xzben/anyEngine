@@ -157,9 +157,10 @@ void WGLHelper::exitCurrent(WGlContext* context) {
 WGLSwapChain* WGLHelper::createWindowSurface(GL3Device& device, HWND win,
                                              uint32_t width, uint32_t height,
                                              bool singleBuffer,
+                                             bool needDepthStencil,
                                              WGlContext* mainContext) {
     return new WGLSwapChain(device, win, width, height, singleBuffer,
-                            mainContext);
+                            needDepthStencil, mainContext);
 }
 
 void WGLHelper::deleteWindowSurface(WGLSwapChain* surface) { delete surface; }
@@ -169,8 +170,8 @@ void WGLHelper::swapBuffer(WGlContext* context) { SwapBuffers(context->hdc); }
 
 WGLSwapChain::WGLSwapChain(GL3Device& device, HWND window, uint32_t width,
                            uint32_t height, bool singleBuffer,
-                           WGlContext* shareContext)
-    : GL3SwapChain(device, width, height, singleBuffer) {
+                           bool needDepthStencil, WGlContext* shareContext)
+    : GL3SwapChain(device, width, height, singleBuffer, needDepthStencil) {
     m_context = WGLHelper::createContext(window, shareContext, singleBuffer);
 }
 
@@ -184,6 +185,8 @@ void WGLSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info) {
 
     m_context = WGLHelper::createContext((HWND)info.handle, shareContext,
                                          m_singleBuffer);
+
+    updateAttachment(info.width, info.height);
 }
 
 void WGLSwapChain::swapBuffer() { WGLHelper::swapBuffer(m_context); }

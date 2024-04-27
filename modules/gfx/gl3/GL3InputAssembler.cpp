@@ -4,33 +4,102 @@
 
 BEGIN_GFX_NAMESPACE
 
-static const uint32_t g_dataFmtSize[] = {
-    0,   // DataFormat::UNDEFINED
-    4,   // DataFormat::Bool
-    8,   // DataFormat::Bool2
-    12,  // DataFormat::Bool3
-    16,  // DataFormat::Bool4
-    4,   // DataFormat::Int
-    8,   // DataFormat::Int2
-    12,  // DataFormat::Int3
-    16,  // DataFormat::Int4
-    4,   // DataFormat::UInt
-    8,   // DataFormat::UInt2
-    12,  // DataFormat::UInt3
-    16,  // DataFormat::UInt4
-    4,   // DataFormat::Float
-    8,   // DataFormat::Float2
-    12,  // DataFormat::Float3
-    16,  // DataFormat::Float4
-    64,  // DataFormat::Mat4
-    36,  // DataFormat::Mat3
+static const uint32_t g_dataTypeCount[] = {
+    1,   // DataFormat::Bool
+    2,   // DataFormat::Bool2
+    3,   // DataFormat::Bool3
+    4,   // DataFormat::Bool4
+    1,   // DataFormat::Int
+    2,   // DataFormat::Int2
+    3,   // DataFormat::Int3
+    4,   // DataFormat::Int4
+    1,   // DataFormat::UInt
+    2,   // DataFormat::UInt2
+    3,   // DataFormat::UInt3
+    4,   // DataFormat::UInt4
+    1,   // DataFormat::Float
+    2,   // DataFormat::Float2
+    3,   // DataFormat::Float3
+    4,   // DataFormat::Float4
+    16,  // DataFormat::Mat4
+    9,   // DataFormat::Mat3
 };
 
+static const uint32_t g_dataFmtSize[] = {
+    4,  // DataFormat::Bool
+    4,  // DataFormat::Bool2
+    4,  // DataFormat::Bool3
+    4,  // DataFormat::Bool4
+    4,  // DataFormat::Int
+    4,  // DataFormat::Int2
+    4,  // DataFormat::Int3
+    4,  // DataFormat::Int4
+    4,  // DataFormat::UInt
+    4,  // DataFormat::UInt2
+    4,  // DataFormat::UInt3
+    4,  // DataFormat::UInt4
+    4,  // DataFormat::Float
+    4,  // DataFormat::Float2
+    4,  // DataFormat::Float3
+    4,  // DataFormat::Float4
+    4,  // DataFormat::Mat4
+    4,  // DataFormat::Mat3
+};
+
+static const GLenum g_attributeFmts[] = {
+    GL_BOOL,          // DataFormat::Bool
+    GL_BOOL,          // DataFormat::Bool2
+    GL_BOOL,          // DataFormat::Bool3
+    GL_BOOL,          // DataFormat::Bool4
+    GL_INT,           // DataFormat::Int
+    GL_INT,           // DataFormat::Int2
+    GL_INT,           // DataFormat::Int3
+    GL_INT,           // DataFormat::Int4
+    GL_UNSIGNED_INT,  // DataFormat::UInt
+    GL_UNSIGNED_INT,  // DataFormat::UInt2
+    GL_UNSIGNED_INT,  // DataFormat::UInt3
+    GL_UNSIGNED_INT,  // DataFormat::UInt4
+    GL_FLOAT,         // DataFormat::Float
+    GL_FLOAT,         // DataFormat::Float2
+    GL_FLOAT,         // DataFormat::Float3
+    GL_FLOAT,         // DataFormat::Float4
+    GL_FLOAT,         // DataFormat::Mat4
+    GL_FLOAT,         // DataFormat::Mat3
+};
+
+static const GLenum g_primitives[] = {
+    GL_POINTS,                    //
+    GL_LINES,                     //
+    GL_LINE_STRIP,                //
+    GL_TRIANGLES,                 //
+    GL_TRIANGLE_STRIP,            //
+    GL_TRIANGLE_FAN,              //
+    GL_LINES_ADJACENCY,           //
+    GL_LINE_STRIP_ADJACENCY,      //
+    GL_TRIANGLES_ADJACENCY,       //
+    GL_TRIANGLE_STRIP_ADJACENCY,  //
+    GL_PATCHES,                   //
+};
+
+void GL3InputAssembler::GetAttributeDataInfo(DataFormat format, uint32_t& count,
+                                             uint32_t& size, GLenum& gltype) {
+    int index = (int)format;
+    count     = g_dataTypeCount[index];
+    size      = g_dataFmtSize[index];
+    gltype    = g_attributeFmts[index];
+}
+
+GLenum GL3InputAssembler::GetPrimivteGLType(PrimitiveType type) {
+    return g_primitives[(int)type];
+}
+
 GL3InputAssembler::GL3InputAssembler(
-    GL3Device& device, const std::vector<Attribute>& attributes,
-    const void* pVertexData, uint32_t vertexCount, const void* pIndexData,
-    uint32_t indexCount, uint32_t indexItemSize)
+    GL3Device& device, PrimitiveType primitiveType,
+    const std::vector<Attribute>& attributes, const void* pVertexData,
+    uint32_t vertexCount, const void* pIndexData, uint32_t indexCount,
+    uint32_t indexItemSize)
     : m_device(device),
+      m_primitiveType(primitiveType),
       m_attributes(attributes),
       m_vertexCount(vertexCount),
       m_indexCount(indexCount),
@@ -38,7 +107,8 @@ GL3InputAssembler::GL3InputAssembler(
     m_vertexStripe = 0;
     for (auto& attr : m_attributes) {
         uint32_t itemSize = g_dataFmtSize[(int)attr.format];
-        m_vertexStripe += itemSize;
+        uint32_t count    = g_dataTypeCount[(int)attr.format];
+        m_vertexStripe += itemSize * count;
     }
     m_vertexBuffer = new GL3Buffer(m_device, BufferType::VERTEX,
                                    vertexCount * m_vertexStripe, pVertexData);
@@ -50,19 +120,21 @@ GL3InputAssembler::GL3InputAssembler(
 }
 
 GL3InputAssembler::GL3InputAssembler(
-    GL3Device& device, const std::vector<Attribute>& attributes,
+    GL3Device& device, PrimitiveType primitiveType,
+    const std::vector<Attribute>& attributes,
     const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
     uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
     const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize)
-    : GL3InputAssembler(device, attributes, pVertexData, vertexCount,
-                        pIndexData, indexCount, indexItemSize) {
+    : GL3InputAssembler(device, primitiveType, attributes, pVertexData,
+                        vertexCount, pIndexData, indexCount, indexItemSize) {
     m_instanceAttributes = InstanceAttributes;
     m_instanceCount      = instanceCount;
 
     m_instanceStrip = 0;
     for (auto& attr : m_instanceAttributes) {
         uint32_t itemSize = g_dataFmtSize[(int)attr.format];
-        m_instanceStrip += itemSize;
+        uint32_t count    = g_dataTypeCount[(int)attr.format];
+        m_instanceStrip += itemSize * count;
     }
 
     m_instanceBuffer =

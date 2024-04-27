@@ -25,7 +25,7 @@ public:
     virtual bool reset() override;
     virtual void begin(CommandBufferUsage usage) override;
     virtual void beginRendPass(
-        RenderPass* renderpass, const std::vector<DrawSurface>& attachments,
+        RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
         const std::vector<ClearValue>& clearValues) override;
     virtual void enable(RenderState state) override;
     virtual void disable(RenderState state) override;
@@ -42,11 +42,12 @@ public:
                             float height) override;
 
     virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size,
-                              uint32_t offset = 0) override;
+                              uint32_t offset = 0,
+                              bool staticData = false) override;
 
-    virtual void updateTexture(Texture* texture, const void* pData,
-                               uint32_t size, uint32_t width,
-                               uint32_t height) override;
+    virtual void updateTexture(Texture* texture, const TextureUpdateInfo& info,
+                               const void* pData, uint32_t size,
+                               bool staticData = false) override;
 
     virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size,
                             uint32_t srcOffset = 0,

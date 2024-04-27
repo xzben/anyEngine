@@ -24,7 +24,8 @@ class WGLSwapChain : public GL3SwapChain {
 public:
     // 基于一个mainContext 创建
     WGLSwapChain(GL3Device& device, HWND window, uint32_t width,
-                 uint32_t height, bool singleBuffer, WGlContext* shareContext);
+                 uint32_t height, bool singleBuffer, bool needDepthStencil,
+                 WGlContext* shareContext);
 
     virtual ~WGLSwapChain();
     virtual void handleUpdateSurfaceInfo(const SurfaceInfo& info) override;
@@ -48,7 +49,9 @@ public:
     static WGLSwapChain* createWindowSurface(GL3Device& device, HWND win,
                                              uint32_t width, uint32_t height,
                                              bool singleBuffer,
+                                             bool needDepthStencil,
                                              WGlContext* mainContext);
+
     static void makeCurrent(WGlContext* context);
     static void deleteWindowSurface(WGLSwapChain* surface);
     static void swapBuffer(WGlContext* context);

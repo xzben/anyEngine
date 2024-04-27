@@ -77,6 +77,7 @@ enum class GfxObjectType : uint8_t {
     Fence,
     Semaphore,
     Event,
+    DrawSurface,
     Count,
 };
 
@@ -99,8 +100,8 @@ enum class CommandBufferUsage : uint8_t {
 CC_ENUM_BITWISE_OPERATORS(CommandBufferUsage)
 
 enum class DataFormat {
-    UNDEFINED = 0,
-    Bool,
+    UNDEFINED = -1,
+    Bool      = 0,
     Bool2,
     Bool3,
     Bool4,
@@ -190,15 +191,15 @@ enum class PolygonModel {
 };
 
 enum class CullModel {
-    NONE,
-    FRONT,
+    FRONT = 0,
     BACK,
     FRONT_AND_BACK,
+    NONE = 100,
 };
 
 enum class FrontFace {
-    COUNTER_CLOCKWISE,  // 逆时针
-    CLOCKWISE,          // 顺时针
+    COUNTER_CLOCKWISE = 0,  // 逆时针
+    CLOCKWISE,              // 顺时针
 };
 
 struct RasterizationState {
@@ -242,15 +243,16 @@ struct MultiSampleState {
 };
 
 enum class CompareOp {
-    EMPTY            = 0,
-    NEVER            = 1,
-    LESS             = 2,
-    EQUAL            = 3,
-    LESS_OR_EQUAL    = 4,
-    GREATER          = 5,
-    NOT_EQUAL        = 6,
-    GREATER_OR_EQUAL = 7,
-    ALWAYS           = 8,
+    NEVER = 0,
+    LESS,
+    EQUAL,
+    LESS_OR_EQUAL,
+    GREATER,
+    NOT_EQUAL,
+    GREATER_OR_EQUAL,
+    ALWAYS,
+
+    EMPTY = 100,
 };
 
 enum class StencilOp {
@@ -322,12 +324,15 @@ enum class BlendFactor {
     ONE_MINUS_CONSTANT_COLOR = 11,
     CONSTANT_ALPHA           = 12,
     ONE_MINUS_CONSTANT_ALPHA = 13,
+    SRC_ALPHA_SATURATE       = 14,
 };
 
 enum class BlendOp {
     ADD              = 0,
     SUBTRACT         = 1,
     REVERSE_SUBTRACT = 2,
+    MIN,
+    MAX,
 };
 
 enum class BlendLogicOp {
@@ -657,6 +662,11 @@ struct Range3D {
     float z{0.f};
 };
 
+struct TextureUpdateInfo {
+    Offset3D offset;
+    Range3D range;
+};
+
 struct TextureCopyInfo {
     Offset3D srcOffset{0.f, 0.f, 0.f};
     Offset3D dstOffset{0.f, 0.f, 0.f};
@@ -696,16 +706,6 @@ struct ClearValue {
         Color color;
         ClearDepthStencilValue depthStencil;
     };
-};
-
-class Texture;
-
-struct DrawSurface {
-    Texture *texture{nullptr};
-    uint32_t layerIndex{0};
-
-    void addRef();
-    void delRef();
 };
 
 struct ShaderModuleInfo {

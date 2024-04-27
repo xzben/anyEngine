@@ -15,8 +15,7 @@ VulkanPipeline::VulkanPipeline(vk::LogicDevice& device,
                                const VulkanRenderPass& rendpass,
                                const PipelineState& state,
                                PrimitiveType primitiveType, uint32_t subpass)
-    : 
-      m_logicDevice(device),
+    : m_logicDevice(device),
       m_shader(shader),
       m_rendpass(rendpass),
       m_subpass(subpass),

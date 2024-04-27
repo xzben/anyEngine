@@ -184,6 +184,10 @@ void GL3Shader::setTexture(const std::string& name, Texture* texture,
     it->second.sampler = sampler;
 }
 
+void GL3Shader::bind() {
+    GL_CHECK(glUseProgram(m_handle));
+    activeBinding();
+}
 void GL3Shader::activeBinding() {
     for (auto it = m_uniformBinding.begin(); it != m_uniformBinding.end();
          it++) {

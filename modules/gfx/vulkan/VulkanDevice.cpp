@@ -177,14 +177,14 @@ VulkanSampler* VulkanDevice::createSampler(const SamplerInfo& info) {
 }
 
 VulkanInputAssembler* VulkanDevice::createInputAssembler(
-    const std::vector<Attribute>& attributes, const void* pVertexData,
-    uint32_t vertexCount, const void* pIndexData, uint32_t indexCount,
-    uint32_t indexItemSize) {
+    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+    const void* pVertexData, uint32_t vertexCount, const void* pIndexData,
+    uint32_t indexCount, uint32_t indexItemSize) {
     return nullptr;
 }
 
 VulkanInputAssembler* VulkanDevice::createInputAssembler(
-    const std::vector<Attribute>& attributes,
+    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
     const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
     uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
     const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
@@ -193,7 +193,8 @@ VulkanInputAssembler* VulkanDevice::createInputAssembler(
 
 VulkanSwapChain* VulkanDevice::createSwapChain(void* nativeWindow,
                                                uint32_t width, uint32_t height,
-                                               bool singleBuffer) {
+                                               bool singleBuffer,
+                                               bool needDepthStencil) {
     return nullptr;
 }
 VulkanFence* VulkanDevice::createFence(bool signaled) { return nullptr; }

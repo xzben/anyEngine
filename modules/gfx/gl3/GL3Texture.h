@@ -7,6 +7,11 @@ BEGIN_GFX_NAMESPACE
 class GL3Device;
 class GL3Texture : public Texture {
 public:
+    static void getPixelFormatInfo(PixelFormat format, GLenum* innerFormat,
+                                   GLenum* pixelFomrat, GLenum* dataType,
+                                   uint32_t* pixelSize);
+
+public:
     GL3Texture(GL3Device& device, const TextureInfo& info,
                const void* pData = nullptr);
     virtual ~GL3Texture();

@@ -46,7 +46,7 @@ public:
             m_meshs[i].input->addRef();
         }
 
-        m_pipeline = info.pipeline;
+        m_pipeline = dynamic_cast<GL3Pipeline*>(info.pipeline);
         m_pipeline->addRef();
     }
 
@@ -77,15 +77,16 @@ public:
         m_pipeline->delRef();
         m_pipeline = nullptr;
     }
-    virtual void execute(gl3::GLContext* context) override {}
+    virtual void execute(gl3::GLContext* context) override;
 
 private:
     std::vector<BufferBindingInfo> m_uniformBuffers;
     std::vector<BufferBindingInfo> m_storageBuffers;
     std::vector<TextureBindingInfo> m_textures;
     std::vector<MeshInfo> m_meshs;
+    std::vector<OGL_HANDLE> m_vaos;
 
-    Pipeline* m_pipeline{nullptr};
+    GL3Pipeline* m_pipeline{nullptr};
 };
 END_GL3_CORE_NAMESPACE
 END_GFX_NAMESPACE

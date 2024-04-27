@@ -56,7 +56,7 @@ void VulkanCommandBuffer::begin(CommandBufferUsage usage) {
 }
 
 void VulkanCommandBuffer::beginRendPass(
-    RenderPass* renderpass, const std::vector<DrawSurface>& attachments,
+    RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
     const std::vector<ClearValue>& clearValues) {}
 
 void VulkanCommandBuffer::bindPipeline(Pipeline* pipeline) {

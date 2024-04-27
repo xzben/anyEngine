@@ -29,8 +29,10 @@ public:
         m_src = nullptr;
     }
     virtual void execute(gl3::GLContext* context) override {
-        OGL_HANDLE fboR = context->getFbo(0);
-        OGL_HANDLE fboW = context->getFbo(1);
+        OGL_HANDLE fbos[2] = {OGL_NULL_HANDLE, OGL_NULL_HANDLE};
+        context->allocFbo(2, fbos);
+        OGL_HANDLE fboR = fbos[0];
+        OGL_HANDLE fboW = fbos[1];
 
         OGL_HANDLE textHandleSrc = m_src->getHandle<OGL_HANDLE>();
         auto& srcInfo            = m_src->getInfo();
@@ -75,6 +77,8 @@ public:
 
         GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
         GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+
+        context->freeFbo(2, fbos);
     }
 
 private:

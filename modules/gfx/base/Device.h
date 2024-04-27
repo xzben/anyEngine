@@ -54,6 +54,7 @@ public:
      * @param subpass 管线在 renderpass 中的 subpass index
      * @param shader 管线的着色器对象
      * @param  state 管线的状态信息
+     * @param primitiveType 管线
      */
     virtual Pipeline* createPipeline(RenderPass* renderPass, uint32_t subpass,
                                      Shader* shader,
@@ -74,18 +75,21 @@ public:
 
     /*
      *  创建渲染几何物体对象，包含了物体的顶点属性描述、顶点buffer、索引buffer
+     *  @param primitiveType 物体的图形构成形状
      *  @param attribute 几何物体的顶点属性描述
      *  @param pVertexData、vertexCount 顶点数据 data，和顶点数量
      *  @param pIndexData、indexCount、indexItemSize 索引数据
      *  data，索引数量，索引数据类型的size
      */
     virtual InputAssembler* createInputAssembler(
-        const std::vector<Attribute>& attributes, const void* pVertexData,
-        uint32_t vertexCount, const void* pIndexData = nullptr,
-        uint32_t indexCount = 0, uint32_t indexItemSize = sizeof(uint32_t)) = 0;
+        PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+        const void* pVertexData, uint32_t vertexCount,
+        const void* pIndexData = nullptr, uint32_t indexCount = 0,
+        uint32_t indexItemSize = sizeof(uint32_t)) = 0;
     /*
      *  创建Instance渲染的几何物体对象，包含了物体的顶点属性描述、顶点buffer、索引buffer、Instance
      *  绘制buffer 和信息
+     *  @param primitiveType 物体的图形构成形状
      *  @param attribute 几何物体的顶点属性描述
      *  @param pVertexData、vertexCount 顶点数据 data，和顶点数量
      *  @param pInstanceData、instanceCount instance绘制的data, 和 instance 数量
@@ -93,7 +97,7 @@ public:
      *  data，索引数量，索引数据类型的size
      */
     virtual InputAssembler* createInputAssembler(
-        const std::vector<Attribute>& attributes,
+        PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
         const std::vector<Attribute>& InstanceAttributes,
         const void* pVertexData, uint32_t vertexCount,
         const void* pInstanceData, uint32_t instanceCount,
@@ -105,9 +109,11 @@ public:
      *   @param nativeWindow 各个平台的渲染创建对象指针
      *   @param width、height 窗口尺寸 宽 高
      *   @param singleBuffer 窗口是单缓冲还是双缓冲
+     *   @param needDepthStencil 是否需要深度模版缓冲
      */
     virtual SwapChain* createSwapChain(void* nativeWindow, uint32_t width,
-                                       uint32_t height, bool singleBuffer) = 0;
+                                       uint32_t height, bool singleBuffer,
+                                       bool needDepthStencil = false) = 0;
     // 同步对象
     /*
      *  创建用于 CPU 和 GPU 同步用的同步对象
