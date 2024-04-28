@@ -1,0 +1,25 @@
+#pragma once
+
+#include <string>
+
+class Object {
+public:
+    Object(const std::string& name) : m_name(name){};
+    Object(){};
+    virtual ~Object() = default;
+
+    void setName(const std::string& name) { m_name = name; }
+    const std::string& getName() { return m_name; }
+
+    void addRef() { ++m_refCount; }
+    void delRef() {
+        if (--m_refCount <= 0) {
+            delete this;
+        }
+    }
+
+private:
+    std::string m_name;
+
+    int32_t m_refCount{1};
+};
