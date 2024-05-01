@@ -69,7 +69,7 @@ void PresentWorkTask::execute(GLContext* context) {
     for (auto& item : m_waits) {
         item->wait();
     }
-    dynamic_cast<GL3SwapChain*>(m_swapChain)->swapBuffer();
+    dynamic_cast<GL3SwapChain*>(m_swapChain)->present();
 }
 
 END_GL3_CORE_NAMESPACE

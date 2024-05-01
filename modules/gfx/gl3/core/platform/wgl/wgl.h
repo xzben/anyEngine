@@ -32,9 +32,8 @@ public:
 
     WGlContext* getContext() { return m_context; }
     void swapBuffer() override;
-
-public:
-    void makeCurrent();
+    virtual void makeCurrent() override;
+    virtual void clearCurrent() override;
 
 private:
     WGlContext* m_context{nullptr};

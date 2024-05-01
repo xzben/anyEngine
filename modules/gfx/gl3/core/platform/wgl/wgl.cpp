@@ -191,6 +191,8 @@ void WGLSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info) {
 
 void WGLSwapChain::swapBuffer() { WGLHelper::swapBuffer(m_context); }
 void WGLSwapChain::makeCurrent() { WGLHelper::makeCurrent(m_context); }
+
+void WGLSwapChain::clearCurrent() { WGLHelper::makeCurrent(nullptr); }
 WGLSwapChain::~WGLSwapChain() {
     if (m_context) {
         WGLHelper::deleteContext(m_context);

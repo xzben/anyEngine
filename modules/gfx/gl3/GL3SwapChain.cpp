@@ -70,4 +70,32 @@ void GL3SwapChain::updateAttachment(uint32_t width, uint32_t height) {
     }
 }
 
+void GL3SwapChain::present() {
+    makeCurrent();
+    if (m_imageFbo == OGL_NULL_HANDLE) {
+        GL_CHECK(glGenFramebuffers(1, &m_imageFbo));
+    }
+    auto wfbo = getPresentFbo();
+
+    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_imageFbo));
+    GL_CHECK(glFramebufferTexture2D(
+        GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+        m_colorTexture->getHandle<OGL_HANDLE>(), 0));
+
+    assert(glCheckFramebufferStatus(GL_READ_FRAMEBUFFER)
+           == GL_FRAMEBUFFER_COMPLETE);
+    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, wfbo));
+    assert(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER)
+           == GL_FRAMEBUFFER_COMPLETE);
+
+    GL_CHECK(glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height,
+                               GL_COLOR_BUFFER_BIT, GL_LINEAR));
+
+    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
+    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+
+    swapBuffer();
+    clearCurrent();
+}
+
 END_GFX_NAMESPACE

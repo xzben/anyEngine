@@ -16,8 +16,11 @@ public:
     virtual std::pair<bool, uint32_t> acquireNextImage(Semaphore* semophore,
                                                        Fence* fence = nullptr,
                                                        uint32_t timeout = 0);
-    virtual void swapBuffer() = 0;
+    virtual void swapBuffer()   = 0;
+    virtual void makeCurrent()  = 0;
+    virtual void clearCurrent() = 0;
 
+    virtual OGL_HANDLE getPresentFbo() { return 0; }
     virtual void setActiveImageIndex(uint32_t imageIndex) override {}
     virtual uint32_t getCurImageIndex() override { return 0; }
     virtual Texture* getColorTexture(uint32_t imageIndex) override {
@@ -29,6 +32,8 @@ public:
 
     void updateAttachment(uint32_t width, uint32_t height);
 
+    void present();
+
 protected:
     GL3Device& m_device;
     uint32_t m_width;
@@ -37,6 +42,8 @@ protected:
     bool m_needDepthStencil{false};
     GL3Texture* m_colorTexture{nullptr};
     GL3Texture* m_depthTexture{nullptr};
+
+    OGL_HANDLE m_imageFbo{OGL_NULL_HANDLE};
 };
 
 END_GFX_NAMESPACE
