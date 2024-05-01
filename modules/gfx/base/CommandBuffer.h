@@ -99,8 +99,8 @@ public:
     virtual void copyTexture(Texture* src, Texture* dst,
                              const TextureCopyInfo& info)                   = 0;
     virtual void blitTexture(Texture* src, Texture* dst,
-                             const TextureBliteInfo& info);
-    virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) = 0;
+                             const TextureBliteInfo& info)                  = 0;
+    virtual void generateMipmaps(Texture* textre, uint32_t mipLevels)       = 0;
 
 protected:
     CommandBuffer() : GfxObject(GfxObjectType::CommandBuffer) {}

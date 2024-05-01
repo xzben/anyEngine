@@ -61,7 +61,7 @@ vk::PhysicalDevice VulkanDevice::selectPhysicDevice(
     return std::move(selector.select());
 }
 
-std::unique_ptr<vk::LogicDevice> createLogicDevice(
+std::unique_ptr<vk::LogicDevice> VulkanDevice::createLogicDevice(
     const DeviceInfo& info, vk::Instance& instance,
     vk::PhysicalDevice physicalDevice, vk::Surface& surface) {
     vk::LogicDeviceBuilder builder(instance, physicalDevice, surface);

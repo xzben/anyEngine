@@ -2,15 +2,17 @@
 #include "common/Object.h"
 
 class System : public Object {
+    friend class Application;
+
 public:
-    System();
-    virtual ~System();
+    System()          = default;
+    virtual ~System() = default;
 
 protected:
-    void update(float dt);
-    virtual void onUpdate(float dt);
-    virtual void onInit();
-    virtual void onDestry();
+    virtual void onUpdate(float dt) = 0;
+
+protected:
+    void update(float dt) { onUpdate(dt); }
 
 protected:
 };

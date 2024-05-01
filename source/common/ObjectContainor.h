@@ -1,17 +1,30 @@
 #pragma once
 
+#include <functional>
 #include <unordered_map>
 #include <vector>
 
 template <class OBJ_TYPE>
 class ObjectContainor {
 public:
-    template <class SUB_OBJ_TYPE>
-    void addObject(const std::string& name) {
+    ObjectContainor() = default;
+    virtual ~ObjectContainor() {
+        for (auto& it : m_objList) {
+            it->delRef();
+        }
+        m_objList.clear();
+        m_name2Object.clear();
+        m_type2Object.clear();
+    }
+
+    template <class SUB_OBJ_TYPE, typename... Args>
+    SUB_OBJ_TYPE* addObject(const std::string& name, Args&... args) {
         static_assert(std::is_base_of_v<OBJ_TYPE, SUB_OBJ_TYPE>);
-        auto* com = new SUB_OBJ_TYPE();
+        auto* com = new SUB_OBJ_TYPE(args...);
         com->setName(name);
         addObject(com);
+
+        return com;
     }
 
     template <class SUB_OBJ_TYPE>
@@ -35,7 +48,7 @@ public:
     }
 
     bool addObject(OBJ_TYPE* obj) {
-        auto& name   = com->getName();
+        auto& name   = obj->getName();
         auto hasCode = typeid(*obj).hash_code();
 
         auto it = m_name2Object.find(name);
@@ -44,7 +57,7 @@ public:
         }
 
         obj->addRef();
-        m_objList.push(obj);
+        m_objList.push_back(obj);
         m_name2Object[name] = obj;
 
         auto itHash = m_type2Object.find(hasCode);
@@ -53,6 +66,7 @@ public:
         } else {
             itHash->second.push_back(obj);
         }
+        return true;
     }
 
     OBJ_TYPE* getObject(const std::string& name) {
@@ -92,6 +106,12 @@ public:
             std::remove_if(hashIt.second.begin(), hashIt.second.end(), obj));
 
         return true;
+    }
+
+    void foreach (std::function<void(OBJ_TYPE* item)> func) {
+        for (auto& it : m_objList) {
+            func(it);
+        }
     }
 
 protected:

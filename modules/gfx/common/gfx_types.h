@@ -14,7 +14,6 @@ static const GFX_HANDLE GFX_NULL_HANDLE = 0;
 
 enum class GFX_API {
     UNKNOWN,
-    OPENGL3,
     GL3,
     VULKAN,
     METAL,
@@ -42,7 +41,7 @@ struct QueueInfo {
 };
 
 struct DeviceInfo {
-    GFX_API api{GFX_API::OPENGL3};
+    GFX_API api{GFX_API::GL3};
     std::string name{""};
     bool present{true};
     SurfaceInfo surface;

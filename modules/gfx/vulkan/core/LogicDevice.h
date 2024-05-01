@@ -21,7 +21,7 @@ struct QueueInfo {
 };
 
 struct EmbeddingQueues {
-    QueueInfo queue[QueueType::Count];
+    QueueInfo queue[(int)QueueType::Count];
 };
 class PhysicalDevice;
 class Instance;
@@ -52,7 +52,8 @@ private:
     const Instance& m_instance;
     const PhysicalDevice& m_physicalDevice;
     VkDevice m_device = VK_NULL_HANDLE;
-    std::array<std::vector<VulkanQueue*>, QueueType::Count> m_embeddingQueues;
+    std::array<std::vector<VulkanQueue*>, (int)QueueType::Count>
+        m_embeddingQueues;
     std::unordered_map<uint32_t, std::vector<VulkanQueue*>> m_customQueues;
 
     VulkanCommandPool* m_commandPool;

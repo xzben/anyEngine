@@ -10,8 +10,3 @@ if(NOT TARGET pipeline)
     add_subdirectory(pipeline)
     set_target_properties(pipeline PROPERTIES FOLDER ${MODULES_PART_FOLDER})
 endif()
-
-# if(NOT TARGET scenegraph)
-#     add_subdirectory(scenegraph)
-#     set_target_properties(scenegraph PROPERTIES FOLDER ${MODULES_PART_FOLDER})
-# endif()

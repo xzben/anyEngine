@@ -55,7 +55,7 @@ public:
     virtual void copyTexture(Texture* src, Texture* dst,
                              const TextureCopyInfo& info) override;
     virtual void blitTexture(Texture* src, Texture* dst,
-                             const TextureBliteInfo& info);
+                             const TextureBliteInfo& info) override;
     virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
 
 public:

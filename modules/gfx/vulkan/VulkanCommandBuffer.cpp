@@ -48,7 +48,7 @@ VulkanCommandBuffer::~VulkanCommandBuffer() {
         vkFreeCommandBuffers(m_pool.getLogicDevice(), m_pool, 1, &m_handle);
     }
 }
-
+bool VulkanCommandBuffer::reset() { return true; }
 void VulkanCommandBuffer::begin(CommandBufferUsage usage) {
     VkCommandBufferBeginInfo info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     info.flags = map_vk_command_buffer_usage_flags(usage);
@@ -243,4 +243,13 @@ void VulkanCommandBuffer::generateMipmaps(Texture* textre, uint32_t mipLevels) {
                          VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr,
                          0, nullptr, 1, &barrier);
 }
+
+void VulkanCommandBuffer::updateBuffer(Buffer* buffer, const void* pData,
+                                       uint32_t size, uint32_t offset,
+                                       bool staticData) {}
+
+void VulkanCommandBuffer::updateTexture(Texture* texture,
+                                        const TextureUpdateInfo& info,
+                                        const void* pData, uint32_t size,
+                                        bool staticData) {}
 END_GFX_NAMESPACE

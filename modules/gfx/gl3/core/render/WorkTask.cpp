@@ -65,6 +65,23 @@ void RenderWorkTask::execute(GLContext* context) {
     }
 }
 //-----------------PresentWorkTask-----------------
+PresentWorkTask::PresentWorkTask(GL3Queue* queue, SwapChain* swapChain,
+                                 uint32_t imageIndex,
+                                 const std::vector<Semaphore*>& waits)
+    : WorkTask(queue), m_swapChain(swapChain), m_waits(waits) {
+    m_swapChain->addRef();
+    for (auto& it : m_waits) {
+        it->addRef();
+    }
+}
+PresentWorkTask::~PresentWorkTask() {
+    m_swapChain->delRef();
+    m_swapChain = nullptr;
+    for (auto& it : m_waits) {
+        it->delRef();
+    }
+    m_waits.clear();
+}
 void PresentWorkTask::execute(GLContext* context) {
     for (auto& item : m_waits) {
         item->wait();

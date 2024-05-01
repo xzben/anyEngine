@@ -1,16 +1,16 @@
 #include <iostream>
+
 #include "platform/Window.h"
+#include "test/gfx/GfxTestApp.h"
 
-int main()
-{
-    Window *win = Window::create("test", 800, 800);
-
+int main() {
+    Window* win = Window::create("test", 800, 800);
     win->init();
 
-    while (!win->shoudleClose())
-    {
-        win->updateEvents();
-    }
+    GfxTestApp app(win);
+    win->setBeforeCloseCallback([&](Window* win) { app.exit(); });
+    app.run();
+    win->delRef();
 
     return 0;
 }

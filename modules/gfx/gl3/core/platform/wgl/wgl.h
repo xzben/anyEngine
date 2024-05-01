@@ -8,6 +8,8 @@
 #include "Windows.h"
 #include "gl3/GL3SwapChain.h"
 
+#pragma comment(lib, "OpenGL32.lib")
+
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
 

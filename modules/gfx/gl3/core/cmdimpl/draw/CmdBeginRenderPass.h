@@ -14,7 +14,7 @@ public:
 public:
     CmdBeginRenderPass(GL3CommandBuffer& cmdBuf)
         : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
-    virtual ~CmdBeginRenderPass() {}
+    virtual ~CmdBeginRenderPass() { reset(); }
 
     void init(RenderPass* renderpass,
               const std::vector<DrawSurface*>& attachments,

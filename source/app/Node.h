@@ -13,9 +13,14 @@ public:
     virtual ~Node();
 
 protected:
-    virtual void onInit();
-    virtual void onDestroy();
     virtual void onUpdate(float dt);
+
+protected:
+    void update(float dt) {
+        foreach ([&](Component* com) { com->update(dt); })
+            ;
+        onUpdate(dt);
+    }
 
 public:
     void addChild(Node* node);

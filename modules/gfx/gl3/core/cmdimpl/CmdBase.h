@@ -38,7 +38,7 @@ enum class CmdType {
 class CmdBase : public NoCopy {
 public:
     CmdBase(GL3CommandBuffer& cmdBuf, CmdType type);
-    virtual ~CmdBase();
+    virtual ~CmdBase() = default;
 
     virtual void reset()                          = 0;
     virtual void execute(gl3::GLContext* context) = 0;

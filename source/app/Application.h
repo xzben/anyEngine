@@ -7,19 +7,25 @@
 #include "System.h"
 #include "common/Object.h"
 #include "common/ObjectContainor.h"
+#include "platform/Window.h"
 
 class Application : public Object, protected ObjectContainor<System> {
 public:
-    Application(const std::string& name);
+    Application(const std::string& name, Window* window);
     virtual ~Application();
 
+    void setWindow(Window* window);
     void run();
     void exit();
 
+protected:
+    virtual void onUpdate(float dt) {}
+    virtual void onUpdateWindow(Window* m_window) {}
+
 public:
-    template <class SYS_CLASS>
-    bool addSystem(const std::string& name) {
-        return addObject<SYS_CLASS>(name);
+    template <class SYS_CLASS, typename... Args>
+    SYS_CLASS* addSystem(const std::string& name, Args&... args) {
+        return addObject<SYS_CLASS>(name, args...);
     }
 
     template <class SYS_CLASS>
@@ -32,15 +38,18 @@ public:
         return getObject<SYS_CLASS>(name);
     }
 
-    void addSystem(System* com) { addObject(com); }
+    bool addSystem(System* com) { return addObject(com); }
     System* getSystem(const std::string& name) { getObject(name); }
 
-public:
-    virtual void onInit();
-    virtual void onDestroy();
-    virtual void onUpdate(float dt);
+protected:
+    void update(float dt);
 
 protected:
-    float m_fps{1.0 / 60};
+    time_t m_lasttime{0};
+    float m_gameRunTime{0};
+    uint32_t m_frameCount{0};
+    float m_fps{1.0f / 60.f};
     bool m_exit{false};
+    std::string m_name;
+    Window* m_window{nullptr};
 };

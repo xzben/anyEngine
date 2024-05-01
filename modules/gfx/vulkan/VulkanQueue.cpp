@@ -11,6 +11,7 @@ VulkanQueue::VulkanQueue(vk::LogicDevice& logicDeivce, QueueType queueType,
     vkGetDeviceQueue(m_logicDevice, m_familyIndex, m_index, &m_handle);
 }
 
+VulkanQueue::~VulkanQueue() {}
 bool VulkanQueue::submit(const std::vector<CommandBuffer*>& cmd,
                          const std::vector<Semaphore*>& wait,
                          const std::vector<Semaphore*>& signal, Fence* fence) {
