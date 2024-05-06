@@ -13,6 +13,22 @@ void GL3Device::exit() {
         delete m_pRenderThreads;
     }
 
+    if (m_innerQueue) {
+        delete m_innerQueue;
+        m_innerQueue = nullptr;
+    }
+
+    if (m_innerCommandPool) {
+        delete m_innerCommandPool;
+        m_innerCommandPool = nullptr;
+    }
+
+    for (auto& queue : m_queues) {
+        delete queue;
+    }
+    m_queues.clear();
+    m_queueMapInfo.clear();
+
     for (auto context : m_subContext) {
         delete context;
     }
@@ -38,6 +54,11 @@ bool GL3Device::init(const DeviceInfo& info) {
             it->second.push_back(queue);
         }
     }
+
+    m_innerQueue = new GL3Queue(*this, QueueType::Transfer, 1.0);
+    m_innerCommandPool =
+        new GL3CommandPool(*this, *m_innerQueue, ResetMode::AlwaysAllocate);
+
     return true;
 }
 
@@ -60,25 +81,6 @@ void GL3Device::initSubRenderThreads(uint32_t threadNum) {
             m_subContext[threadIndex]->clearContextRes();
             m_subContext[threadIndex]->exitCurrent();
         });
-}
-
-void GL3Device::initResourceThread() {
-    m_syncWorkThread = new std::thread([&]() {
-        m_pMainContext->makeCurrent();
-        m_pMainContext->initContextRes();
-        std::queue<SyncWork*> works;
-        while (!m_exit) {
-            m_syncWorkQueue.wait(works);
-
-            while (!works.empty()) {
-                auto& item = works.front();
-                works.pop();
-                item->func();
-                item->finish = true;
-            }
-        }
-        m_pMainContext->clearContextRes();
-    });
 }
 
 GL3Shader* GL3Device::createShader(ShaderModuleInfo* info, uint32_t count) {
@@ -158,12 +160,25 @@ GL3Semaphore* GL3Device::createSemaphore() { return new GL3Semaphore(*this); }
 GL3Event* GL3Device::createEvent() { return new GL3Event(*this); }
 
 void GL3Device::waitIdle() {
+    m_innerQueue->waitIdle();
+
     for (auto& queue : m_queues) {
         queue->waitIdle();
     }
 }
+
 void GL3Device::withOneTimeCmd(
-    std::function<void(CommandBuffer& cmd)> callback) {}
+    std::function<void(CommandBuffer& cmd)> callback) {
+    auto* cmd = m_innerCommandPool->alloc(CommandBufferLevel::PRIMARY);
+    callback(*cmd);
+
+    gl3::CustomWorkTask task(m_innerQueue,
+                             [&](gl3::GLContext* ctx) { cmd->execute(ctx); });
+    addTask(&task);
+    task.waitFinish();
+    m_innerCommandPool->free(cmd);
+}
+
 //-------------------------------------------------------------
 void GL3Device::destroyBuffer(Buffer* buffer) { buffer->delRef(); }
 void GL3Device::destroyEvent(Event* event) { event->delRef(); }

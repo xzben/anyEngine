@@ -47,7 +47,7 @@ public:
 
         m_itemLock.lock();
         m_items.swap(queue);
-        m_count = 0;
+        m_count.store(0);
         m_itemLock.unlock();
 
         return true;

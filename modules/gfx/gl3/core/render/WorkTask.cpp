@@ -56,6 +56,7 @@ void RenderWorkTask::execute(GLContext* context) {
     for (auto& cmd : m_cmds) {
         dynamic_cast<GL3CommandBuffer*>(cmd)->execute(context);
     }
+    GL_CHECK(glFinish());
     //-------------------------------
     for (auto& item : m_waits) {
         item->signal();
@@ -86,7 +87,14 @@ void PresentWorkTask::execute(GLContext* context) {
     for (auto& item : m_waits) {
         item->wait();
     }
-    dynamic_cast<GL3SwapChain*>(m_swapChain)->present();
+    dynamic_cast<GL3SwapChain*>(m_swapChain)->present(context);
+}
+
+///
+
+void CustomWorkTask::execute(GLContext* context) {
+    m_func(context);
+    GL_CHECK(glFinish());
 }
 
 END_GL3_CORE_NAMESPACE

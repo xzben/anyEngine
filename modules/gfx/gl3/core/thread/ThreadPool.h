@@ -5,6 +5,7 @@
 #include <thread>
 
 #include "ThreadPriorityQueue.h"
+#include "ThreadQueue.h"
 #include "gl3/core/gl3_core_common.h"
 
 BEGIN_GFX_NAMESPACE
@@ -61,23 +62,23 @@ public:
         m_threads.clear();
     }
 
-    bool addTask(const WorkTaskType& task, float priority) {
+    bool addTask(const WorkTaskType& task) {
         if (m_exit.load()) return false;
-        m_queue.addItem(task, priority);
+        m_queue.addItem(task);
 
         return true;
     }
 
-    bool addTask(const WorkTaskType&& task, float priority) {
+    bool addTask(const WorkTaskType&& task) {
         if (m_exit.load()) return false;
-        m_queue.addItem(task, priority);
+        m_queue.addItem(task);
 
         return true;
     }
 
 private:
     std::vector<std::thread*> m_threads;
-    ThreadPriorityQueue<WorkTaskType> m_queue;
+    ThreadQueue<WorkTaskType> m_queue;
     std::atomic<bool> m_exit{false};
     THREAD_PREPARE_FUNC m_threaPrepareFunc;
     THREAD_EXIT_FUNC m_threadExitFunc;

@@ -110,6 +110,15 @@ void WGLHelper::deleteContext(WGlContext* context) {
 }
 
 thread_local WGlContext* s_lastContext = nullptr;
+thread_local WGlContext* s_preContext  = nullptr;
+
+WGlContext* WGLHelper::getLastContext() {
+    g_context_lock.lock();
+    WGlContext* lastContext = s_lastContext;
+    g_context_lock.unlock();
+
+    return lastContext;
+}
 
 void WGLHelper::makeCurrent(WGlContext* context) {
     if (s_lastContext == context) {
@@ -123,6 +132,7 @@ void WGLHelper::makeCurrent(WGlContext* context) {
             CCERROR("WGL: Failed to make context[ hdc: %d | hglrc: %d] current",
                     context->hdc, context->hglrc);
         } else {
+            s_preContext  = s_lastContext;
             s_lastContext = context;
             g_context_lock.unlock();
         }
@@ -133,6 +143,7 @@ void WGLHelper::makeCurrent(WGlContext* context) {
             g_context_lock.unlock();
             CCERROR("WGL: Failed to make context empty");
         } else {
+            s_preContext  = s_lastContext;
             s_lastContext = context;
             g_context_lock.unlock();
         }
@@ -190,9 +201,7 @@ void WGLSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info) {
 }
 
 void WGLSwapChain::swapBuffer() { WGLHelper::swapBuffer(m_context); }
-void WGLSwapChain::makeCurrent() { WGLHelper::makeCurrent(m_context); }
 
-void WGLSwapChain::clearCurrent() { WGLHelper::makeCurrent(nullptr); }
 WGLSwapChain::~WGLSwapChain() {
     if (m_context) {
         WGLHelper::deleteContext(m_context);

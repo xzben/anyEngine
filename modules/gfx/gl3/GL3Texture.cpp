@@ -92,7 +92,7 @@ GL3Texture::GL3Texture(GL3Device& device, const TextureInfo& info,
     uint32_t pixelSize   = g_pixelSize[int(info.format)];
     uint64_t textureSize = info.width * info.height * pixelSize;
 
-    m_device.callSync([&]() {
+    m_device.callSync([&](gl3::GLContext* ctx) {
         GL_CHECK(glGenTextures(1, &m_handle));
         GL_CHECK(glBindTexture(target, m_handle));
         switch (info.type) {
@@ -134,7 +134,9 @@ GL3Texture::GL3Texture(GL3Device& device, const TextureInfo& info,
 
 GL3Texture::~GL3Texture() {
     if (m_handle) {
-        m_device.callSync([&]() { GL_CHECK(glDeleteTextures(1, &m_handle)); });
+        m_device.callSync([&](gl3::GLContext* ctx) {
+            GL_CHECK(glDeleteTextures(1, &m_handle));
+        });
         m_handle = OGL_NULL_HANDLE;
     }
 }

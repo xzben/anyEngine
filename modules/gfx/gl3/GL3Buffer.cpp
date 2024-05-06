@@ -25,7 +25,7 @@ GL3Buffer::GL3Buffer(GL3Device& device, BufferType type, uint32_t size,
     m_target  = g_buffer_tages[int(type)];
     m_glUsage = g_buffer_usage[int(type)];
 
-    m_device.callSync([&]() {
+    m_device.callSync([&](gl3::GLContext* ctx) {
         GL_CHECK(glGenBuffers(1, &m_handle));
         GL_CHECK(glBindBuffer(m_target, m_handle));
         GL_CHECK(glBufferData(m_target, size, pData, m_glUsage));
@@ -35,7 +35,9 @@ GL3Buffer::GL3Buffer(GL3Device& device, BufferType type, uint32_t size,
 
 GL3Buffer::~GL3Buffer() {
     if (m_handle != OGL_NULL_HANDLE) {
-        m_device.callSync([&]() { GL_CHECK(glDeleteBuffers(1, &m_handle)); });
+        m_device.callSync([&](gl3::GLContext* ctx) {
+            GL_CHECK(glDeleteBuffers(1, &m_handle));
+        });
         m_handle = OGL_NULL_HANDLE;
     }
 }
@@ -45,7 +47,7 @@ void GL3Buffer::update(const void* data, uint32_t size, uint32_t offset) {
     CCASSERT(curSize <= m_capacity, "update range need in capacity");
     m_size = m_size > curSize ? m_size : curSize;
 
-    m_device.callSync([&]() {
+    m_device.callSync([&](gl3::GLContext* ctx) {
         GL_CHECK(glBindBuffer(m_target, m_handle));
         void* dst{nullptr};
         GL_CHECK(dst = glMapBufferRange(

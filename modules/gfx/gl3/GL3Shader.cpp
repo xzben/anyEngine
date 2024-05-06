@@ -39,7 +39,7 @@ static inline OGL_HANDLE createShaderModel(uint8_t* code, uint32_t size,
 
 GL3Shader::GL3Shader(GL3Device& device, ShaderModuleInfo* infos, uint32_t count)
     : m_device(device) {
-    m_device.callSync([&]() {
+    m_device.callSync([&](gl3::GLContext* ctx) {
         this->createPrograme(infos, count);
         this->reflect();
     });
@@ -77,7 +77,8 @@ void GL3Shader::createPrograme(ShaderModuleInfo* infos, uint32_t count) {
 
 GL3Shader::~GL3Shader() {
     if (m_handle != OGL_NULL_HANDLE) {
-        m_device.callSync([&]() { GL_CHECK(glDeleteProgram(m_handle)); });
+        m_device.callSync(
+            [&](gl3::GLContext* ctx) { GL_CHECK(glDeleteProgram(m_handle)); });
         m_handle = OGL_NULL_HANDLE;
     }
 }

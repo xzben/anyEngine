@@ -66,7 +66,7 @@ public:
     CustomWorkTask(GL3Queue* queue, WorkFunc func)
         : WorkTask(queue), m_func(func) {}
 
-    void execute(GLContext* context) override { m_func(context); }
+    void execute(GLContext* context) override;
 
 private:
     WorkFunc m_func;

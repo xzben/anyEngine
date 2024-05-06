@@ -34,8 +34,6 @@ public:
 
     WGlContext* getContext() { return m_context; }
     void swapBuffer() override;
-    virtual void makeCurrent() override;
-    virtual void clearCurrent() override;
 
 private:
     WGlContext* m_context{nullptr};
@@ -56,7 +54,7 @@ public:
     static void makeCurrent(WGlContext* context);
     static void deleteWindowSurface(WGLSwapChain* surface);
     static void swapBuffer(WGlContext* context);
-
+    static WGlContext* getLastContext();
     static void exitCurrent(WGlContext* context);
 };
 

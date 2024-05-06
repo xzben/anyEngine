@@ -2,6 +2,7 @@
 
 #include "../base/Device.h"
 #include "GL3Buffer.h"
+#include "GL3CommandPool.h"
 #include "GL3Event.h"
 #include "GL3Fence.h"
 #include "GL3InputAssembler.h"
@@ -83,28 +84,14 @@ protected:
     RenderThreadPool* m_pRenderThreads;
     void initSubRenderThreads(uint32_t threadNum);
     bool addTask(WorkTask* task, float priority = 1.0) {
-        return m_pRenderThreads->addTask(task, priority);
+        return m_pRenderThreads->addTask(task);
     }
 
-    using SyncFunc = std::function<void()>;
-
-    struct SyncWork {
-        SyncFunc func;
-        std::atomic<bool> finish;
-    };
-    gl3::ThreadQueue<SyncWork*> m_syncWorkQueue;
-    std::thread* m_syncWorkThread;
-    void initResourceThread();
-
 public:
-    void callSync(SyncFunc func) {
-        SyncWork item;
-        item.func   = func;
-        item.finish = false;
-
-        m_syncWorkQueue.addItem(&item);
-        while (!item.finish)
-            ;
+    void callSync(gl3::CustomWorkTask::WorkFunc func) {
+        gl3::CustomWorkTask task(m_innerQueue, func);
+        addTask(&task);
+        task.waitFinish();
     }
 
     void exit();
@@ -124,6 +111,9 @@ public:
 
 private:
     std::vector<GL3Queue*> m_queues;
+    GL3Queue* m_innerQueue{nullptr};
+    GL3CommandPool* m_innerCommandPool{nullptr};
+
     std::unordered_map<QueueType, std::vector<GL3Queue*>> m_queueMapInfo;
     std::unique_ptr<gl3::GLContext> m_pMainContext;
     std::vector<gl3::GLContext*> m_subContext;

@@ -1,6 +1,7 @@
 #include "GL3SwapChain.h"
 
 #include "GL3Fence.h"
+#include "core/GLContext.h"
 
 BEGIN_GFX_NAMESPACE
 
@@ -70,8 +71,8 @@ void GL3SwapChain::updateAttachment(uint32_t width, uint32_t height) {
     }
 }
 
-void GL3SwapChain::present() {
-    makeCurrent();
+void GL3SwapChain::present(gl3::GLContext* context) {
+    context->makeCurrent(this);
     if (m_imageFbo == OGL_NULL_HANDLE) {
         GL_CHECK(glGenFramebuffers(1, &m_imageFbo));
     }
@@ -95,7 +96,7 @@ void GL3SwapChain::present() {
     GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
 
     swapBuffer();
-    clearCurrent();
+    context->makeCurrent(nullptr);
 }
 
 END_GFX_NAMESPACE

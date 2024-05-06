@@ -76,7 +76,8 @@ void GLContext::makeCurrent(GL3SwapChain* swapChain) {
     if (swapChain == nullptr) {
         WGLHelper::makeCurrent(m_context);
     } else {
-        dynamic_cast<WGLSwapChain*>(swapChain)->makeCurrent();
+        WGLHelper::makeCurrent(
+            dynamic_cast<WGLSwapChain*>(swapChain)->getContext());
     }
 #elif CUR_GL_TYPE == OPENGL_AGL
 

@@ -39,7 +39,7 @@ static const float g_borderColors[][4] = {
 
 GL3Sampler::GL3Sampler(GL3Device& device, const SamplerInfo& info)
     : m_device(device), m_info(info) {
-    m_device.callSync([&]() {
+    m_device.callSync([&](gl3::GLContext* ctx) {
         GL_CHECK(glGenSamplers(1, &m_handle));
         GL_CHECK(glSamplerParameteri(m_handle, GL_TEXTURE_WRAP_S,
                                      g_addressType[(int)info.addressU]));
@@ -72,7 +72,9 @@ GL3Sampler::GL3Sampler(GL3Device& device, const SamplerInfo& info)
 
 GL3Sampler::~GL3Sampler() {
     if (m_handle) {
-        m_device.callSync([&]() { GL_CHECK(glDeleteSamplers(1, &m_handle)); });
+        m_device.callSync([&](gl3::GLContext* ctx) {
+            GL_CHECK(glDeleteSamplers(1, &m_handle));
+        });
         m_handle = OGL_NULL_HANDLE;
     }
 }

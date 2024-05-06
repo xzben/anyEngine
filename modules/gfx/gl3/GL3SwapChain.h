@@ -5,6 +5,11 @@
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
+
+BEGIN_GL3_CORE_NAMESPACE
+class GLContext;
+END_GL3_CORE_NAMESPACE
+
 class GL3Device;
 
 class GL3SwapChain : public SwapChain {
@@ -16,9 +21,7 @@ public:
     virtual std::pair<bool, uint32_t> acquireNextImage(Semaphore* semophore,
                                                        Fence* fence = nullptr,
                                                        uint32_t timeout = 0);
-    virtual void swapBuffer()   = 0;
-    virtual void makeCurrent()  = 0;
-    virtual void clearCurrent() = 0;
+    virtual void swapBuffer() = 0;
 
     virtual OGL_HANDLE getPresentFbo() { return 0; }
     virtual void setActiveImageIndex(uint32_t imageIndex) override {}
@@ -32,7 +35,7 @@ public:
 
     void updateAttachment(uint32_t width, uint32_t height);
 
-    void present();
+    void present(gl3::GLContext* context);
 
 protected:
     GL3Device& m_device;
