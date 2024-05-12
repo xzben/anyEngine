@@ -2,39 +2,47 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set(TARGET_NAME gfx)
 
-set(GFX_LIB_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}")
-set(THIRD_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../3rd/")
-set(MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../")
+# Global flag to cause add_library() to create shared libraries if on.
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
-file(GLOB_RECURSE RUNTIME_HEADERS CONFIGURE_DEPENDS ${GFX_LIB_SOURCE}/*.h)
-file(GLOB_RECURSE RUNTIME_SOURCES CONFIGURE_DEPENDS ${GFX_LIB_SOURCE}/*.cpp)
+# control where the static and shared libraries are built so that on windows
+# we don't need to tinker with the path to run the executable
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
+
+set(GFX_LIB_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/source")
+set(GFX_LIB_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(COMMON_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../common/include")
+
+file(GLOB_RECURSE INTERFACE_HEADERS CONFIGURE_DEPENDS ${GFX_LIB_INCLUDE}/*.h)
+file(GLOB_RECURSE INTERFACE_SOURCES CONFIGURE_DEPENDS ${GFX_LIB_INCLUDE}/*.cpp)
+
+file(GLOB_RECURSE IMPL_HEADERS CONFIGURE_DEPENDS ${GFX_LIB_SOURCE}/*.h)
+file(GLOB_RECURSE IMPL_SOURCES CONFIGURE_DEPENDS ${GFX_LIB_SOURCE}/*.cpp)
+
 
 set(GFX_PRIVATE_INCLUDE 
 ${GFX_LIB_SOURCE}
-${THIRD_LIB_DIR}
-${THIRD_LIB_DIR}/SPIRV-Reflect/
-${MODULES_DIR}/common/
-${THIRD_LIB_DIR}/VulkanSDK/include/
-${THIRD_LIB_DIR}/vulkanmemoryallocator/include/
+${COMMON_MODULE_DIR}
+${GFX_LIB_INCLUDE}
 )
 
 set(GFX_PUBLIC_INCLUDE
-${GFX_LIB_SOURCE}
-${MODULES_DIR}/common/
+${GFX_LIB_INCLUDE}
 )
 
-source_group(TREE "${GFX_LIB_SOURCE}" FILES 
-	${RUNTIME_HEADERS} 
-	${RUNTIME_SOURCES})
-
-source_group(TREE "${THIRD_LIB_DIR}" FILES 
-	${RUNTIME_GLAB} 
-	${RUNTIME_GLAB_HEADS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES 
+	${INTERFACE_HEADERS} 
+	${INTERFACE_SOURCES}
+  ${IMPL_HEADERS}
+  ${IMPL_SOURCES})
 
 add_definitions (-DGLEW_STATIC)
-add_library(${TARGET_NAME} ${RUNTIME_HEADERS} 
-	${RUNTIME_SOURCES}
-    ${RUNTIME_GLAB})
+add_library(${TARGET_NAME} ${INTERFACE_HEADERS} 
+${INTERFACE_SOURCES}
+${IMPL_HEADERS}
+${IMPL_SOURCES})
 
 target_include_directories(${TARGET_NAME} PUBLIC ${GFX_PUBLIC_INCLUDE})
 target_include_directories(${TARGET_NAME} PRIVATE ${GFX_PRIVATE_INCLUDE})
@@ -42,24 +50,19 @@ target_include_directories(${TARGET_NAME} PRIVATE ${GFX_PRIVATE_INCLUDE})
 
 find_package(Vulkan REQUIRED)
 
-if(WIN32)
-    set(vulkan_lib ${THIRD_LIB_DIR}/VulkanSDK/lib/Win32/vulkan-1.lib)
-    set(glslangValidator_executable ${THIRD_LIB_DIR}/VulkanSDK/bin/Win32/glslangValidator.exe)
-    set(spirv_cross_executable ${ENGINE_TOOL_DIR}/spirv-cross/win32/spirv-cross.exe)
-    add_compile_definitions("ENGINE_VK_LAYER_PATH=${THIRD_LIB_DIR}/VulkanSDK/bin/Win32")
-elseif(UNIX)
-    if(APPLE)
-      set(vulkan_lib ${THIRD_LIB_DIR}/VulkanSDK/lib/MacOS/libvulkan.1.dylib)
-      set(glslangValidator_executable ${THIRD_LIB_DIR}/VulkanSDK/bin/MacOS/glslangValidator)
-      add_compile_definitions("ENGINE_VK_LAYER_PATH=${THIRD_LIB_DIR}/VulkanSDK/bin/MacOS")
-      add_compile_definitions("ENGINE_VK_ICD_FILENAMES=${THIRD_LIB_DIR}/VulkanSDK/bin/MacOS/MoltenVK_icd.json")
-    else()
-      set(vulkan_lib ${THIRD_LIB_DIR}/VulkanSDK/lib/Linux/libvulkan.so.1)
-      set(glslangValidator_executable ${THIRD_LIB_DIR}/VulkanSDK/bin/Linux/glslangValidator)
-      add_compile_definitions("ENGINE_VK_LAYER_PATH=${THIRD_LIB_DIR}/VulkanSDK/bin/Linux")
-    endif()
-else()
-  message(FATAL_ERROR "Unknown Platform")
-endif()
+set(VMA_STATIC_VULKAN_FUNCTIONS    OFF CACHE BOOL "Link statically with Vulkan API" FORCE)
+set(VMA_DYNAMIC_VULKAN_FUNCTIONS   ON CACHE BOOL "Fetch pointers to Vulkan functions internally (no static linking)" FORCE)
+set(VMA_BUILD_DOCUMENTATION        OFF CACHE BOOL "Create and install the HTML based API documentation" FORCE)
+set(VMA_BUILD_SAMPLES              OFF CACHE BOOL "Fetch pointers to Vulkan functions internally (no static linking)" FORCE)
+set(PROJECT_IS_TOP_LEVEL           OFF CACHE BOOL "" FORCE)
+add_subdirectory(3rd/VulkanMemoryAllocator)
 
-target_link_libraries(${TARGET_NAME} PRIVATE glfw glew ${vulkan_lib} spirv-reflect-static)
+set(SPIRV_REFLECT_EXECUTABLE  OFF CACHE BOOL "Build spirv-reflect executable" FORCE)
+set(SPIRV_REFLECT_STATIC_LIB ON CACHE BOOL    "Build a SPIRV-Reflect static library" FORCE)
+set(SPIRV_REFLECT_BUILD_TESTS OFF CACHE BOOL  "Build the SPIRV-Reflect test suite" FORCE)
+set(SPIRV_REFLECT_ENABLE_ASSERTS OFF CACHE BOOL "Enable asserts for debugging" FORCE)
+set(SPIRV_REFLECT_ENABLE_ASAN OFF CACHE BOOL   "Use address sanitization" FORCE)
+
+add_subdirectory(3rd/SPIRV-Reflect)
+
+target_link_libraries(${TARGET_NAME} PUBLIC glew VulkanMemoryAllocator spirv-reflect-static Vulkan::Vulkan)

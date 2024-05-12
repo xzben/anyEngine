@@ -2,6 +2,12 @@
 
 #include <string>
 
+#define RELEASE_OBJ(obj)  \
+    if (obj != nullptr) { \
+        obj->delRef();    \
+        obj = nullptr;    \
+    }
+
 class Object {
 public:
     Object(const std::string& name) : m_name(name){};

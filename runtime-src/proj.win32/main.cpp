@@ -10,7 +10,8 @@ int main() {
     GfxTestApp app(win);
     win->setBeforeCloseCallback([&](Window* win) { app.exit(); });
     app.run();
-    win->delRef();
+
+    RELEASE_OBJ(win);
 
     return 0;
 }

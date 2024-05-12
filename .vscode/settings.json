@@ -73,6 +73,7 @@
         "xlocmon": "cpp",
         "xloctime": "cpp",
         "queue": "cpp",
-        "xthread": "cpp"
+        "xthread": "cpp",
+        "filesystem": "cpp"
     }
 }

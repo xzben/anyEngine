@@ -31,9 +31,3 @@ if(NOT TARGET glew)
     add_subdirectory(glew)
 endif()
 
-set(SPIRV_REFLECT_EXECUTABLE OFF CACHE BOOL "Build spirv-reflect executable" FORCE)
-set(SPIRV_REFLECT_EXAMPLES OFF CACHE BOOL "Build stripper examples" FORCE)
-set(SPIRV_REFLECT_STATIC_LIB ON CACHE BOOL "Build a SPIRV-Reflect static library" FORCE)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SPIRV-Reflect)
-
-

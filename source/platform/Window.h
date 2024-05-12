@@ -3,7 +3,7 @@
 #include <functional>
 
 #include "common/Object.h"
-#include "common/common.h"
+#include "common.h"
 #include "math/math.h"
 
 class Window : public Object {

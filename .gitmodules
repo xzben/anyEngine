@@ -10,6 +10,9 @@
 [submodule "3rd/stb"]
 	path = 3rd/stb
 	url = git@github.com:nothings/stb.git
-[submodule "3rd/SPIRV-Reflect"]
-	path = 3rd/SPIRV-Reflect
+[submodule "modules/gfx/3rd/SPIRV-Reflect"]
+	path = modules/gfx/3rd/SPIRV-Reflect
 	url = git@github.com:KhronosGroup/SPIRV-Reflect.git
+[submodule "modules/gfx/3rd/VulkanMemoryAllocator"]
+	path = modules/gfx/3rd/VulkanMemoryAllocator
+	url = git@github.com:GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
