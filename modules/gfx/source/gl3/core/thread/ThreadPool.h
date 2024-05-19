@@ -26,20 +26,17 @@ protected:
     }
 
 public:
-    using TASK_EXECUTE_FUNC =
-        std::function<void(WorkTaskType& item, uint32_t threadIndex)>;
+    using TASK_EXECUTE_FUNC = std::function<void(WorkTaskType& item, uint32_t threadIndex)>;
 
     using THREAD_PREPARE_FUNC = std::function<void(uint32_t threadIndex)>;
     using THREAD_EXIT_FUNC    = std::function<void(uint32_t threadIndex)>;
 
 public:
     ThreadPool(
-        uint32_t threadNum, TASK_EXECUTE_FUNC taskExecuteFunc,
-        THREAD_PREPARE_FUNC prepareFunc = [](uint32_t) {},
-        THREAD_EXIT_FUNC exitFunc       = [](uint32_t) {})
-        : m_taskExcuteFunc(std::move(taskExecuteFunc)),
-          m_threaPrepareFunc(std::move(prepareFunc)),
-          m_threadExitFunc(std::move(exitFunc)) {
+        uint32_t threadNum, TASK_EXECUTE_FUNC taskExecuteFunc, THREAD_PREPARE_FUNC prepareFunc = [](uint32_t) {},
+        THREAD_EXIT_FUNC exitFunc = [](uint32_t) {})
+        : m_taskExcuteFunc(std::move(taskExecuteFunc)), m_threaPrepareFunc(std::move(prepareFunc)), m_threadExitFunc(std::move(exitFunc)) {
+        m_threads.resize(threadNum);
         for (int i = 0; i < threadNum; i++) {
             m_threads[i] = new std::thread(&ThreadPool::threadFunc, this, i);
         }

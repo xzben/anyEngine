@@ -5,8 +5,7 @@
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
 
-static int findPixelFormatAttribValueWGL(const int* attribs, int attribCount,
-                                         const int* values, int attrib) {
+static int findPixelFormatAttribValueWGL(const int* attribs, int attribCount, const int* values, int attrib) {
     int i;
 
     for (i = 0; i < attribCount; i++) {
@@ -24,19 +23,15 @@ static int findPixelFormatAttribValueWGL(const int* attribs, int attribCount,
         attribs[attribCount++] = a;                                         \
     }
 
-#define SET_ATTRIB(a, v)                                                    \
-    {                                                                       \
-        assert(((size_t)index + 1) < sizeof(attribs) / sizeof(attribs[0])); \
-        attribs[index++] = a;                                               \
-        attribs[index++] = v;                                               \
+#define SET_ATTRIB(a, v)      \
+    {                         \
+        attribs[index++] = a; \
+        attribs[index++] = v; \
     }
 
-#define FIND_ATTRIB_VALUE(a) \
-    findPixelFormatAttribValueWGL(attribs, attribCount, values, a)
+#define FIND_ATTRIB_VALUE(a) findPixelFormatAttribValueWGL(attribs, attribCount, values, a)
 
-const WGLConfig* wglChooseConfig(const WGLConfig* desired,
-                                 const WGLConfig* alternatives,
-                                 unsigned int count) {
+const WGLConfig* wglChooseConfig(const WGLConfig* desired, const WGLConfig* alternatives, unsigned int count) {
     unsigned int i;
     unsigned int missing, leastMissing     = UINT_MAX;
     unsigned int colorDiff, leastColorDiff = UINT_MAX;
@@ -60,11 +55,9 @@ const WGLConfig* wglChooseConfig(const WGLConfig* desired,
 
             if (desired->depthBits > 0 && current->depthBits == 0) missing++;
 
-            if (desired->stencilBits > 0 && current->stencilBits == 0)
-                missing++;
+            if (desired->stencilBits > 0 && current->stencilBits == 0) missing++;
 
-            if (desired->auxBuffers > 0
-                && current->auxBuffers < desired->auxBuffers) {
+            if (desired->auxBuffers > 0 && current->auxBuffers < desired->auxBuffers) {
                 missing += desired->auxBuffers - current->auxBuffers;
             }
 
@@ -86,18 +79,15 @@ const WGLConfig* wglChooseConfig(const WGLConfig* desired,
             colorDiff = 0;
 
             if (desired->redBits != WGL_DONT_CARE) {
-                colorDiff += (desired->redBits - current->redBits)
-                             * (desired->redBits - current->redBits);
+                colorDiff += (desired->redBits - current->redBits) * (desired->redBits - current->redBits);
             }
 
             if (desired->greenBits != WGL_DONT_CARE) {
-                colorDiff += (desired->greenBits - current->greenBits)
-                             * (desired->greenBits - current->greenBits);
+                colorDiff += (desired->greenBits - current->greenBits) * (desired->greenBits - current->greenBits);
             }
 
             if (desired->blueBits != WGL_DONT_CARE) {
-                colorDiff += (desired->blueBits - current->blueBits)
-                             * (desired->blueBits - current->blueBits);
+                colorDiff += (desired->blueBits - current->blueBits) * (desired->blueBits - current->blueBits);
             }
         }
 
@@ -106,46 +96,35 @@ const WGLConfig* wglChooseConfig(const WGLConfig* desired,
             extraDiff = 0;
 
             if (desired->alphaBits != WGL_DONT_CARE) {
-                extraDiff += (desired->alphaBits - current->alphaBits)
-                             * (desired->alphaBits - current->alphaBits);
+                extraDiff += (desired->alphaBits - current->alphaBits) * (desired->alphaBits - current->alphaBits);
             }
 
             if (desired->depthBits != WGL_DONT_CARE) {
-                extraDiff += (desired->depthBits - current->depthBits)
-                             * (desired->depthBits - current->depthBits);
+                extraDiff += (desired->depthBits - current->depthBits) * (desired->depthBits - current->depthBits);
             }
 
             if (desired->stencilBits != WGL_DONT_CARE) {
-                extraDiff += (desired->stencilBits - current->stencilBits)
-                             * (desired->stencilBits - current->stencilBits);
+                extraDiff += (desired->stencilBits - current->stencilBits) * (desired->stencilBits - current->stencilBits);
             }
 
             if (desired->accumRedBits != WGL_DONT_CARE) {
-                extraDiff += (desired->accumRedBits - current->accumRedBits)
-                             * (desired->accumRedBits - current->accumRedBits);
+                extraDiff += (desired->accumRedBits - current->accumRedBits) * (desired->accumRedBits - current->accumRedBits);
             }
 
             if (desired->accumGreenBits != WGL_DONT_CARE) {
-                extraDiff +=
-                    (desired->accumGreenBits - current->accumGreenBits)
-                    * (desired->accumGreenBits - current->accumGreenBits);
+                extraDiff += (desired->accumGreenBits - current->accumGreenBits) * (desired->accumGreenBits - current->accumGreenBits);
             }
 
             if (desired->accumBlueBits != WGL_DONT_CARE) {
-                extraDiff +=
-                    (desired->accumBlueBits - current->accumBlueBits)
-                    * (desired->accumBlueBits - current->accumBlueBits);
+                extraDiff += (desired->accumBlueBits - current->accumBlueBits) * (desired->accumBlueBits - current->accumBlueBits);
             }
 
             if (desired->accumAlphaBits != WGL_DONT_CARE) {
-                extraDiff +=
-                    (desired->accumAlphaBits - current->accumAlphaBits)
-                    * (desired->accumAlphaBits - current->accumAlphaBits);
+                extraDiff += (desired->accumAlphaBits - current->accumAlphaBits) * (desired->accumAlphaBits - current->accumAlphaBits);
             }
 
             if (desired->samples != WGL_DONT_CARE) {
-                extraDiff += (desired->samples - current->samples)
-                             * (desired->samples - current->samples);
+                extraDiff += (desired->samples - current->samples) * (desired->samples - current->samples);
             }
 
             if (desired->sRGB && !current->sRGB) extraDiff++;
@@ -158,9 +137,7 @@ const WGLConfig* wglChooseConfig(const WGLConfig* desired,
         if (missing < leastMissing)
             closest = current;
         else if (missing == leastMissing) {
-            if ((colorDiff < leastColorDiff)
-                || (colorDiff == leastColorDiff
-                    && extraDiff < leastExtraDiff)) {
+            if ((colorDiff < leastColorDiff) || (colorDiff == leastColorDiff && extraDiff < leastExtraDiff)) {
                 closest = current;
             }
         }
@@ -182,8 +159,7 @@ int choosePixelFormatWGL(HDC hdc, const WGLConfig* fbconfig) {
     int values[sizeof(attribs) / sizeof(attribs[0])];
 
     std::vector<WGLConfig> usableConfigs;
-    nativeCount =
-        DescribePixelFormat(hdc, 1, sizeof(PIXELFORMATDESCRIPTOR), NULL);
+    nativeCount = DescribePixelFormat(hdc, 1, sizeof(PIXELFORMATDESCRIPTOR), NULL);
 
     if (WGLEW_ARB_pixel_format) {
         ADD_ATTRIB(WGL_SUPPORT_OPENGL_ARB);
@@ -211,8 +187,7 @@ int choosePixelFormatWGL(HDC hdc, const WGLConfig* fbconfig) {
 
         if (WGLEW_ARB_multisample) ADD_ATTRIB(WGL_SAMPLES_ARB);
 
-        if (WGLEW_ARB_framebuffer_sRGB || WGLEW_EXT_framebuffer_sRGB)
-            ADD_ATTRIB(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB);
+        if (WGLEW_ARB_framebuffer_sRGB || WGLEW_EXT_framebuffer_sRGB) ADD_ATTRIB(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB);
     }
     usableConfigs.resize(nativeCount);
 
@@ -223,27 +198,20 @@ int choosePixelFormatWGL(HDC hdc, const WGLConfig* fbconfig) {
         if (WGLEW_ARB_pixel_format) {
             // Get pixel format attributes through "modern" extension
 
-            if (!wglGetPixelFormatAttribivARB(hdc, pixelFormat, 0, attribCount,
-                                              attribs, values)) {
+            if (!wglGetPixelFormatAttribivARB(hdc, pixelFormat, 0, attribCount, attribs, values)) {
                 CCERROR("WGL: Failed to retrieve pixel format attributes");
                 return 0;
             }
 
-            if (!FIND_ATTRIB_VALUE(WGL_SUPPORT_OPENGL_ARB)
-                || !FIND_ATTRIB_VALUE(WGL_DRAW_TO_WINDOW_ARB)) {
+            if (!FIND_ATTRIB_VALUE(WGL_SUPPORT_OPENGL_ARB) || !FIND_ATTRIB_VALUE(WGL_DRAW_TO_WINDOW_ARB)) {
                 continue;
             }
 
-            if (FIND_ATTRIB_VALUE(WGL_PIXEL_TYPE_ARB) != WGL_TYPE_RGBA_ARB)
-                continue;
+            if (FIND_ATTRIB_VALUE(WGL_PIXEL_TYPE_ARB) != WGL_TYPE_RGBA_ARB) continue;
 
-            if (FIND_ATTRIB_VALUE(WGL_ACCELERATION_ARB)
-                == WGL_NO_ACCELERATION_ARB)
-                continue;
+            if (FIND_ATTRIB_VALUE(WGL_ACCELERATION_ARB) == WGL_NO_ACCELERATION_ARB) continue;
 
-            if (FIND_ATTRIB_VALUE(WGL_DOUBLE_BUFFER_ARB)
-                != fbconfig->doublebuffer)
-                continue;
+            if (FIND_ATTRIB_VALUE(WGL_DOUBLE_BUFFER_ARB) != fbconfig->doublebuffer) continue;
 
             u->redBits   = FIND_ATTRIB_VALUE(WGL_RED_BITS_ARB);
             u->greenBits = FIND_ATTRIB_VALUE(WGL_GREEN_BITS_ARB);
@@ -262,38 +230,32 @@ int choosePixelFormatWGL(HDC hdc, const WGLConfig* fbconfig) {
 
             if (FIND_ATTRIB_VALUE(WGL_STEREO_ARB)) u->stereo = WGL_TRUE;
 
-            if (WGLEW_ARB_multisample)
-                u->samples = FIND_ATTRIB_VALUE(WGL_SAMPLES_ARB);
+            if (WGLEW_ARB_multisample) u->samples = FIND_ATTRIB_VALUE(WGL_SAMPLES_ARB);
 
             if (WGLEW_ARB_framebuffer_sRGB || WGLEW_EXT_framebuffer_sRGB) {
-                if (FIND_ATTRIB_VALUE(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB))
-                    u->sRGB = WGL_TRUE;
+                if (FIND_ATTRIB_VALUE(WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB)) u->sRGB = WGL_TRUE;
             }
         } else {
             // Get pixel format attributes through legacy PFDs
 
             PIXELFORMATDESCRIPTOR pfd;
 
-            if (!DescribePixelFormat(hdc, pixelFormat,
-                                     sizeof(PIXELFORMATDESCRIPTOR), &pfd)) {
+            if (!DescribePixelFormat(hdc, pixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd)) {
                 CCERROR("WGL: Failed to describe pixel format");
                 return 0;
             }
 
-            if (!(pfd.dwFlags & PFD_DRAW_TO_WINDOW)
-                || !(pfd.dwFlags & PFD_SUPPORT_OPENGL)) {
+            if (!(pfd.dwFlags & PFD_DRAW_TO_WINDOW) || !(pfd.dwFlags & PFD_SUPPORT_OPENGL)) {
                 continue;
             }
 
-            if (!(pfd.dwFlags & PFD_GENERIC_ACCELERATED)
-                && (pfd.dwFlags & PFD_GENERIC_FORMAT)) {
+            if (!(pfd.dwFlags & PFD_GENERIC_ACCELERATED) && (pfd.dwFlags & PFD_GENERIC_FORMAT)) {
                 continue;
             }
 
             if (pfd.iPixelType != PFD_TYPE_RGBA) continue;
 
-            if (!!(pfd.dwFlags & PFD_DOUBLEBUFFER) != fbconfig->doublebuffer)
-                continue;
+            if (!!(pfd.dwFlags & PFD_DOUBLEBUFFER) != fbconfig->doublebuffer) continue;
 
             u->redBits   = pfd.cRedBits;
             u->greenBits = pfd.cGreenBits;
@@ -349,12 +311,9 @@ void setAttribsARB(int* attribs, const WLGCtxconfig& ctxConfig) {
     if (ctxConfig.robustness != RobustnessType::NO_ROBUSTNESS) {
         if (WGLEW_ARB_create_context_robustness) {
             if (ctxConfig.robustness == RobustnessType::NO_RESET_NOTIFICATION) {
-                SET_ATTRIB(WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB,
-                           WGL_NO_RESET_NOTIFICATION_ARB);
-            } else if (ctxConfig.robustness
-                       == RobustnessType::LOSE_CONTEXT_ON_RESET) {
-                SET_ATTRIB(WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB,
-                           WGL_LOSE_CONTEXT_ON_RESET_ARB);
+                SET_ATTRIB(WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB, WGL_NO_RESET_NOTIFICATION_ARB);
+            } else if (ctxConfig.robustness == RobustnessType::LOSE_CONTEXT_ON_RESET) {
+                SET_ATTRIB(WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB, WGL_LOSE_CONTEXT_ON_RESET_ARB);
             }
 
             flags |= WGL_CONTEXT_ROBUST_ACCESS_BIT_ARB;
@@ -364,12 +323,9 @@ void setAttribsARB(int* attribs, const WLGCtxconfig& ctxConfig) {
     if (ctxConfig.release != ReleaseType::ANY_RELEASE_BEHAVIOR) {
         if (WGLEW_ARB_context_flush_control) {
             if (ctxConfig.release == ReleaseType::RELEASE_BEHAVIOR_NONE) {
-                SET_ATTRIB(WGL_CONTEXT_RELEASE_BEHAVIOR_ARB,
-                           WGL_CONTEXT_RELEASE_BEHAVIOR_NONE_ARB);
-            } else if (ctxConfig.release
-                       == ReleaseType::RELEASE_BEHAVIOR_FLUSH) {
-                SET_ATTRIB(WGL_CONTEXT_RELEASE_BEHAVIOR_ARB,
-                           WGL_CONTEXT_RELEASE_BEHAVIOR_FLUSH_ARB);
+                SET_ATTRIB(WGL_CONTEXT_RELEASE_BEHAVIOR_ARB, WGL_CONTEXT_RELEASE_BEHAVIOR_NONE_ARB);
+            } else if (ctxConfig.release == ReleaseType::RELEASE_BEHAVIOR_FLUSH) {
+                SET_ATTRIB(WGL_CONTEXT_RELEASE_BEHAVIOR_ARB, WGL_CONTEXT_RELEASE_BEHAVIOR_FLUSH_ARB);
             }
         }
     }

@@ -22,14 +22,14 @@ void GLContext::init() {
 }
 GLContext::GLContext(GL3Device& device) : m_device(device) {
     static bool s_inited = false;
-    /*if (!s_inited) {
+    if (!s_inited) {
         g_initLock.lock();
         if (!s_inited) {
             init();
             s_inited = true;
         }
         g_initLock.unlock();
-    }*/
+    }
     m_context = createContext(nullptr);
 }
 

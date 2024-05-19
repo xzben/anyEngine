@@ -56,7 +56,7 @@ enum class ReleaseType {
 };
 
 struct WLGCtxconfig {
-    int major{3};
+    int major{4};
     int minor{3};
     WGLBool forward{WGL_TRUE};
     WGLBool debug{WGL_TRUE};

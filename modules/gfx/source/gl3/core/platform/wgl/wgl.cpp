@@ -1,7 +1,9 @@
 #include "wgl.h"
 
+#include <conio.h>
 #include <windows.h>
 
+#include <cstdio>
 #include <mutex>
 
 #include "wgl_config.h"
@@ -27,6 +29,7 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext, bool
     int attribs[40];
     int pixelFormat;
     PIXELFORMATDESCRIPTOR pfd;
+    memset(&pfd, 0, sizeof(pfd));
     HGLRC share = NULL;
     if (shareContext != nullptr) {
         share = shareContext->hglrc;
@@ -35,11 +38,13 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext, bool
     HGLRC newHglrc = NULL;
     bool selfHdc   = false;
     if (window == NULL) {
-        hdc     = ::GetDC(NULL);
-        selfHdc = true;
+        HWND forageHwnd = ::GetForegroundWindow();
+        hdc             = ::GetDC(forageHwnd);
+        selfHdc         = true;
     } else {
         hdc = ::GetDC(window);
     }
+
     WLGCtxconfig ctxConfig;
     WGLConfig pbConfig;
     pbConfig.doublebuffer = singleBuffer ? WGL_FALSE : WGL_TRUE;
