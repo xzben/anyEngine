@@ -30,7 +30,7 @@ struct WGLConfig {
     int accumAlphaBits{0};
     int auxBuffers{0};
     WGLBool stereo{WGL_FALSE};
-    int samples{};
+    int samples{0};
     WGLBool sRGB{WGL_TRUE};
     WGLBool doublebuffer{WGL_TRUE};
     WGLBool transparent{WGL_FALSE};
@@ -56,12 +56,12 @@ enum class ReleaseType {
 };
 
 struct WLGCtxconfig {
-    int major{4};
+    int major{3};
     int minor{3};
     WGLBool forward{WGL_TRUE};
     WGLBool debug{WGL_TRUE};
     WGLBool noerror{WGL_TRUE};
-    ProfileType profile{ProfileType::OPENGL_ANY_PROFILE};
+    ProfileType profile{ProfileType::OPENGL_CORE_PROFILE};
     RobustnessType robustness{RobustnessType::NO_ROBUSTNESS};
     ReleaseType release{ReleaseType::ANY_RELEASE_BEHAVIOR};
 };

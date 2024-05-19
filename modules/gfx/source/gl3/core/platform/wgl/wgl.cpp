@@ -1,5 +1,7 @@
 #include "wgl.h"
 
+#include <windows.h>
+
 #include <mutex>
 
 #include "wgl_config.h"
@@ -12,19 +14,15 @@ BEGIN_GL3_CORE_NAMESPACE
 static std::mutex g_context_lock;
 
 bool WGLHelper::init() {
-    HDC hdc = ::GetDC(NULL);
-    g_context_lock.lock();
-    HGLRC tempHglrc = wglCreateContext(hdc);
-    wglMakeCurrent(hdc, tempHglrc);
+    auto tempCtx = createContext(NULL, nullptr, true);
+    makeCurrent(tempCtx);
     glewInit();
-    wglMakeCurrent(NULL, NULL);
-    g_context_lock.unlock();
-    wglDeleteContext(tempHglrc);
+    makeCurrent(nullptr);
+    deleteContext(tempCtx);
     return true;
 }
 
-WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext,
-                                     bool singleBuffer) {
+WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext, bool singleBuffer) {
     bool success = true;
     int attribs[40];
     int pixelFormat;
@@ -46,29 +44,30 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext,
     WGLConfig pbConfig;
     pbConfig.doublebuffer = singleBuffer ? WGL_FALSE : WGL_TRUE;
 
+    g_context_lock.lock();
     pixelFormat = choosePixelFormatWGL(hdc, &pbConfig);
     if (0 == pixelFormat) {
-        CCERROR("can't find pixelFormat for hdc:%d", hdc);
+        CCERROR("can't find pixelFormat for hdc:%x", hdc);
         return nullptr;
     }
     if (!DescribePixelFormat(hdc, pixelFormat, sizeof(pfd), &pfd)) {
-        CCERROR("WGL: Failed to retrieve PFD for selected pixel format");
+        const DWORD error = GetLastError();
+        CCERROR("WGL: Failed to retrieve PFD for selected pixel format error:%d", error);
         return nullptr;
     }
 
     if (!SetPixelFormat(hdc, pixelFormat, &pfd)) {
-        CCERROR("WGL: Failed to set selected pixel format");
+        const DWORD error = GetLastError();
+        CCERROR("WGL: Failed to set selected pixel format by error:%x", error);
         return nullptr;
     }
-
-    g_context_lock.lock();
 
     if (WGLEW_ARB_create_context) {
         setAttribsARB(attribs, ctxConfig);
         newHglrc = wglCreateContextAttribsARB(hdc, share, attribs);
         if (!newHglrc) {
             const DWORD error = GetLastError();
-            CCERROR("create context error[%d]", error);
+            CCERROR("create context error[%x]", error);
             success = false;
         }
     } else {
@@ -103,10 +102,13 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext,
 }
 
 void WGLHelper::deleteContext(WGlContext* context) {
-    if (context && context->hglrc) {
+    if (context == nullptr) return;
+
+    if (context->hglrc) {
         wglDeleteContext(context->hglrc);
         context->hglrc = NULL;
     }
+    delete context;
 }
 
 thread_local WGlContext* s_lastContext = nullptr;
@@ -129,8 +131,7 @@ void WGLHelper::makeCurrent(WGlContext* context) {
         g_context_lock.lock();
         if (!wglMakeCurrent(context->hdc, context->hglrc)) {
             g_context_lock.unlock();
-            CCERROR("WGL: Failed to make context[ hdc: %d | hglrc: %d] current",
-                    context->hdc, context->hglrc);
+            CCERROR("WGL: Failed to make context[ hdc: %d | hglrc: %d] current", context->hdc, context->hglrc);
         } else {
             s_preContext  = s_lastContext;
             s_lastContext = context;
@@ -165,13 +166,9 @@ void WGLHelper::exitCurrent(WGlContext* context) {
     }
 }
 
-WGLSwapChain* WGLHelper::createWindowSurface(GL3Device& device, HWND win,
-                                             uint32_t width, uint32_t height,
-                                             bool singleBuffer,
-                                             bool needDepthStencil,
+WGLSwapChain* WGLHelper::createWindowSurface(GL3Device& device, HWND win, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil,
                                              WGlContext* mainContext) {
-    return new WGLSwapChain(device, win, width, height, singleBuffer,
-                            needDepthStencil, mainContext);
+    return new WGLSwapChain(device, win, width, height, singleBuffer, needDepthStencil, mainContext);
 }
 
 void WGLHelper::deleteWindowSurface(WGLSwapChain* surface) { delete surface; }
@@ -179,9 +176,8 @@ void WGLHelper::swapBuffer(WGlContext* context) { SwapBuffers(context->hdc); }
 
 //-----
 
-WGLSwapChain::WGLSwapChain(GL3Device& device, HWND window, uint32_t width,
-                           uint32_t height, bool singleBuffer,
-                           bool needDepthStencil, WGlContext* shareContext)
+WGLSwapChain::WGLSwapChain(GL3Device& device, HWND window, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil,
+                           WGlContext* shareContext)
     : GL3SwapChain(device, width, height, singleBuffer, needDepthStencil) {
     m_context = WGLHelper::createContext(window, shareContext, singleBuffer);
 }
@@ -194,8 +190,7 @@ void WGLSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info) {
     m_width        = info.width;
     m_height       = info.height;
 
-    m_context = WGLHelper::createContext((HWND)info.handle, shareContext,
-                                         m_singleBuffer);
+    m_context = WGLHelper::createContext((HWND)info.handle, shareContext, m_singleBuffer);
 
     updateAttachment(info.width, info.height);
 }

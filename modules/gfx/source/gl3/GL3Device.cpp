@@ -55,16 +55,15 @@ bool GL3Device::init(const DeviceInfo& info) {
         }
     }
 
-    m_innerQueue = new GL3Queue(*this, QueueType::Transfer, 1.0);
-    m_innerCommandPool =
-        new GL3CommandPool(*this, *m_innerQueue, ResetMode::AlwaysAllocate);
+    m_innerQueue       = new GL3Queue(*this, QueueType::Transfer, 1.0);
+    m_innerCommandPool = new GL3CommandPool(*this, *m_innerQueue, ResetMode::AlwaysAllocate);
 
     return true;
 }
 
 void GL3Device::initSubRenderThreads(uint32_t threadNum) {
     m_subContext.resize(threadNum);
-    for (int i = 0; i < threadNum; i++) {
+    for (uint32_t i = 0; i < threadNum; i++) {
         m_subContext[i] = m_pMainContext->createSubContext();
     }
     m_pRenderThreads = new RenderThreadPool(
@@ -83,9 +82,7 @@ void GL3Device::initSubRenderThreads(uint32_t threadNum) {
         });
 }
 
-GL3Shader* GL3Device::createShader(ShaderModuleInfo* info, uint32_t count) {
-    return new GL3Shader(*this, info, count);
-}
+GL3Shader* GL3Device::createShader(ShaderModuleInfo* info, uint32_t count) { return new GL3Shader(*this, info, count); }
 
 GL3Queue* GL3Device::getQueue(QueueType& type, uint32_t index) {
     auto it = m_queueMapInfo.find(type);
@@ -99,61 +96,37 @@ GL3Queue* GL3Device::getQueue(QueueType& type, uint32_t index) {
     return it->second[index];
 }
 
-GL3RenderPass* GL3Device::createRenderPass(
-    const std::vector<Attachment>& attachments,
-    const std::vector<SubPass>& subpass,
-    const std::vector<SubPassDependency>& dependencies) {
+GL3RenderPass* GL3Device::createRenderPass(const std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+                                           const std::vector<SubPassDependency>& dependencies) {
     return new GL3RenderPass(*this, attachments, subpass, dependencies);
 }
 
-GL3Pipeline* GL3Device::createPipeline(RenderPass* renderPass, uint32_t subpass,
-                                       Shader* shader,
-                                       const PipelineState& state) {
+GL3Pipeline* GL3Device::createPipeline(RenderPass* renderPass, uint32_t subpass, Shader* shader, const PipelineState& state) {
     return new GL3Pipeline(*this, renderPass, subpass, shader, state);
 }
 
-GL3Texture* GL3Device::createTexture(const TextureInfo& info,
-                                     const void* pData) {
-    return new GL3Texture(*this, info, pData);
+GL3Texture* GL3Device::createTexture(const TextureInfo& info, const void* pData) { return new GL3Texture(*this, info, pData); }
+
+GL3Buffer* GL3Device::createBuffer(BufferType type, uint32_t size, const void* pData) { return new GL3Buffer(*this, type, size, pData); }
+GL3Sampler* GL3Device::createSampler(const SamplerInfo& info) { return new GL3Sampler(*this, info); }
+
+GL3InputAssembler* GL3Device::createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes, const void* pVertexData,
+                                                   uint32_t vertexCount, const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
+    return new GL3InputAssembler(*this, primitiveType, attributes, pVertexData, vertexCount, pIndexData, indexCount, indexItemSize);
 }
 
-GL3Buffer* GL3Device::createBuffer(BufferType type, uint32_t size,
-                                   const void* pData) {
-    return new GL3Buffer(*this, type, size, pData);
-}
-GL3Sampler* GL3Device::createSampler(const SamplerInfo& info) {
-    return new GL3Sampler(*this, info);
-}
-
-GL3InputAssembler* GL3Device::createInputAssembler(
-    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-    const void* pVertexData, uint32_t vertexCount, const void* pIndexData,
-    uint32_t indexCount, uint32_t indexItemSize) {
-    return new GL3InputAssembler(*this, primitiveType, attributes, pVertexData,
-                                 vertexCount, pIndexData, indexCount,
-                                 indexItemSize);
+GL3InputAssembler* GL3Device::createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+                                                   const std::vector<Attribute>& InstanceAttributes, const void* pVertexData, uint32_t vertexCount,
+                                                   const void* pInstanceData, uint32_t instanceCount, const void* pIndexData, uint32_t indexCount,
+                                                   uint32_t indexItemSize) {
+    return new GL3InputAssembler(*this, primitiveType, attributes, InstanceAttributes, pVertexData, vertexCount, pInstanceData, instanceCount,
+                                 pIndexData, indexCount, indexItemSize);
 }
 
-GL3InputAssembler* GL3Device::createInputAssembler(
-    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-    const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
-    uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
-    const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
-    return new GL3InputAssembler(*this, primitiveType, attributes,
-                                 InstanceAttributes, pVertexData, vertexCount,
-                                 pInstanceData, instanceCount, pIndexData,
-                                 indexCount, indexItemSize);
+GL3SwapChain* GL3Device::createSwapChain(void* nativeWindow, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil) {
+    return m_pMainContext->createSwapChain(nativeWindow, width, height, singleBuffer, needDepthStencil);
 }
-
-GL3SwapChain* GL3Device::createSwapChain(void* nativeWindow, uint32_t width,
-                                         uint32_t height, bool singleBuffer,
-                                         bool needDepthStencil) {
-    return m_pMainContext->createSwapChain(nativeWindow, width, height,
-                                           singleBuffer, needDepthStencil);
-}
-GL3Fence* GL3Device::createFence(bool signaled) {
-    return new GL3Fence(*this, signaled);
-}
+GL3Fence* GL3Device::createFence(bool signaled) { return new GL3Fence(*this, signaled); }
 
 GL3Semaphore* GL3Device::createSemaphore() { return new GL3Semaphore(*this); }
 
@@ -167,13 +140,11 @@ void GL3Device::waitIdle() {
     }
 }
 
-void GL3Device::withOneTimeCmd(
-    std::function<void(CommandBuffer& cmd)> callback) {
+void GL3Device::withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callback) {
     auto* cmd = m_innerCommandPool->alloc(CommandBufferLevel::PRIMARY);
     callback(*cmd);
 
-    gl3::CustomWorkTask task(m_innerQueue,
-                             [&](gl3::GLContext* ctx) { cmd->execute(ctx); });
+    gl3::CustomWorkTask task(m_innerQueue, [&](gl3::GLContext* ctx) { cmd->execute(ctx); });
     addTask(&task);
     task.waitFinish();
     m_innerCommandPool->free(cmd);
@@ -183,13 +154,9 @@ void GL3Device::withOneTimeCmd(
 void GL3Device::destroyBuffer(Buffer* buffer) { buffer->delRef(); }
 void GL3Device::destroyEvent(Event* event) { event->delRef(); }
 void GL3Device::destroyFence(Fence* fence) { fence->delRef(); }
-void GL3Device::destroyInputAssembler(InputAssembler* input) {
-    input->delRef();
-}
+void GL3Device::destroyInputAssembler(InputAssembler* input) { input->delRef(); }
 void GL3Device::destroyPipeline(Pipeline* pipeline) { pipeline->delRef(); }
-void GL3Device::destroyRenderPasss(RenderPass* renderPass) {
-    renderPass->delRef();
-}
+void GL3Device::destroyRenderPasss(RenderPass* renderPass) { renderPass->delRef(); }
 void GL3Device::destroySampler(Sampler* sampler) { sampler->delRef(); }
 void GL3Device::destroySemaphore(Semaphore* semaphore) { semaphore->delRef(); }
 void GL3Device::destroyShader(Shader* shader) { shader->delRef(); }

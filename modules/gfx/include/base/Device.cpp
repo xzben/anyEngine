@@ -9,9 +9,11 @@ Device* Device::createDevice(const DeviceInfo& info) {
     switch (info.api) {
         case GFX_API::GL3: {
             device = new GL3Device();
+            break;
         }
         case GFX_API::VULKAN: {
             device = new VulkanDevice();
+            break;
         }
         // case GFX_API::OPENGL3: {
         //     break;

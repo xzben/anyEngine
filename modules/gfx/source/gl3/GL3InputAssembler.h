@@ -9,7 +9,7 @@ class GL3Device;
 class GL3InputAssembler : public InputAssembler {
 public:
     static void GetAttributeDataInfo(DataFormat format, uint32_t& count,
-                                     uint32_t& size, GLenum& gltype);
+                                     uint32_t& size, GLenum& gltype, bool& intType);
     static GLenum GetPrimivteGLType(PrimitiveType type);
 
 public:

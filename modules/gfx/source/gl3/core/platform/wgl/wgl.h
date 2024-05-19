@@ -8,10 +8,25 @@
 #include "Windows.h"
 #include "gl3/GL3SwapChain.h"
 
-#pragma comment(lib, "OpenGL32.lib")
+#pragma comment(lib, "Gdi32.lib")
+#pragma comment(lib, "opengl32.lib")
 
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
+
+#if DEBUG_OPENGL
+
+#define WGL_CHECK(code)                               \
+    do {                                              \
+        code;                                         \
+        const DWORD error = GetLastError();           \
+        if (error != 0) {                             \
+            CCERROR("wgl %s error:%x", #code, error); \
+        }                                             \
+    } while (false)
+#else
+#define WGL_CHECK(code) code
+#endif
 
 struct WGlContext {
     HDC hdc{NULL};
@@ -25,9 +40,7 @@ struct WGlContext {
 class WGLSwapChain : public GL3SwapChain {
 public:
     // 基于一个mainContext 创建
-    WGLSwapChain(GL3Device& device, HWND window, uint32_t width,
-                 uint32_t height, bool singleBuffer, bool needDepthStencil,
-                 WGlContext* shareContext);
+    WGLSwapChain(GL3Device& device, HWND window, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil, WGlContext* shareContext);
 
     virtual ~WGLSwapChain();
     virtual void handleUpdateSurfaceInfo(const SurfaceInfo& info) override;
@@ -42,13 +55,9 @@ private:
 class WGLHelper {
 public:
     static bool init();
-    static WGlContext* createContext(HWND window, WGlContext* share,
-                                     bool singleBuffer);
+    static WGlContext* createContext(HWND window, WGlContext* share, bool singleBuffer);
     static void deleteContext(WGlContext* context);
-    static WGLSwapChain* createWindowSurface(GL3Device& device, HWND win,
-                                             uint32_t width, uint32_t height,
-                                             bool singleBuffer,
-                                             bool needDepthStencil,
+    static WGLSwapChain* createWindowSurface(GL3Device& device, HWND win, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil,
                                              WGlContext* mainContext);
 
     static void makeCurrent(WGlContext* context);

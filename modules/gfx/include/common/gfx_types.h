@@ -9,7 +9,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-using GFX_HANDLE                        = void *;
+using GFX_HANDLE                        = uint32_t;
 static const GFX_HANDLE GFX_NULL_HANDLE = 0;
 
 enum class GFX_API {
@@ -204,13 +204,9 @@ enum class FrontFace {
 
 struct RasterizationState {
     bool operator==(const RasterizationState &rhs) {
-        return depthClampEnable == rhs.depthClampEnable
-               && rasterizerDiscardEnable == rhs.rasterizerDiscardEnable
-               && polygonMode == rhs.polygonMode && lineWidth == rhs.lineWidth
-               && cullMode == rhs.cullMode && frontFace == rhs.frontFace
-               && depthBiasEnable == rhs.depthBiasEnable
-               && depthBiasConstantFactor == rhs.depthBiasConstantFactor
-               && depthBiasClamp == rhs.depthBiasClamp
+        return depthClampEnable == rhs.depthClampEnable && rasterizerDiscardEnable == rhs.rasterizerDiscardEnable && polygonMode == rhs.polygonMode
+               && lineWidth == rhs.lineWidth && cullMode == rhs.cullMode && frontFace == rhs.frontFace && depthBiasEnable == rhs.depthBiasEnable
+               && depthBiasConstantFactor == rhs.depthBiasConstantFactor && depthBiasClamp == rhs.depthBiasClamp
                && depthBiassSlopeFactor == rhs.depthBiassSlopeFactor;
     }
 
@@ -268,10 +264,8 @@ enum class StencilOp {
 
 struct StencilOpState {
     bool operator==(const StencilOpState &rhs) {
-        return failOp == rhs.failOp && passOp == rhs.passOp
-               && depthFailOP == rhs.depthFailOP && compareOp == rhs.compareOp
-               && compareMask == rhs.compareMask && writeMask == rhs.writeMask
-               && reference == rhs.reference;
+        return failOp == rhs.failOp && passOp == rhs.passOp && depthFailOP == rhs.depthFailOP && compareOp == rhs.compareOp
+               && compareMask == rhs.compareMask && writeMask == rhs.writeMask && reference == rhs.reference;
     }
     bool operator!=(const StencilOpState &rhs) { return !operator==(rhs); }
 
@@ -286,14 +280,9 @@ struct StencilOpState {
 
 struct DepthStencilState {
     bool operator==(const DepthStencilState &rhs) {
-        return depthTestEnable == rhs.depthTestEnable
-               && depthWriteEnable == rhs.depthWriteEnable
-               && depthCompareOp == rhs.depthCompareOp
-               && depthBoundsTestEnable == rhs.depthBoundsTestEnable
-               && minDepthBounds == rhs.minDepthBounds
-               && maxDepthBounds == rhs.maxDepthBounds
-               && stencilTestEnable == rhs.stencilTestEnable
-               && front == rhs.front && back == rhs.back;
+        return depthTestEnable == rhs.depthTestEnable && depthWriteEnable == rhs.depthWriteEnable && depthCompareOp == rhs.depthCompareOp
+               && depthBoundsTestEnable == rhs.depthBoundsTestEnable && minDepthBounds == rhs.minDepthBounds && maxDepthBounds == rhs.maxDepthBounds
+               && stencilTestEnable == rhs.stencilTestEnable && front == rhs.front && back == rhs.back;
     }
 
     bool operator!=(const DepthStencilState &rhs) { return !operator==(rhs); }
@@ -356,17 +345,10 @@ enum class BlendLogicOp {
 
 struct ColorBlendState {
     bool operator==(const ColorBlendState &rhs) {
-        return blendEnable == rhs.blendEnable
-               && srcColorFactor == rhs.srcColorFactor
-               && dstColorFactor == rhs.dstColorFactor
-               && colorBlendOp == rhs.colorBlendOp
-               && srcAlphaFactor == rhs.srcAlphaFactor
-               && dstAlphaFactor == rhs.dstAlphaFactor
-               && alphaBlendOp == rhs.alphaBlendOp
-               && logicOpEnable == rhs.logicOpEnable && logicOp == rhs.logicOp
-               && constansts[0] == rhs.constansts[0]
-               && constansts[1] == rhs.constansts[1]
-               && constansts[2] == rhs.constansts[2]
+        return blendEnable == rhs.blendEnable && srcColorFactor == rhs.srcColorFactor && dstColorFactor == rhs.dstColorFactor
+               && colorBlendOp == rhs.colorBlendOp && srcAlphaFactor == rhs.srcAlphaFactor && dstAlphaFactor == rhs.dstAlphaFactor
+               && alphaBlendOp == rhs.alphaBlendOp && logicOpEnable == rhs.logicOpEnable && logicOp == rhs.logicOp
+               && constansts[0] == rhs.constansts[0] && constansts[1] == rhs.constansts[1] && constansts[2] == rhs.constansts[2]
                && constansts[3] == rhs.constansts[3];
     }
 
@@ -498,9 +480,7 @@ struct TextureInfo {
     uint32_t miplevels{1};
     SampleCount sampleCount{SampleCount::SAMPLE_COUNT_1_BIT};
     PixelFormat format{PixelFormat::RGBA8};
-    TextureUsage usage{TextureUsage::USAGE_SAMPLED_BIT
-                       | TextureUsage::USAGE_TRANSFER_DST_BIT
-                       | TextureUsage::USAGE_TRANSFER_SRC_BIT};
+    TextureUsage usage{TextureUsage::USAGE_SAMPLED_BIT | TextureUsage::USAGE_TRANSFER_DST_BIT | TextureUsage::USAGE_TRANSFER_SRC_BIT};
 };
 
 enum class PipelineStage : uint32_t {

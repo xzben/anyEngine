@@ -30,8 +30,7 @@ public:
 
     void makeCurrent(GL3SwapChain* swapChain = nullptr);
     void exitCurrent(GL3SwapChain* swapChain = nullptr);
-    GL3SwapChain* createSwapChain(void* winow, uint32_t width, uint32_t height,
-                                  bool singleBuffer, bool needDepthStencil);
+    GL3SwapChain* createSwapChain(void* winow, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil);
     void destroySwapChain(GL3SwapChain* swapChain);
     void swapBuffer(GL3SwapChain* swapChain);
 
@@ -45,16 +44,16 @@ public:
 
     void updateState(const PipelineState& state);
     void setEnable(GLenum statue, bool enable);
-    
+
 protected:
+    void init();
     void setRasterizationState(const RasterizationState& state);
     void setColorBlendState(const ColorBlendState& state);
     void setDepthStencilState(const DepthStencilState& state);
 
 protected:
     GLContextType createContext(GLContextType share);
-    GLContext(GL3Device& device, GLContextType context)
-        : m_device(device), m_context(context) {}
+    GLContext(GL3Device& device, GLContextType context) : m_device(device), m_context(context) {}
 
     using ALLOC_FUNC = std::function<void(uint32_t count, OGL_HANDLE* objs)>;
     using FREE_FUNC  = std::function<void(uint32_t count, OGL_HANDLE* objs)>;
@@ -67,8 +66,7 @@ protected:
     void allocCacheObj(CacheOGLType type, uint32_t count, OGL_HANDLE* objs);
     CacheObject& getCacheObject(CacheOGLType type);
 
-    void preAllocCacheObject(CacheOGLType type, uint32_t defaultCount,
-                             ALLOC_FUNC allocFunc, FREE_FUNC freeFunc);
+    void preAllocCacheObject(CacheOGLType type, uint32_t defaultCount, ALLOC_FUNC allocFunc, FREE_FUNC freeFunc);
 
 private:
     std::unordered_map<CacheOGLType, CacheObject> m_cacheObjects;
