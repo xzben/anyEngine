@@ -31,7 +31,7 @@ struct WGLConfig {
     int auxBuffers{0};
     WGLBool stereo{WGL_FALSE};
     int samples{0};
-    WGLBool sRGB{WGL_TRUE};
+    WGLBool sRGB{WGL_FALSE};
     WGLBool doublebuffer{WGL_TRUE};
     WGLBool transparent{WGL_FALSE};
     uintptr_t handle{0};

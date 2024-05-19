@@ -35,13 +35,12 @@ public:
     bool wait(std::queue<ItemType>& queue) {
         assert(queue.empty());
 
-        if (m_count.load() <= 0) {
+        if (m_count <= 0) {
             std::unique_lock<std::mutex> locker(m_lock);
-            m_condition.wait(
-                locker, [&]() { return m_count.load() > 0 || m_exit.load(); });
+            m_condition.wait(locker, [&]() { return m_count > 0 || m_exit; });
         }
 
-        if (m_exit.load()) {
+        if (m_exit) {
             return false;
         }
 
@@ -54,13 +53,12 @@ public:
     }
 
     bool wait(ItemType& out) {
-        if (m_count.load() <= 0) {
+        if (m_count <= 0) {
             std::unique_lock<std::mutex> locker(m_lock);
-            m_condition.wait(
-                locker, [&]() { return m_count.load() > 0 || m_exit.load(); });
+            m_condition.wait(locker, [&]() { return m_count > 0 || m_exit; });
         }
 
-        if (m_exit.load()) {
+        if (m_exit) {
             return false;
         }
 

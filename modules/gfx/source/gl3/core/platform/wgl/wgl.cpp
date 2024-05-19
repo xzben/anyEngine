@@ -25,6 +25,8 @@ bool WGLHelper::init() {
 }
 
 WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext, bool singleBuffer) {
+    g_context_lock.lock();
+
     bool success = true;
     int attribs[40];
     int pixelFormat;
@@ -38,7 +40,7 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext, bool
     HGLRC newHglrc = NULL;
     bool selfHdc   = false;
     if (window == NULL) {
-        HWND forageHwnd = ::GetForegroundWindow();
+        HWND forageHwnd = NULL;
         hdc             = ::GetDC(forageHwnd);
         selfHdc         = true;
     } else {
@@ -49,7 +51,6 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext, bool
     WGLConfig pbConfig;
     pbConfig.doublebuffer = singleBuffer ? WGL_FALSE : WGL_TRUE;
 
-    g_context_lock.lock();
     pixelFormat = choosePixelFormatWGL(hdc, &pbConfig);
     if (0 == pixelFormat) {
         CCERROR("can't find pixelFormat for hdc:%x", hdc);
@@ -136,7 +137,8 @@ void WGLHelper::makeCurrent(WGlContext* context) {
         g_context_lock.lock();
         if (!wglMakeCurrent(context->hdc, context->hglrc)) {
             g_context_lock.unlock();
-            CCERROR("WGL: Failed to make context[ hdc: %d | hglrc: %d] current", context->hdc, context->hglrc);
+            CCERROR("WGL: Failed to make context[ hdc: %d | hglrc: %d] current", context->hdc,
+                    context->hglrc);
         } else {
             s_preContext  = s_lastContext;
             s_lastContext = context;
@@ -171,9 +173,11 @@ void WGLHelper::exitCurrent(WGlContext* context) {
     }
 }
 
-WGLSwapChain* WGLHelper::createWindowSurface(GL3Device& device, HWND win, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil,
-                                             WGlContext* mainContext) {
-    return new WGLSwapChain(device, win, width, height, singleBuffer, needDepthStencil, mainContext);
+WGLSwapChain* WGLHelper::createWindowSurface(GL3Device& device, HWND win, uint32_t width,
+                                             uint32_t height, bool singleBuffer,
+                                             bool needDepthStencil, WGlContext* mainContext) {
+    return new WGLSwapChain(device, win, width, height, singleBuffer, needDepthStencil,
+                            mainContext);
 }
 
 void WGLHelper::deleteWindowSurface(WGLSwapChain* surface) { delete surface; }
@@ -181,8 +185,8 @@ void WGLHelper::swapBuffer(WGlContext* context) { SwapBuffers(context->hdc); }
 
 //-----
 
-WGLSwapChain::WGLSwapChain(GL3Device& device, HWND window, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil,
-                           WGlContext* shareContext)
+WGLSwapChain::WGLSwapChain(GL3Device& device, HWND window, uint32_t width, uint32_t height,
+                           bool singleBuffer, bool needDepthStencil, WGlContext* shareContext)
     : GL3SwapChain(device, width, height, singleBuffer, needDepthStencil) {
     m_context = WGLHelper::createContext(window, shareContext, singleBuffer);
 }

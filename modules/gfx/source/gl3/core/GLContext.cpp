@@ -56,9 +56,11 @@ GLContext::~GLContext() {
 #endif
 }
 
-GL3SwapChain* GLContext::createSwapChain(void* window, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil) {
+GL3SwapChain* GLContext::createSwapChain(void* window, uint32_t width, uint32_t height,
+                                         bool singleBuffer, bool needDepthStencil) {
 #if CUR_GL_TYPE == OPENGL_WGL
-    return WGLHelper::createWindowSurface(m_device, (HWND)window, width, height, singleBuffer, needDepthStencil, m_context);
+    return WGLHelper::createWindowSurface(m_device, (HWND)window, width, height, singleBuffer,
+                                          needDepthStencil, m_context);
 #elif CUR_GL_TYPE == OPENGL_AGL
 
 #elif CUR_GL_TYPE == OPENGL_EGL
@@ -133,11 +135,13 @@ static const uint32_t defaultVaoCount = 10;
 
 void GLContext::initContextRes() {
     preAllocCacheObject(
-        CacheOGLType::FBO, defaultFboCount, [](uint32_t count, OGL_HANDLE* objs) { GL_CHECK(glGenFramebuffers(count, objs)); },
+        CacheOGLType::FBO, defaultFboCount,
+        [](uint32_t count, OGL_HANDLE* objs) { GL_CHECK(glGenFramebuffers(count, objs)); },
         [](uint32_t count, OGL_HANDLE* objs) { GL_CHECK(glDeleteFramebuffers(count, objs)); });
 
     preAllocCacheObject(
-        CacheOGLType::VAO, defaultVaoCount, [](uint32_t count, OGL_HANDLE* objs) { GL_CHECK(glGenVertexArrays(count, objs)); },
+        CacheOGLType::VAO, defaultVaoCount,
+        [](uint32_t count, OGL_HANDLE* objs) { GL_CHECK(glGenVertexArrays(count, objs)); },
         [](uint32_t count, OGL_HANDLE* objs) { GL_CHECK(glDeleteVertexArrays(count, objs)); });
 }
 
@@ -150,13 +154,21 @@ void GLContext::clearContextRes() {
     }
 }
 
-void GLContext::allocFbo(uint32_t count, OGL_HANDLE* fbos) { allocCacheObj(CacheOGLType::FBO, count, fbos); }
+void GLContext::allocFbo(uint32_t count, OGL_HANDLE* fbos) {
+    allocCacheObj(CacheOGLType::FBO, count, fbos);
+}
 
-void GLContext::freeFbo(uint32_t count, OGL_HANDLE* fbos) { freeCacheObj(CacheOGLType::FBO, count, fbos); }
+void GLContext::freeFbo(uint32_t count, OGL_HANDLE* fbos) {
+    freeCacheObj(CacheOGLType::FBO, count, fbos);
+}
 
-void GLContext::allocVao(uint32_t count, OGL_HANDLE* vaos) { allocCacheObj(CacheOGLType::VAO, count, vaos); }
+void GLContext::allocVao(uint32_t count, OGL_HANDLE* vaos) {
+    allocCacheObj(CacheOGLType::VAO, count, vaos);
+}
 
-void GLContext::freeVao(uint32_t count, OGL_HANDLE* vaos) { freeCacheObj(CacheOGLType::VAO, count, vaos); }
+void GLContext::freeVao(uint32_t count, OGL_HANDLE* vaos) {
+    freeCacheObj(CacheOGLType::VAO, count, vaos);
+}
 
 void GLContext::freeCacheObj(CacheOGLType type, uint32_t count, OGL_HANDLE* objs) {
     auto& vec        = getCacheObject(type).objs;
@@ -173,7 +185,8 @@ GLContext::CacheObject& GLContext::getCacheObject(CacheOGLType type) {
     return it->second;
 }
 
-void GLContext::preAllocCacheObject(CacheOGLType type, uint32_t defaultCount, ALLOC_FUNC allocFunc, FREE_FUNC freeFunc) {
+void GLContext::preAllocCacheObject(CacheOGLType type, uint32_t defaultCount, ALLOC_FUNC allocFunc,
+                                    FREE_FUNC freeFunc) {
     assert(m_cacheObjects.find(type) == m_cacheObjects.end());
 
     std::vector<OGL_HANDLE> defaultObjs;
@@ -307,9 +320,11 @@ void GLContext::setColorBlendState(const ColorBlendState& state) {
     setEnable(GL_BLEND, state.blendEnable);
     if (!state.blendEnable) return;
 
-    if (blend.constansts[0] != state.constansts[0] || blend.constansts[1] != state.constansts[1] || blend.constansts[2] != state.constansts[2]
+    if (blend.constansts[0] != state.constansts[0] || blend.constansts[1] != state.constansts[1]
+        || blend.constansts[2] != state.constansts[2]
         || blend.constansts[3] != state.constansts[3]) {
-        GL_CHECK(glBlendColor(state.constansts[0], state.constansts[1], state.constansts[2], state.constansts[3]));
+        GL_CHECK(glBlendColor(state.constansts[0], state.constansts[1], state.constansts[2],
+                              state.constansts[3]));
 
         blend.constansts[0] = state.constansts[0];
         blend.constansts[1] = state.constansts[1];
@@ -326,10 +341,12 @@ void GLContext::setColorBlendState(const ColorBlendState& state) {
         blend.alphaBlendOp = state.alphaBlendOp;
     }
 
-    if (blend.srcColorFactor != state.srcColorFactor || blend.dstColorFactor != state.dstColorFactor || blend.srcAlphaFactor != state.srcAlphaFactor
+    if (blend.srcColorFactor != state.srcColorFactor || blend.dstColorFactor != state.dstColorFactor
+        || blend.srcAlphaFactor != state.srcAlphaFactor
         || blend.dstAlphaFactor != state.dstAlphaFactor) {
-        GL_CHECK(glBlendFuncSeparate(g_blendFactors[(int)state.srcColorFactor], g_blendFactors[(int)state.dstColorFactor],
-                                     g_blendFactors[(int)state.srcAlphaFactor], g_blendFactors[(int)state.dstAlphaFactor]));
+        GL_CHECK(glBlendFuncSeparate(
+            g_blendFactors[(int)state.srcColorFactor], g_blendFactors[(int)state.dstColorFactor],
+            g_blendFactors[(int)state.srcAlphaFactor], g_blendFactors[(int)state.dstAlphaFactor]));
 
         blend.srcColorFactor = state.srcColorFactor;
         blend.dstColorFactor = state.dstColorFactor;
@@ -395,18 +412,22 @@ void GLContext::setDepthStencilState(const DepthStencilState& state) {
                 cacheState.writeMask = stencilState.writeMask;
             }
 
-            if (stencilState.compareOp != cacheState.compareOp || stencilState.reference != cacheState.reference
+            if (stencilState.compareOp != cacheState.compareOp
+                || stencilState.reference != cacheState.reference
                 || stencilState.compareMask != cacheState.compareMask) {
-                GL_CHECK(
-                    glStencilFuncSeparate(GL_FRONT, g_CompareFuncs[(int)stencilState.compareOp], stencilState.reference, stencilState.compareMask));
+                GL_CHECK(glStencilFuncSeparate(GL_FRONT,
+                                               g_CompareFuncs[(int)stencilState.compareOp],
+                                               stencilState.reference, stencilState.compareMask));
                 cacheState.compareOp   = stencilState.compareOp;
                 cacheState.reference   = stencilState.reference;
                 cacheState.compareMask = stencilState.compareMask;
             }
 
-            if (stencilState.failOp != cacheState.failOp || stencilState.depthFailOP != cacheState.depthFailOP
+            if (stencilState.failOp != cacheState.failOp
+                || stencilState.depthFailOP != cacheState.depthFailOP
                 || stencilState.passOp != cacheState.passOp) {
-                GL_CHECK(glStencilOpSeparate(GL_FRONT, g_stencilOps[(int)stencilState.failOp], g_stencilOps[(int)stencilState.depthFailOP],
+                GL_CHECK(glStencilOpSeparate(GL_FRONT, g_stencilOps[(int)stencilState.failOp],
+                                             g_stencilOps[(int)stencilState.depthFailOP],
                                              g_stencilOps[(int)stencilState.passOp]));
                 cacheState.failOp      = stencilState.failOp;
                 cacheState.depthFailOP = stencilState.depthFailOP;
@@ -424,18 +445,21 @@ void GLContext::setDepthStencilState(const DepthStencilState& state) {
                 cacheState.writeMask = stencilState.writeMask;
             }
 
-            if (stencilState.compareOp != cacheState.compareOp || stencilState.reference != cacheState.reference
+            if (stencilState.compareOp != cacheState.compareOp
+                || stencilState.reference != cacheState.reference
                 || stencilState.compareMask != cacheState.compareMask) {
-                GL_CHECK(
-                    glStencilFuncSeparate(GL_BACK, g_CompareFuncs[(int)stencilState.compareOp], stencilState.reference, stencilState.compareMask));
+                GL_CHECK(glStencilFuncSeparate(GL_BACK, g_CompareFuncs[(int)stencilState.compareOp],
+                                               stencilState.reference, stencilState.compareMask));
                 cacheState.compareOp   = stencilState.compareOp;
                 cacheState.reference   = stencilState.reference;
                 cacheState.compareMask = stencilState.compareMask;
             }
 
-            if (stencilState.failOp != cacheState.failOp || stencilState.depthFailOP != cacheState.depthFailOP
+            if (stencilState.failOp != cacheState.failOp
+                || stencilState.depthFailOP != cacheState.depthFailOP
                 || stencilState.passOp != cacheState.passOp) {
-                GL_CHECK(glStencilOpSeparate(GL_BACK, g_stencilOps[(int)stencilState.failOp], g_stencilOps[(int)stencilState.depthFailOP],
+                GL_CHECK(glStencilOpSeparate(GL_BACK, g_stencilOps[(int)stencilState.failOp],
+                                             g_stencilOps[(int)stencilState.depthFailOP],
                                              g_stencilOps[(int)stencilState.passOp]));
                 cacheState.failOp      = stencilState.failOp;
                 cacheState.depthFailOP = stencilState.depthFailOP;

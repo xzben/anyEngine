@@ -12,8 +12,7 @@ static const GLenum g_glStage[] = {
     GL_COMPUTE_SHADER,
 };
 
-static inline OGL_HANDLE createShaderModel(uint8_t* code, uint32_t size,
-                                           ShaderStage stage) {
+static inline OGL_HANDLE createShaderModel(uint8_t* code, uint32_t size, ShaderStage stage) {
     OGL_HANDLE handle{OGL_NULL_HANDLE};
     GLenum glStage = g_glStage[int(stage)];
 
@@ -39,7 +38,7 @@ static inline OGL_HANDLE createShaderModel(uint8_t* code, uint32_t size,
 
 GL3Shader::GL3Shader(GL3Device& device, ShaderModuleInfo* infos, uint32_t count)
     : m_device(device) {
-    m_device.callSync([&](gl3::GLContext* ctx) {
+    m_device.runWithContext([&](gl3::GLContext* ctx) {
         this->createPrograme(infos, count);
         this->reflect();
     });
@@ -76,10 +75,10 @@ void GL3Shader::createPrograme(ShaderModuleInfo* infos, uint32_t count) {
 }
 
 GL3Shader::~GL3Shader() {
-    if (m_handle != OGL_NULL_HANDLE) {
-        m_device.callSync(
-            [&](gl3::GLContext* ctx) { GL_CHECK(glDeleteProgram(m_handle)); });
-        m_handle = OGL_NULL_HANDLE;
+    OGL_HANDLE handle = m_handle;
+    m_handle          = OGL_NULL_HANDLE;
+    if (handle != OGL_NULL_HANDLE) {
+        m_device.runWithContext([=](gl3::GLContext* ctx) { GL_CHECK(glDeleteProgram(handle)); });
     }
 }
 
@@ -102,8 +101,8 @@ void GL3Shader::reflect() {
     int32_t shader_need;
 
     for (GLint block_index = 0; block_index < blockCount; ++block_index) {
-        GL_CHECK(glGetActiveUniformBlockName(
-            m_handle, block_index, NAME_BUFFER_SIZE - 1, &glLength, var_name));
+        GL_CHECK(glGetActiveUniformBlockName(m_handle, block_index, NAME_BUFFER_SIZE - 1, &glLength,
+                                             var_name));
         var_name[glLength + 1] = '\0';
 
         char* offset = strchr(var_name, '[');
@@ -123,13 +122,10 @@ void GL3Shader::reflect() {
     int32_t uniform_count;
     GL_CHECK(glGetProgramiv(m_handle, GL_ACTIVE_UNIFORMS, &uniform_count));
     uint32_t texture_biding = 0;
-    for (uint32_t uniform_index = 0; uniform_index < uniform_count;
-         uniform_index++) {
-        GL_CHECK(glGetActiveUniformName(m_handle, uniform_index,
-                                        NAME_BUFFER_SIZE - 1, &namelength,
+    for (uint32_t uniform_index = 0; uniform_index < uniform_count; uniform_index++) {
+        GL_CHECK(glGetActiveUniformName(m_handle, uniform_index, NAME_BUFFER_SIZE - 1, &namelength,
                                         var_name));
-        GL_CHECK(glGetActiveUniformsiv(m_handle, 1, &uniform_index,
-                                       GL_UNIFORM_TYPE, &uniType));
+        GL_CHECK(glGetActiveUniformsiv(m_handle, 1, &uniform_index, GL_UNIFORM_TYPE, &uniType));
         switch (uniType) {
             case GL_SAMPLER_2D:
             case GL_SAMPLER_2D_ARRAY:
@@ -138,16 +134,15 @@ void GL3Shader::reflect() {
                 TextureBinding binding;
                 binding.name    = var_name;
                 binding.binding = texture_biding++;
-                GL_CHECK(binding.location =
-                             glGetUniformBlockIndex(m_handle, var_name));
+                GL_CHECK(binding.location = glGetUniformBlockIndex(m_handle, var_name));
 
                 m_textureBinding[binding.name] = binding;
             }
         }
     }
 }
-void GL3Shader::setUniformBuffer(const std::string& name, Buffer* buffer,
-                                 uint32_t offset, uint32_t size) {
+void GL3Shader::setUniformBuffer(const std::string& name, Buffer* buffer, uint32_t offset,
+                                 uint32_t size) {
     auto it = m_uniformBinding.find(name);
 
     if (it == m_uniformBinding.end()) {
@@ -160,8 +155,8 @@ void GL3Shader::setUniformBuffer(const std::string& name, Buffer* buffer,
     it->second.size   = size == 0 ? buffer->size() : size;
 }
 
-void GL3Shader::setShaderStorageBuffer(const std::string& name, Buffer* buffer,
-                                       uint32_t offset, uint32_t size) {
+void GL3Shader::setShaderStorageBuffer(const std::string& name, Buffer* buffer, uint32_t offset,
+                                       uint32_t size) {
     auto it = m_shaderStorageBinding.find(name);
 
     if (it == m_shaderStorageBinding.end()) {
@@ -173,8 +168,7 @@ void GL3Shader::setShaderStorageBuffer(const std::string& name, Buffer* buffer,
     it->second.offset = offset;
     it->second.size   = size == 0 ? buffer->size() : size;
 }
-void GL3Shader::setTexture(const std::string& name, Texture* texture,
-                           Sampler* sampler) {
+void GL3Shader::setTexture(const std::string& name, Texture* texture, Sampler* sampler) {
     auto it = m_textureBinding.find(name);
     if (it == m_textureBinding.end()) {
         CCWARN("can't find texture binding[%s]", name.c_str());
@@ -190,45 +184,36 @@ void GL3Shader::bind() {
     activeBinding();
 }
 void GL3Shader::activeBinding() {
-    for (auto it = m_uniformBinding.begin(); it != m_uniformBinding.end();
-         it++) {
+    for (auto it = m_uniformBinding.begin(); it != m_uniformBinding.end(); it++) {
         const auto& binding = it->second;
         if (binding.buffer != nullptr) {
             OGL_HANDLE bufHandle = binding.buffer->getHandle<OGL_HANDLE>();
-            GL_CHECK(glBindBufferRange(GL_UNIFORM_BUFFER, binding.binding,
-                                       bufHandle, binding.offset,
-                                       binding.size));
-            GL_CHECK(glUniformBlockBinding(m_handle, binding.location,
-                                           binding.binding));
+            GL_CHECK(glBindBufferRange(GL_UNIFORM_BUFFER, binding.binding, bufHandle,
+                                       binding.offset, binding.size));
+            GL_CHECK(glUniformBlockBinding(m_handle, binding.location, binding.binding));
         }
     }
 
-    for (auto it = m_shaderStorageBinding.begin();
-         it != m_shaderStorageBinding.end(); it++) {
+    for (auto it = m_shaderStorageBinding.begin(); it != m_shaderStorageBinding.end(); it++) {
         const auto& binding = it->second;
         if (binding.buffer != nullptr) {
-            GL_CHECK(glBindBufferRange(GL_SHADER_STORAGE_BUFFER,
-                                       binding.binding,
-                                       binding.buffer->getHandle<OGL_HANDLE>(),
-                                       binding.offset, binding.size));
+            GL_CHECK(glBindBufferRange(GL_SHADER_STORAGE_BUFFER, binding.binding,
+                                       binding.buffer->getHandle<OGL_HANDLE>(), binding.offset,
+                                       binding.size));
         }
     }
 
-    for (auto it = m_textureBinding.begin(); it != m_textureBinding.end();
-         it++) {
+    for (auto it = m_textureBinding.begin(); it != m_textureBinding.end(); it++) {
         const auto& binding = it->second;
         if (binding.texture != nullptr) {
             GL_CHECK(glActiveTexture(GL_TEXTURE0 + binding.binding));
-            auto target =
-                GL3Texture::getTarget(binding.texture->getInfo().type);
+            auto target = GL3Texture::getTarget(binding.texture->getInfo().type);
 
-            GL_CHECK(glBindTexture(target,
-                                   binding.texture->getHandle<OGL_HANDLE>()));
+            GL_CHECK(glBindTexture(target, binding.texture->getHandle<OGL_HANDLE>()));
 
             if (binding.sampler) {
-                GL_CHECK(
-                    glBindSampler(GL_TEXTURE0 + binding.binding,
-                                  binding.sampler->getHandle<OGL_HANDLE>()));
+                GL_CHECK(glBindSampler(GL_TEXTURE0 + binding.binding,
+                                       binding.sampler->getHandle<OGL_HANDLE>()));
             }
         }
     }

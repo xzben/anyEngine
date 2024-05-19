@@ -1,6 +1,5 @@
 #pragma once
 
-#include "base/Device.h"
 #include "GL3Buffer.h"
 #include "GL3CommandPool.h"
 #include "GL3Event.h"
@@ -14,6 +13,7 @@
 #include "GL3Shader.h"
 #include "GL3SwapChain.h"
 #include "GL3Texture.h"
+#include "base/Device.h"
 #include "core/GLContext.h"
 #include "core/render/WorkTask.h"
 #include "core/thread/ThreadPool.h"
@@ -31,18 +31,15 @@ public:
     virtual ~GL3Device();
 
     virtual bool init(const DeviceInfo& info) override;
-    virtual GL3Shader* createShader(ShaderModuleInfo* info,
-                                    uint32_t count) override;
+    virtual GL3Shader* createShader(ShaderModuleInfo* info, uint32_t count) override;
 
-    virtual GL3Queue* getQueue(QueueType& type, uint32_t index = 0) override;
+    virtual GL3Queue* getQueue(QueueType type, uint32_t index = 0) override;
 
     virtual GL3RenderPass* createRenderPass(
-        const std::vector<Attachment>& attachments,
-        const std::vector<SubPass>& subpass,
+        const std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
         const std::vector<SubPassDependency>& dependencies) override;
 
-    virtual GL3Pipeline* createPipeline(RenderPass* renderPass,
-                                        uint32_t subpass, Shader* shader,
+    virtual GL3Pipeline* createPipeline(RenderPass* renderPass, uint32_t subpass, Shader* shader,
                                         const PipelineState& state) override;
 
     virtual GL3Texture* createTexture(const TextureInfo& info,
@@ -53,21 +50,19 @@ public:
 
     virtual GL3InputAssembler* createInputAssembler(
         PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-        const void* pVertexData, uint32_t vertexCount,
-        const void* pIndexData = nullptr, uint32_t indexCount = 0,
-        uint32_t indexItemSize = sizeof(uint32_t)) override;
+        const void* pVertexData, uint32_t vertexCount, const void* pIndexData = nullptr,
+        uint32_t indexCount = 0, uint32_t indexItemSize = sizeof(uint32_t)) override;
 
     virtual GL3InputAssembler* createInputAssembler(
         PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-        const std::vector<Attribute>& InstanceAttributes,
-        const void* pVertexData, uint32_t vertexCount,
-        const void* pInstanceData, uint32_t instanceCount,
+        const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
+        uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
         const void* pIndexData = nullptr, uint32_t indexCount = 0,
         uint32_t indexItemSize = sizeof(uint32_t)) override;
 
-    virtual GL3SwapChain* createSwapChain(
-        void* nativeWindow, uint32_t width, uint32_t height, bool singleBuffer,
-        bool needDepthStencil = false) override;
+    virtual GL3SwapChain* createSwapChain(void* nativeWindow, uint32_t width, uint32_t height,
+                                          bool singleBuffer,
+                                          bool needDepthStencil = false) override;
     virtual GL3Fence* createFence(bool signaled = false) override;
 
     virtual GL3Semaphore* createSemaphore() override;
@@ -75,20 +70,17 @@ public:
     virtual GL3Event* createEvent() override;
 
     virtual void waitIdle() override;
-    virtual void withOneTimeCmd(
-        std::function<void(CommandBuffer& cmd)> callback) override;
+    virtual void withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callback) override;
 
 protected:
     using WorkTask         = gl3::WorkTask;
     using RenderThreadPool = gl3::ThreadPool<WorkTask*>;
     RenderThreadPool* m_pRenderThreads;
     void initSubRenderThreads(uint32_t threadNum);
-    bool addTask(WorkTask* task, float priority = 1.0) {
-        return m_pRenderThreads->addTask(task);
-    }
+    bool addTask(WorkTask* task, float priority = 1.0) { return m_pRenderThreads->addTask(task); }
 
 public:
-    void callSync(gl3::CustomWorkTask::WorkFunc func) {
+    void runWithContext(gl3::CustomWorkTask::WorkFunc func) {
         gl3::CustomWorkTask task(m_innerQueue, func);
         addTask(&task);
         task.waitFinish();

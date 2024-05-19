@@ -10,6 +10,7 @@ using OGL_HANDLE                 = uint32_t;
 const OGL_HANDLE OGL_NULL_HANDLE = 0;
 
 #define DEBUG_OPENGL true
+#define OPENGL_RESOURCE_ANSC false
 
 #if DEBUG_OPENGL
 

@@ -6,11 +6,9 @@
 
 BEGIN_GFX_NAMESPACE
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL
-debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-              VkDebugUtilsMessageTypeFlagsEXT messageType,
-              const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-              void* pUserData) {
+static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                    VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
     switch (messageSeverity) {
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: {
             CCWARN("validation layer: %s", pCallbackData->pMessage);
@@ -25,16 +23,13 @@ debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     return VK_FALSE;
 }
 
-std::unique_ptr<vk::Instance> VulkanDevice::getInstance(
-    const DeviceInfo& info) {
+std::unique_ptr<vk::Instance> VulkanDevice::getInstance(const DeviceInfo& info) {
     vk::InstanceBuilder builder;
 
 #ifndef NDEBUG
     builder.enableValidationLayer();
-    builder.setDebugMessengerSeverity(
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
-        | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
-        | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT);
+    builder.setDebugMessengerSeverity(VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+                                      | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT);
 #endif  // NDEBUG
     builder.setAppName(info.name);
     builder.setDebugCallback(debugCallback);
@@ -49,9 +44,7 @@ std::unique_ptr<vk::Instance> VulkanDevice::getInstance(
     return builder.build();
 }
 
-vk::PhysicalDevice VulkanDevice::selectPhysicDevice(
-    const DeviceInfo& info, const vk::Instance& instance,
-    vk::Surface& surface) {
+vk::PhysicalDevice VulkanDevice::selectPhysicDevice(const DeviceInfo& info, const vk::Instance& instance, vk::Surface& surface) {
     vk::PhysicalDeviceSelector selector(instance, surface);
     selector.preferDeviceType(VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
     if (info.present) {
@@ -61,15 +54,13 @@ vk::PhysicalDevice VulkanDevice::selectPhysicDevice(
     return std::move(selector.select());
 }
 
-std::unique_ptr<vk::LogicDevice> VulkanDevice::createLogicDevice(
-    const DeviceInfo& info, vk::Instance& instance,
-    vk::PhysicalDevice physicalDevice, vk::Surface& surface) {
+std::unique_ptr<vk::LogicDevice> VulkanDevice::createLogicDevice(const DeviceInfo& info, vk::Instance& instance, vk::PhysicalDevice physicalDevice,
+                                                                 vk::Surface& surface) {
     vk::LogicDeviceBuilder builder(instance, physicalDevice, surface);
 
     if (info.present) {
         builder.requirePresent();
-        builder.requireExtension(
-            VK_KHR_MAINTENANCE_1_EXTENSION_NAME);  // for viewport -1*height
+        builder.requireExtension(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);  // for viewport -1*height
     }
 
     //  device_builder.require_extension(VK_EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME);
@@ -88,23 +79,19 @@ std::unique_ptr<vk::LogicDevice> VulkanDevice::createLogicDevice(
     for (auto queuItem : info.queues) {
         switch (queuItem.type) {
             case QueueType::Graphics: {
-                builder.requireGraphicsQueue(queuItem.priority,
-                                             queuItem.perferSperate);
+                builder.requireGraphicsQueue(queuItem.priority, queuItem.perferSperate);
                 break;
             }
             case QueueType::Present: {
-                builder.requirePresentQueue(queuItem.priority,
-                                            queuItem.perferSperate);
+                builder.requirePresentQueue(queuItem.priority, queuItem.perferSperate);
                 break;
             }
             case QueueType::Compute: {
-                builder.requireComputeQueue(queuItem.priority,
-                                            queuItem.perferSperate);
+                builder.requireComputeQueue(queuItem.priority, queuItem.perferSperate);
                 break;
             }
             case QueueType::Transfer: {
-                builder.requireTransferQueue(queuItem.priority,
-                                             queuItem.perferSperate);
+                builder.requireTransferQueue(queuItem.priority, queuItem.perferSperate);
                 break;
             };
         }
@@ -126,75 +113,50 @@ bool VulkanDevice::init(const DeviceInfo& info) {
 
     m_surface = std::make_unique<vk::Surface>(*m_instance, info.surface);
 
-    auto phycialDevice =
-        std::move(selectPhysicDevice(info, *m_instance, *m_surface));
+    auto phycialDevice = std::move(selectPhysicDevice(info, *m_instance, *m_surface));
 
-    m_logicDevice = createLogicDevice(info, *m_instance,
-                                      std::move(phycialDevice), *m_surface);
+    m_logicDevice = createLogicDevice(info, *m_instance, std::move(phycialDevice), *m_surface);
 
     return true;
 }
 
-VulkanShader* VulkanDevice::createShader(ShaderModuleInfo* info,
-                                         uint32_t count) {
+VulkanShader* VulkanDevice::createShader(ShaderModuleInfo* info, uint32_t count) {
     auto obj = new VulkanShader(*this->m_logicDevice);
 
     for (int i = 0; i < count; i++) {
-        obj->addStage(info[i].pData, info[i].size, info[i].stage,
-                      info[i].entryName);
+        obj->addStage(info[i].pData, info[i].size, info[i].stage, info[i].entryName);
     }
 
     return obj;
 }
 
-VulkanQueue* VulkanDevice::getQueue(QueueType& type, uint32_t index) {
+VulkanQueue* VulkanDevice::getQueue(QueueType type, uint32_t index) { return nullptr; }
+
+VulkanRenderPass* VulkanDevice::createRenderPass(const std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+                                                 const std::vector<SubPassDependency>& dependencies) {
     return nullptr;
 }
 
-VulkanRenderPass* VulkanDevice::createRenderPass(
-    const std::vector<Attachment>& attachments,
-    const std::vector<SubPass>& subpass,
-    const std::vector<SubPassDependency>& dependencies) {
+VulkanPipeline* VulkanDevice::createPipeline(RenderPass* renderPass, uint32_t subpass, Shader* shader, const PipelineState& state) { return nullptr; }
+
+VulkanTexture* VulkanDevice::createTexture(const TextureInfo& info, const void* pData) { return nullptr; }
+VulkanBuffer* VulkanDevice::createBuffer(BufferType type, uint32_t size, const void* pData) { return nullptr; }
+VulkanSampler* VulkanDevice::createSampler(const SamplerInfo& info) { return nullptr; }
+
+VulkanInputAssembler* VulkanDevice::createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+                                                         const void* pVertexData, uint32_t vertexCount, const void* pIndexData, uint32_t indexCount,
+                                                         uint32_t indexItemSize) {
     return nullptr;
 }
 
-VulkanPipeline* VulkanDevice::createPipeline(RenderPass* renderPass,
-                                             uint32_t subpass, Shader* shader,
-                                             const PipelineState& state) {
+VulkanInputAssembler* VulkanDevice::createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+                                                         const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
+                                                         uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
+                                                         const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
     return nullptr;
 }
 
-VulkanTexture* VulkanDevice::createTexture(const TextureInfo& info,
-                                           const void* pData) {
-    return nullptr;
-}
-VulkanBuffer* VulkanDevice::createBuffer(BufferType type, uint32_t size,
-                                         const void* pData) {
-    return nullptr;
-}
-VulkanSampler* VulkanDevice::createSampler(const SamplerInfo& info) {
-    return nullptr;
-}
-
-VulkanInputAssembler* VulkanDevice::createInputAssembler(
-    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-    const void* pVertexData, uint32_t vertexCount, const void* pIndexData,
-    uint32_t indexCount, uint32_t indexItemSize) {
-    return nullptr;
-}
-
-VulkanInputAssembler* VulkanDevice::createInputAssembler(
-    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-    const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
-    uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
-    const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
-    return nullptr;
-}
-
-VulkanSwapChain* VulkanDevice::createSwapChain(void* nativeWindow,
-                                               uint32_t width, uint32_t height,
-                                               bool singleBuffer,
-                                               bool needDepthStencil) {
+VulkanSwapChain* VulkanDevice::createSwapChain(void* nativeWindow, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil) {
     return nullptr;
 }
 VulkanFence* VulkanDevice::createFence(bool signaled) { return nullptr; }
@@ -204,28 +166,19 @@ VulkanSemaphore* VulkanDevice::createSemaphore() { return nullptr; }
 VulkanEvent* VulkanDevice::createEvent() { return nullptr; }
 
 void VulkanDevice::waitIdle() {}
-void VulkanDevice::withOneTimeCmd(
-    std::function<void(CommandBuffer& cmd)> callback) {}
+void VulkanDevice::withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callback) {}
 //------------------
 
 //-------------------------------------------------------------
 void VulkanDevice::destroyBuffer(Buffer* buffer) { buffer->delRef(); }
 void VulkanDevice::destroyEvent(Event* event) { event->delRef(); }
 void VulkanDevice::destroyFence(Fence* fence) { fence->delRef(); }
-void VulkanDevice::destroyInputAssembler(InputAssembler* input) {
-    input->delRef();
-}
+void VulkanDevice::destroyInputAssembler(InputAssembler* input) { input->delRef(); }
 void VulkanDevice::destroyPipeline(Pipeline* pipeline) { pipeline->delRef(); }
-void VulkanDevice::destroyRenderPasss(RenderPass* renderPass) {
-    renderPass->delRef();
-}
+void VulkanDevice::destroyRenderPasss(RenderPass* renderPass) { renderPass->delRef(); }
 void VulkanDevice::destroySampler(Sampler* sampler) { sampler->delRef(); }
-void VulkanDevice::destroySemaphore(Semaphore* semaphore) {
-    semaphore->delRef();
-}
+void VulkanDevice::destroySemaphore(Semaphore* semaphore) { semaphore->delRef(); }
 void VulkanDevice::destroyShader(Shader* shader) { shader->delRef(); }
-void VulkanDevice::destroySwapChain(SwapChain* swapChain) {
-    swapChain->delRef();
-}
+void VulkanDevice::destroySwapChain(SwapChain* swapChain) { swapChain->delRef(); }
 void VulkanDevice::destroyTexture(Texture* texture) { texture->delRef(); }
 END_GFX_NAMESPACE

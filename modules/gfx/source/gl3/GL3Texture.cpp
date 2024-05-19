@@ -67,9 +67,8 @@ static const uint32_t g_pixelSize[] = {
     4,  // Depth24Stencil8
 };
 
-void GL3Texture::getPixelFormatInfo(PixelFormat format, GLenum* innerFormat,
-                                    GLenum* pixelFomrat, GLenum* dataType,
-                                    uint32_t* pixelSize) {
+void GL3Texture::getPixelFormatInfo(PixelFormat format, GLenum* innerFormat, GLenum* pixelFomrat,
+                                    GLenum* dataType, uint32_t* pixelSize) {
     if (innerFormat != nullptr) *innerFormat = g_interformat[(int)format];
     if (pixelFomrat != nullptr) *pixelFomrat = g_pixleFormat[(int)format];
     if (dataType != nullptr) *dataType = g_dataTypeFormat[(int)format];
@@ -81,8 +80,7 @@ GLenum GL3Texture::getTarget(TextureType type) {
     return target;
 }
 
-GL3Texture::GL3Texture(GL3Device& device, const TextureInfo& info,
-                       const void* pData)
+GL3Texture::GL3Texture(GL3Device& device, const TextureInfo& info, const void* pData)
     : m_device(device), m_info(info) {
     GLenum target         = g_type2OGLTextureType[(int)info.type];
     GLenum internalFormat = g_interformat[(int)info.format];
@@ -91,21 +89,20 @@ GL3Texture::GL3Texture(GL3Device& device, const TextureInfo& info,
 
     uint32_t pixelSize   = g_pixelSize[int(info.format)];
     uint64_t textureSize = info.width * info.height * pixelSize;
-
-    m_device.callSync([&](gl3::GLContext* ctx) {
+#if OPENGL_RESOURCE_ANSC
+    m_device.runWithContext([&](gl3::GLContext* ctx) {
+#endif
         GL_CHECK(glGenTextures(1, &m_handle));
         GL_CHECK(glBindTexture(target, m_handle));
         switch (info.type) {
             case TextureType::TEX2D: {
-                GL_CHECK(glTexImage2D(target, 0, internalFormat, info.width,
-                                      info.height, 0, pixelFomrat, dataType,
-                                      pData));
+                GL_CHECK(glTexImage2D(target, 0, internalFormat, info.width, info.height, 0,
+                                      pixelFomrat, dataType, pData));
                 break;
             }
             case TextureType::TEX3D: {
-                GL_CHECK(glTexImage3D(target, 0, internalFormat, info.width,
-                                      info.height, info.depth, 0, pixelFomrat,
-                                      dataType, pData));
+                GL_CHECK(glTexImage3D(target, 0, internalFormat, info.width, info.height,
+                                      info.depth, 0, pixelFomrat, dataType, pData));
                 break;
             }
             case TextureType::CUBE: {
@@ -114,30 +111,36 @@ GL3Texture::GL3Texture(GL3Device& device, const TextureInfo& info,
                     if (pData) {
                         pTexData = (char*)pData + i * textureSize;
                     }
-                    GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
-                                          internalFormat, info.width,
-                                          info.height, 0, pixelFomrat, dataType,
+                    GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat,
+                                          info.width, info.height, 0, pixelFomrat, dataType,
                                           pTexData));
                 }
                 break;
             }
             case TextureType::TEX2D_ARRAY: {
-                GL_CHECK(glTexImage3D(target, 0, internalFormat, info.width,
-                                      info.height, info.arrayCount, 0,
-                                      pixelFomrat, dataType, pData));
+                GL_CHECK(glTexImage3D(target, 0, internalFormat, info.width, info.height,
+                                      info.arrayCount, 0, pixelFomrat, dataType, pData));
                 break;
             }
         }
         GL_CHECK(glBindTexture(target, 0));
+#if OPENGL_RESOURCE_ANSC
     });
+#endif
 }
 
 GL3Texture::~GL3Texture() {
-    if (m_handle) {
-        m_device.callSync([&](gl3::GLContext* ctx) {
-            GL_CHECK(glDeleteTextures(1, &m_handle));
+    OGL_HANDLE handle = m_handle;
+
+    m_handle = OGL_NULL_HANDLE;
+    if (handle) {
+#if OPENGL_RESOURCE_ANSC
+        m_device.runWithContext([=](gl3::GLContext* ctx) {
+#endif
+            GL_CHECK(glDeleteTextures(1, &handle));
+#if OPENGL_RESOURCE_ANSC
         });
-        m_handle = OGL_NULL_HANDLE;
+#endif
     }
 }
 

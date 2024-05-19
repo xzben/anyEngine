@@ -26,43 +26,31 @@ public:
     virtual ~VulkanDevice();
 
     virtual bool init(const DeviceInfo& info) override;
-    virtual VulkanShader* createShader(ShaderModuleInfo* info,
-                                       uint32_t count) override;
+    virtual VulkanShader* createShader(ShaderModuleInfo* info, uint32_t count) override;
 
-    virtual VulkanQueue* getQueue(QueueType& type, uint32_t index = 0) override;
+    virtual VulkanQueue* getQueue(QueueType type, uint32_t index = 0) override;
 
-    virtual VulkanRenderPass* createRenderPass(
-        const std::vector<Attachment>& attachments,
-        const std::vector<SubPass>& subpass,
-        const std::vector<SubPassDependency>& dependencies) override;
+    virtual VulkanRenderPass* createRenderPass(const std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+                                               const std::vector<SubPassDependency>& dependencies) override;
 
-    virtual VulkanPipeline* createPipeline(RenderPass* renderPass,
-                                           uint32_t subpass, Shader* shader,
-                                           const PipelineState& state) override;
+    virtual VulkanPipeline* createPipeline(RenderPass* renderPass, uint32_t subpass, Shader* shader, const PipelineState& state) override;
 
-    virtual VulkanTexture* createTexture(const TextureInfo& info,
-                                         const void* pData = nullptr) override;
-    virtual VulkanBuffer* createBuffer(BufferType type, uint32_t size,
-                                       const void* pData = nullptr) override;
+    virtual VulkanTexture* createTexture(const TextureInfo& info, const void* pData = nullptr) override;
+    virtual VulkanBuffer* createBuffer(BufferType type, uint32_t size, const void* pData = nullptr) override;
     virtual VulkanSampler* createSampler(const SamplerInfo& info) override;
 
-    virtual VulkanInputAssembler* createInputAssembler(
-        PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-        const void* pVertexData, uint32_t vertexCount,
-        const void* pIndexData = nullptr, uint32_t indexCount = 0,
-        uint32_t indexItemSize = sizeof(uint32_t)) override;
+    virtual VulkanInputAssembler* createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes, const void* pVertexData,
+                                                       uint32_t vertexCount, const void* pIndexData = nullptr, uint32_t indexCount = 0,
+                                                       uint32_t indexItemSize = sizeof(uint32_t)) override;
 
-    virtual VulkanInputAssembler* createInputAssembler(
-        PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-        const std::vector<Attribute>& InstanceAttributes,
-        const void* pVertexData, uint32_t vertexCount,
-        const void* pInstanceData, uint32_t instanceCount,
-        const void* pIndexData = nullptr, uint32_t indexCount = 0,
-        uint32_t indexItemSize = sizeof(uint32_t)) override;
+    virtual VulkanInputAssembler* createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+                                                       const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
+                                                       uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
+                                                       const void* pIndexData = nullptr, uint32_t indexCount = 0,
+                                                       uint32_t indexItemSize = sizeof(uint32_t)) override;
 
-    virtual VulkanSwapChain* createSwapChain(
-        void* nativeWindow, uint32_t width, uint32_t height, bool singleBuffer,
-        bool needDepthStencil = false) override;
+    virtual VulkanSwapChain* createSwapChain(void* nativeWindow, uint32_t width, uint32_t height, bool singleBuffer,
+                                             bool needDepthStencil = false) override;
     virtual VulkanFence* createFence(bool signaled = false) override;
 
     virtual VulkanSemaphore* createSemaphore() override;
@@ -71,8 +59,7 @@ public:
 
     virtual void waitIdle() override;
 
-    virtual void withOneTimeCmd(
-        std::function<void(CommandBuffer& cmd)> callback) override;
+    virtual void withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callback) override;
 
 public:
     virtual void destroyBuffer(Buffer* buffer) override;
@@ -89,13 +76,10 @@ public:
 
 protected:
     static std::unique_ptr<vk::Instance> getInstance(const DeviceInfo& info);
-    static vk::PhysicalDevice selectPhysicDevice(const DeviceInfo& info,
-                                                 const vk::Instance& instance,
-                                                 vk::Surface& surface);
+    static vk::PhysicalDevice selectPhysicDevice(const DeviceInfo& info, const vk::Instance& instance, vk::Surface& surface);
 
-    static std::unique_ptr<vk::LogicDevice> createLogicDevice(
-        const DeviceInfo& info, vk::Instance& instance,
-        vk::PhysicalDevice physicalDevice, vk::Surface& surface);
+    static std::unique_ptr<vk::LogicDevice> createLogicDevice(const DeviceInfo& info, vk::Instance& instance, vk::PhysicalDevice physicalDevice,
+                                                              vk::Surface& surface);
 
 private:
     std::unique_ptr<vk::Instance> m_instance;
