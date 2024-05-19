@@ -8,11 +8,12 @@ BEGIN_GFX_NAMESPACE
 
 class VulkanCommandPool : public CommandPool {
 public:
-    VulkanCommandPool(const vk::LogicDevice& logicDevice,
-                      uint32_t queueFamilyIndex, ResetMode resetMode);
+    VulkanCommandPool(const vk::LogicDevice& logicDevice, uint32_t queueFamilyIndex,
+                      ResetMode resetMode);
     virtual ~VulkanCommandPool();
 
-    virtual VulkanCommandBuffer* alloc(CommandBufferLevel level) override;
+    virtual VulkanCommandBuffer* alloc(
+        CommandBufferLevel level = CommandBufferLevel::PRIMARY) override;
     virtual void reset() override;
     virtual void free(CommandBuffer* buffer) override;
 

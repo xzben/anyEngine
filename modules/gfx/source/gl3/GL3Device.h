@@ -60,8 +60,7 @@ public:
         const void* pIndexData = nullptr, uint32_t indexCount = 0,
         uint32_t indexItemSize = sizeof(uint32_t)) override;
 
-    virtual GL3SwapChain* createSwapChain(void* nativeWindow, uint32_t width, uint32_t height,
-                                          bool singleBuffer,
+    virtual GL3SwapChain* createSwapChain(const SurfaceInfo& info,
                                           bool needDepthStencil = false) override;
     virtual GL3Fence* createFence(bool signaled = false) override;
 

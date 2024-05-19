@@ -9,11 +9,11 @@ static_assert("need to implement this platform");
 
 BEGIN_GFX_NAMESPACE
 BEGIN_VK_NAMESPACE
-Surface::Surface(VkInstance instance, SurfaceInfo info) : m_instance(instance) {
+Surface::Surface(VkInstance instance, const SurfaceInfo& info) : m_instance(instance) {
     update(info);
 }
 
-bool Surface::update(SurfaceInfo info) {
+bool Surface::update(const SurfaceInfo& info) {
     if (m_info.handle == info.handle) {
         return false;
     }
@@ -25,8 +25,7 @@ bool Surface::update(SurfaceInfo info) {
     createInfo.hwnd      = (HWND)m_info.handle;
     createInfo.hinstance = GetModuleHandle(nullptr);
 
-    if (vkCreateWin32SurfaceKHR(m_instance, &createInfo, nullptr, &m_handle)
-        != VK_SUCCESS) {
+    if (vkCreateWin32SurfaceKHR(m_instance, &createInfo, nullptr, &m_handle) != VK_SUCCESS) {
         throw std::runtime_error("failed to create window surface!");
     }
 #else

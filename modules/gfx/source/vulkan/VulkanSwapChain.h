@@ -25,27 +25,22 @@ public:
     const VkExtent2D& extent() const { return m_extent; }
 
     const std::vector<vk::Image>& images() const { return m_images; }
-    const std::vector<vk::ImageView>& image_views() const {
-        return m_imageViews;
-    }
+    const std::vector<vk::ImageView>& image_views() const { return m_imageViews; }
 
-    std::pair<bool, uint32_t> acquireNextImage(Semaphore* semophore,
-                                               Fence* fence     = nullptr,
+    std::pair<bool, uint32_t> acquireNextImage(Semaphore* semophore, Fence* fence = nullptr,
                                                uint32_t timeout = 0) override;
+    virtual uint32_t getImageCount() const override { return m_images.size(); }
+    virtual const SurfaceInfo& getInfo() const override { return m_surface->getInfo(); };
 
 protected:
     void handleUpdateSurfaceInfo(const SurfaceInfo& info) override;
 
 protected:
     bool createSwapChainHandle();
-    std::optional<VkSurfaceFormatKHR> chooseFormat(
-        std::vector<VkSurfaceFormatKHR> desired_formats);
-    std::optional<VkPresentModeKHR> choosePresentMode(
-        std::vector<VkPresentModeKHR> presentModes);
-    VkExtent2D chooseExtent(const VkSurfaceCapabilitiesKHR& capabilities,
-                            VkExtent2D extent);
-    uint32_t chooseImageCount(const VkSurfaceCapabilitiesKHR& capabilities,
-                              uint32_t miniCount);
+    std::optional<VkSurfaceFormatKHR> chooseFormat(std::vector<VkSurfaceFormatKHR> desired_formats);
+    std::optional<VkPresentModeKHR> choosePresentMode(std::vector<VkPresentModeKHR> presentModes);
+    VkExtent2D chooseExtent(const VkSurfaceCapabilitiesKHR& capabilities, VkExtent2D extent);
+    uint32_t chooseImageCount(const VkSurfaceCapabilitiesKHR& capabilities, uint32_t miniCount);
 
 private:
     std::unique_ptr<SwapChainBuilder> m_builder{};
@@ -63,11 +58,10 @@ private:
 
 class SwapChainBuilder {
 public:
-    explicit SwapChainBuilder(const vk::LogicDevice& device,
-                              VkSurfaceKHR surface);
+    explicit SwapChainBuilder(const vk::LogicDevice& device, VkSurfaceKHR surface);
 
-    bool build(VkSwapchainKHR& handle, VkSurfaceFormatKHR& format,
-               VkPresentModeKHR& presentMode, VkExtent2D& extent);
+    bool build(VkSwapchainKHR& handle, VkSurfaceFormatKHR& format, VkPresentModeKHR& presentMode,
+               VkExtent2D& extent);
 
     SwapChainBuilder& setSurface(VkSurfaceKHR surface);
     SwapChainBuilder& setOldSwapChain(VkSwapchainKHR oldSwapChain);
@@ -82,10 +76,8 @@ public:
 
     SwapChainBuilder& requestMinImageCount(uint32_t min_image_count);
 
-    SwapChainBuilder& setPreTransform(
-        VkSurfaceTransformFlagBitsKHR pre_transform);
-    SwapChainBuilder& setCompositeAlpha(
-        VkCompositeAlphaFlagBitsKHR composite_alpha);
+    SwapChainBuilder& setPreTransform(VkSurfaceTransformFlagBitsKHR pre_transform);
+    SwapChainBuilder& setCompositeAlpha(VkCompositeAlphaFlagBitsKHR composite_alpha);
 
 private:
     std::optional<VkSurfaceFormatKHR> chooseFormat();
@@ -104,8 +96,7 @@ private:
     std::vector<VkPresentModeKHR> m_presentModes;
     uint32_t m_minImageCount                     = 0;
     VkSurfaceTransformFlagBitsKHR m_preTransform = {};
-    VkCompositeAlphaFlagBitsKHR m_compositeAlpha =
-        VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    VkCompositeAlphaFlagBitsKHR m_compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 };
 
 END_GFX_NAMESPACE

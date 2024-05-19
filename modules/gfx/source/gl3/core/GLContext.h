@@ -30,7 +30,7 @@ public:
 
     void makeCurrent(GL3SwapChain* swapChain = nullptr);
     void exitCurrent(GL3SwapChain* swapChain = nullptr);
-    GL3SwapChain* createSwapChain(void* winow, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil);
+    GL3SwapChain* createSwapChain(const SurfaceInfo& info, bool needDepthStencil);
     void destroySwapChain(GL3SwapChain* swapChain);
     void swapBuffer(GL3SwapChain* swapChain);
 
@@ -66,7 +66,8 @@ protected:
     void allocCacheObj(CacheOGLType type, uint32_t count, OGL_HANDLE* objs);
     CacheObject& getCacheObject(CacheOGLType type);
 
-    void preAllocCacheObject(CacheOGLType type, uint32_t defaultCount, ALLOC_FUNC allocFunc, FREE_FUNC freeFunc);
+    void preAllocCacheObject(CacheOGLType type, uint32_t defaultCount, ALLOC_FUNC allocFunc,
+                             FREE_FUNC freeFunc);
 
 private:
     std::unordered_map<CacheOGLType, CacheObject> m_cacheObjects;

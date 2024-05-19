@@ -8,7 +8,7 @@ class Instance;
 
 class Surface {
 public:
-    Surface(VkInstance instance, SurfaceInfo info);
+    Surface(VkInstance instance, const SurfaceInfo& info);
     virtual ~Surface();
 
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
@@ -17,7 +17,8 @@ public:
     uint32_t width() const { return m_info.width; }
     uint32_t height() const { return m_info.height; }
 
-    bool update(SurfaceInfo info);
+    bool update(const SurfaceInfo& info);
+    const SurfaceInfo& getInfo() const { return m_info; }
 
 private:
     SurfaceInfo m_info;

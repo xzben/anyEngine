@@ -11,16 +11,13 @@ public:
     static const CmdType CUR_CMD_TYPE = CmdType::END_RENDERPASS;
 
 public:
-    CmdEndRenderPass(GL3CommandBuffer& cmdBuf)
-        : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
+    CmdEndRenderPass(GL3CommandBuffer& cmdBuf) : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
     virtual ~CmdEndRenderPass() {}
 
     void init(CmdBeginRenderPass* beginPass) { m_beginPass = beginPass; }
 
     virtual void reset() override { m_beginPass = nullptr; }
-    virtual void execute(gl3::GLContext* context) override {
-        m_beginPass->endRenderPass(context);
-    }
+    virtual void execute(gl3::GLContext* context) override { m_beginPass->endRenderPass(context); }
 
 private:
     CmdBeginRenderPass* m_beginPass;

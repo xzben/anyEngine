@@ -4,6 +4,7 @@
 #include "Buffer.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
+#include "DrawSurface.h"
 #include "Event.h"
 #include "Fence.h"
 #include "InputAssembler.h"
@@ -43,9 +44,20 @@ public:
      * @param subpass 渲染过程中的 subpass 信息
      * @param dependencies 渲染过程中 subpass 之间的依赖关系
      */
-    virtual RenderPass* createRenderPass(const std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+    virtual RenderPass* createRenderPass(const std::vector<Attachment>& attachments,
+                                         const std::vector<SubPass>& subpass,
                                          const std::vector<SubPassDependency>& dependencies) = 0;
 
+    DrawTextureSurface* createDrawSurface(Texture* texture, uint32_t layerindex) {
+        return new DrawTextureSurface(texture, layerindex);
+    }
+
+    DrawSwaChainSurface* createDrawSurface(SwapChain* swapchain, uint32_t imageIndex,
+                                           bool colorAttachment) {
+        return new DrawSwaChainSurface(swapchain, imageIndex, colorAttachment);
+    }
+
+    void destroyDrawSurface(DrawSurface* surface) { delete surface; }
     /*
      *  创建一个渲染管线
      * @param renderPass 管线所属的 renderpass
@@ -54,7 +66,8 @@ public:
      * @param  state 管线的状态信息
      * @param primitiveType 管线
      */
-    virtual Pipeline* createPipeline(RenderPass* renderPass, uint32_t subpass, Shader* shader, const PipelineState& state) = 0;
+    virtual Pipeline* createPipeline(RenderPass* renderPass, uint32_t subpass, Shader* shader,
+                                     const PipelineState& state) = 0;
     /*
      *  创建一个着色器对象
      *  info shaderModule 信息数组指针
@@ -75,8 +88,11 @@ public:
      *  @param pIndexData、indexCount、indexItemSize 索引数据
      *  data，索引数量，索引数据类型的size
      */
-    virtual InputAssembler* createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes, const void* pVertexData,
-                                                 uint32_t vertexCount, const void* pIndexData = nullptr, uint32_t indexCount = 0,
+    virtual InputAssembler* createInputAssembler(PrimitiveType primitiveType,
+                                                 const std::vector<Attribute>& attributes,
+                                                 const void* pVertexData, uint32_t vertexCount,
+                                                 const void* pIndexData = nullptr,
+                                                 uint32_t indexCount    = 0,
                                                  uint32_t indexItemSize = sizeof(uint32_t)) = 0;
     /*
      *  创建Instance渲染的几何物体对象，包含了物体的顶点属性描述、顶点buffer、索引buffer、Instance
@@ -88,10 +104,14 @@ public:
      *  @param pIndexData、indexCount、indexItemSize 索引数据
      *  data，索引数量，索引数据类型的size
      */
-    virtual InputAssembler* createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-                                                 const std::vector<Attribute>& InstanceAttributes, const void* pVertexData, uint32_t vertexCount,
-                                                 const void* pInstanceData, uint32_t instanceCount, const void* pIndexData = nullptr,
-                                                 uint32_t indexCount = 0, uint32_t indexItemSize = sizeof(uint32_t)) = 0;
+    virtual InputAssembler* createInputAssembler(PrimitiveType primitiveType,
+                                                 const std::vector<Attribute>& attributes,
+                                                 const std::vector<Attribute>& InstanceAttributes,
+                                                 const void* pVertexData, uint32_t vertexCount,
+                                                 const void* pInstanceData, uint32_t instanceCount,
+                                                 const void* pIndexData = nullptr,
+                                                 uint32_t indexCount    = 0,
+                                                 uint32_t indexItemSize = sizeof(uint32_t)) = 0;
 
     /*
      *   创建渲染的窗口表面对象
@@ -100,7 +120,7 @@ public:
      *   @param singleBuffer 窗口是单缓冲还是双缓冲
      *   @param needDepthStencil 是否需要深度模版缓冲
      */
-    virtual SwapChain* createSwapChain(void* nativeWindow, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil = false) = 0;
+    virtual SwapChain* createSwapChain(const SurfaceInfo& info, bool needDepthStencil = false) = 0;
     // 同步对象
     /*
      *  创建用于 CPU 和 GPU 同步用的同步对象

@@ -10,14 +10,12 @@ void CmdBeginRenderPass::endRenderPass(gl3::GLContext* context) {
     m_fbo = OGL_NULL_HANDLE;
 }
 
-void CmdBeginRenderPass::switchSubpass(gl3::GLContext* context,
-                                       uint32_t index) {
+void CmdBeginRenderPass::switchSubpass(gl3::GLContext* context, uint32_t index) {
     bindSubpassFbo(context, index);
     clearSubpassFbo(context, index);
 }
 
-void CmdBeginRenderPass::bindSubpassFbo(gl3::GLContext* context,
-                                        uint32_t index) {
+void CmdBeginRenderPass::bindSubpassFbo(gl3::GLContext* context, uint32_t index) {
     const auto& attachments = m_renderpass->getAttachments();
     const auto& subpasses   = m_renderpass->getSubpasses();
 
@@ -41,15 +39,13 @@ void CmdBeginRenderPass::bindSubpassFbo(gl3::GLContext* context,
         auto textureHandle     = texture->getHandle<OGL_HANDLE>();
         switch (info.type) {
             case TextureType::TEX2D: {
-                GL_CHECK(
-                    glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0 + i,
-                                           GL_TEXTURE_2D, textureHandle, 0));
+                GL_CHECK(glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D,
+                                                textureHandle, 0));
                 break;
             }
             case TextureType::TEX2D_ARRAY: {
-                GL_CHECK(glFramebufferTextureLayer(
-                    target, GL_COLOR_ATTACHMENT0 + i, textureHandle, 0,
-                    drawTarget->getLayerIndex()));
+                GL_CHECK(glFramebufferTextureLayer(target, GL_COLOR_ATTACHMENT0 + i, textureHandle,
+                                                   0, drawTarget->getLayerIndex()));
                 break;
             }
             default: {
@@ -65,13 +61,12 @@ void CmdBeginRenderPass::bindSubpassFbo(gl3::GLContext* context,
         auto texture           = drawTarget->getTexture();
         const auto& info       = texture->getInfo();
         auto textureHandle     = texture->getHandle<OGL_HANDLE>();
-        GL_CHECK(glFramebufferTexture2D(target, GL_DEPTH_STENCIL_ATTACHMENT,
-                                        GL_TEXTURE_2D, textureHandle, 0));
+        GL_CHECK(glFramebufferTexture2D(target, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                                        textureHandle, 0));
     }
 }
 
-void CmdBeginRenderPass::clearSubpassFbo(gl3::GLContext* context,
-                                         uint32_t index) {
+void CmdBeginRenderPass::clearSubpassFbo(gl3::GLContext* context, uint32_t index) {
     const auto& attachments = m_renderpass->getAttachments();
     const auto& subpasses   = m_renderpass->getSubpasses();
 
@@ -96,8 +91,7 @@ void CmdBeginRenderPass::clearSubpassFbo(gl3::GLContext* context,
 
         if (att.load_op == LoadOp::CLEAR) {
             const auto& clearValue = m_clearValues[depthAtt.attachment];
-            GL_CHECK(glClearBufferfi(GL_DEPTH_STENCIL, i,
-                                     clearValue.depthStencil.depth,
+            GL_CHECK(glClearBufferfi(GL_DEPTH_STENCIL, i, clearValue.depthStencil.depth,
                                      clearValue.depthStencil.stencil));
         }
     }

@@ -12,12 +12,10 @@ public:
     static const CmdType CUR_CMD_TYPE = CmdType::BEGIN_RENDERPASS;
 
 public:
-    CmdBeginRenderPass(GL3CommandBuffer& cmdBuf)
-        : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
+    CmdBeginRenderPass(GL3CommandBuffer& cmdBuf) : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
     virtual ~CmdBeginRenderPass() { reset(); }
 
-    void init(RenderPass* renderpass,
-              const std::vector<DrawSurface*>& attachments,
+    void init(RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
               const std::vector<ClearValue>& clearValues) {
         m_renderpass = dynamic_cast<GL3RenderPass*>(renderpass);
         m_renderpass->addRef();
@@ -30,8 +28,10 @@ public:
     }
 
     virtual void reset() override {
-        m_renderpass->delRef();
-        m_renderpass = nullptr;
+        if (m_renderpass) {
+            m_renderpass->delRef();
+            m_renderpass = nullptr;
+        }
 
         for (auto& att : m_attachments) {
             att->delRef();
@@ -39,6 +39,7 @@ public:
         m_attachments.clear();
         m_clearValues.clear();
     }
+
     virtual void execute(gl3::GLContext* context) {
         m_curPassIndex = 0;
         switchSubpass(context, m_curPassIndex);

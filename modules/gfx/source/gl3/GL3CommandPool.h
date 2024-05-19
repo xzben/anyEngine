@@ -1,7 +1,7 @@
 #pragma once
 
-#include "base/CommandPool.h"
 #include "GL3CommandBuffer.h"
+#include "base/CommandPool.h"
 #include "gl_common.h"
 
 BEGIN_GFX_NAMESPACE
@@ -12,7 +12,8 @@ class GL3CommandPool : public CommandPool {
 public:
     GL3CommandPool(GL3Device& device, GL3Queue& queue, ResetMode resetModel);
     virtual ~GL3CommandPool();
-    virtual GL3CommandBuffer* alloc(CommandBufferLevel level) override;
+    virtual GL3CommandBuffer* alloc(
+        CommandBufferLevel level = CommandBufferLevel::PRIMARY) override;
     virtual void free(CommandBuffer* buffer) override;
     virtual void reset() override;
 

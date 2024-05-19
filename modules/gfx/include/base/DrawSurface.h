@@ -44,9 +44,7 @@ public:
         }
     }
 
-    virtual DrawSurfaceType getType() override {
-        return DrawSurfaceType::TEXTURE;
-    }
+    virtual DrawSurfaceType getType() override { return DrawSurfaceType::TEXTURE; }
 
     virtual Texture* getTexture() override { return m_texture; }
     virtual uint32_t getLayerIndex() override { return m_layerIndex; }
@@ -59,15 +57,13 @@ private:
 class DrawSwaChainSurface : public DrawSurface {
 public:
     DrawSwaChainSurface(SwapChain* swapChain, uint32_t imageIndex, bool color)
-        : m_swapChain(swapChain), m_imageIndex(imageIndex), m_isColor(color) {}
+        : m_swapChain(swapChain), m_isColor(color), m_imageIndex(imageIndex) {}
     virtual ~DrawSwaChainSurface() {
         m_swapChain->delRef();
         m_swapChain = nullptr;
     }
 
-    virtual DrawSurfaceType getType() override {
-        return DrawSurfaceType::SWAPCHAIN;
-    }
+    virtual DrawSurfaceType getType() override { return DrawSurfaceType::SWAPCHAIN; }
 
     virtual Texture* getTexture() override {
         if (m_isColor) {

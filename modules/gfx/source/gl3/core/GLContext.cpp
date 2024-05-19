@@ -56,11 +56,9 @@ GLContext::~GLContext() {
 #endif
 }
 
-GL3SwapChain* GLContext::createSwapChain(void* window, uint32_t width, uint32_t height,
-                                         bool singleBuffer, bool needDepthStencil) {
+GL3SwapChain* GLContext::createSwapChain(const SurfaceInfo& info, bool needDepthStencil) {
 #if CUR_GL_TYPE == OPENGL_WGL
-    return WGLHelper::createWindowSurface(m_device, (HWND)window, width, height, singleBuffer,
-                                          needDepthStencil, m_context);
+    return WGLHelper::createWindowSurface(m_device, info, needDepthStencil, m_context);
 #elif CUR_GL_TYPE == OPENGL_AGL
 
 #elif CUR_GL_TYPE == OPENGL_EGL
@@ -212,6 +210,8 @@ void GLContext::allocCacheObj(CacheOGLType type, uint32_t count, OGL_HANDLE* obj
         for (int i = oldSize - 1; i >= 0; i--) {
             objs[setIndex++] = obj.objs[i];
             readSize++;
+            count--;
+            if (count <= 0) break;
         }
         obj.objs.resize(oldSize - readSize);
     }

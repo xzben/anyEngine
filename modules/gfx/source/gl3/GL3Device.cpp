@@ -143,10 +143,8 @@ GL3InputAssembler* GL3Device::createInputAssembler(PrimitiveType primitiveType,
                                  indexItemSize);
 }
 
-GL3SwapChain* GL3Device::createSwapChain(void* nativeWindow, uint32_t width, uint32_t height,
-                                         bool singleBuffer, bool needDepthStencil) {
-    return m_pMainContext->createSwapChain(nativeWindow, width, height, singleBuffer,
-                                           needDepthStencil);
+GL3SwapChain* GL3Device::createSwapChain(const SurfaceInfo& info, bool needDepthStencil) {
+    return m_pMainContext->createSwapChain(info, needDepthStencil);
 }
 GL3Fence* GL3Device::createFence(bool signaled) { return new GL3Fence(*this, signaled); }
 

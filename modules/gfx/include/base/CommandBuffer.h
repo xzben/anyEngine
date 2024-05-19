@@ -71,36 +71,32 @@ enum class RenderState {
 
 class CommandBuffer : public GfxObject {
 public:
-    virtual bool reset()                                                   = 0;
-    virtual void begin(CommandBufferUsage usage)                           = 0;
-    virtual void beginRendPass(RenderPass* renderpass,
-                               const std::vector<DrawSurface*>& attachments,
-                               const std::vector<ClearValue>& clearValues) = 0;
-    virtual void draw(const DrawMeshInfo& info)                            = 0;
-    virtual void compute(const ComputeInfo& info)                          = 0;
-    virtual void nextSubPass()                                             = 0;
-    virtual void endRendPass()                                             = 0;
-    virtual void end()                                                     = 0;
-    virtual void enable(RenderState state)                                 = 0;
-    virtual void disable(RenderState state)                                = 0;
-    virtual void setViewport(float x, float y, float width, float height)  = 0;
+    virtual bool reset()                                                               = 0;
+    virtual void begin(CommandBufferUsage usage = CommandBufferUsage::ONE_TIME_SUBMIT) = 0;
+    virtual void beginRendPass(RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
+                               const std::vector<ClearValue>& clearValues)             = 0;
+    virtual void draw(const DrawMeshInfo& info)                                        = 0;
+    virtual void compute(const ComputeInfo& info)                                      = 0;
+    virtual void nextSubPass()                                                         = 0;
+    virtual void endRendPass()                                                         = 0;
+    virtual void end()                                                                 = 0;
+    virtual void enable(RenderState state)                                             = 0;
+    virtual void disable(RenderState state)                                            = 0;
+    virtual void setViewport(float x, float y, float width, float height)              = 0;
 
     virtual void setScissor(float x, float y, float width, float height) = 0;
 
-    virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size,
-                              uint32_t offset = 0, bool staticData = false) = 0;
+    virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size, uint32_t offset = 0,
+                              bool staticData = false) = 0;
 
-    virtual void updateTexture(Texture* texture, const TextureUpdateInfo& info,
-                               const void* pData, uint32_t size,
-                               bool staticData = false) = 0;
+    virtual void updateTexture(Texture* texture, const TextureUpdateInfo& info, const void* pData,
+                               uint32_t size, bool staticData = false) = 0;
 
-    virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size,
-                            uint32_t srcOffset = 0, uint32_t dstOffset = 0) = 0;
-    virtual void copyTexture(Texture* src, Texture* dst,
-                             const TextureCopyInfo& info)                   = 0;
-    virtual void blitTexture(Texture* src, Texture* dst,
-                             const TextureBliteInfo& info)                  = 0;
-    virtual void generateMipmaps(Texture* textre, uint32_t mipLevels)       = 0;
+    virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size, uint32_t srcOffset = 0,
+                            uint32_t dstOffset = 0)                                    = 0;
+    virtual void copyTexture(Texture* src, Texture* dst, const TextureCopyInfo& info)  = 0;
+    virtual void blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info) = 0;
+    virtual void generateMipmaps(Texture* textre, uint32_t mipLevels)                  = 0;
 
 protected:
     CommandBuffer() : GfxObject(GfxObjectType::CommandBuffer) {}

@@ -6,9 +6,10 @@
 
 BEGIN_GFX_NAMESPACE
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                    VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+static VKAPI_ATTR VkBool32 VKAPI_CALL
+debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+              VkDebugUtilsMessageTypeFlagsEXT messageType,
+              const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
     switch (messageSeverity) {
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: {
             CCWARN("validation layer: %s", pCallbackData->pMessage);
@@ -28,7 +29,8 @@ std::unique_ptr<vk::Instance> VulkanDevice::getInstance(const DeviceInfo& info) 
 
 #ifndef NDEBUG
     builder.enableValidationLayer();
-    builder.setDebugMessengerSeverity(VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+    builder.setDebugMessengerSeverity(VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
+                                      | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
                                       | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT);
 #endif  // NDEBUG
     builder.setAppName(info.name);
@@ -44,7 +46,9 @@ std::unique_ptr<vk::Instance> VulkanDevice::getInstance(const DeviceInfo& info) 
     return builder.build();
 }
 
-vk::PhysicalDevice VulkanDevice::selectPhysicDevice(const DeviceInfo& info, const vk::Instance& instance, vk::Surface& surface) {
+vk::PhysicalDevice VulkanDevice::selectPhysicDevice(const DeviceInfo& info,
+                                                    const vk::Instance& instance,
+                                                    vk::Surface& surface) {
     vk::PhysicalDeviceSelector selector(instance, surface);
     selector.preferDeviceType(VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
     if (info.present) {
@@ -54,7 +58,9 @@ vk::PhysicalDevice VulkanDevice::selectPhysicDevice(const DeviceInfo& info, cons
     return std::move(selector.select());
 }
 
-std::unique_ptr<vk::LogicDevice> VulkanDevice::createLogicDevice(const DeviceInfo& info, vk::Instance& instance, vk::PhysicalDevice physicalDevice,
+std::unique_ptr<vk::LogicDevice> VulkanDevice::createLogicDevice(const DeviceInfo& info,
+                                                                 vk::Instance& instance,
+                                                                 vk::PhysicalDevice physicalDevice,
                                                                  vk::Surface& surface) {
     vk::LogicDeviceBuilder builder(instance, physicalDevice, surface);
 
@@ -132,31 +138,40 @@ VulkanShader* VulkanDevice::createShader(ShaderModuleInfo* info, uint32_t count)
 
 VulkanQueue* VulkanDevice::getQueue(QueueType type, uint32_t index) { return nullptr; }
 
-VulkanRenderPass* VulkanDevice::createRenderPass(const std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
-                                                 const std::vector<SubPassDependency>& dependencies) {
+VulkanRenderPass* VulkanDevice::createRenderPass(
+    const std::vector<Attachment>& attachments, const std::vector<SubPass>& subpass,
+    const std::vector<SubPassDependency>& dependencies) {
     return nullptr;
 }
 
-VulkanPipeline* VulkanDevice::createPipeline(RenderPass* renderPass, uint32_t subpass, Shader* shader, const PipelineState& state) { return nullptr; }
+VulkanPipeline* VulkanDevice::createPipeline(RenderPass* renderPass, uint32_t subpass,
+                                             Shader* shader, const PipelineState& state) {
+    return nullptr;
+}
 
-VulkanTexture* VulkanDevice::createTexture(const TextureInfo& info, const void* pData) { return nullptr; }
-VulkanBuffer* VulkanDevice::createBuffer(BufferType type, uint32_t size, const void* pData) { return nullptr; }
+VulkanTexture* VulkanDevice::createTexture(const TextureInfo& info, const void* pData) {
+    return nullptr;
+}
+VulkanBuffer* VulkanDevice::createBuffer(BufferType type, uint32_t size, const void* pData) {
+    return nullptr;
+}
 VulkanSampler* VulkanDevice::createSampler(const SamplerInfo& info) { return nullptr; }
 
-VulkanInputAssembler* VulkanDevice::createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-                                                         const void* pVertexData, uint32_t vertexCount, const void* pIndexData, uint32_t indexCount,
-                                                         uint32_t indexItemSize) {
+VulkanInputAssembler* VulkanDevice::createInputAssembler(
+    PrimitiveType primitiveType, const std::vector<Attribute>& attributes, const void* pVertexData,
+    uint32_t vertexCount, const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
     return nullptr;
 }
 
-VulkanInputAssembler* VulkanDevice::createInputAssembler(PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-                                                         const std::vector<Attribute>& InstanceAttributes, const void* pVertexData,
-                                                         uint32_t vertexCount, const void* pInstanceData, uint32_t instanceCount,
-                                                         const void* pIndexData, uint32_t indexCount, uint32_t indexItemSize) {
+VulkanInputAssembler* VulkanDevice::createInputAssembler(
+    PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
+    const std::vector<Attribute>& InstanceAttributes, const void* pVertexData, uint32_t vertexCount,
+    const void* pInstanceData, uint32_t instanceCount, const void* pIndexData, uint32_t indexCount,
+    uint32_t indexItemSize) {
     return nullptr;
 }
 
-VulkanSwapChain* VulkanDevice::createSwapChain(void* nativeWindow, uint32_t width, uint32_t height, bool singleBuffer, bool needDepthStencil) {
+VulkanSwapChain* VulkanDevice::createSwapChain(const SurfaceInfo& info, bool needDepthStencil) {
     return nullptr;
 }
 VulkanFence* VulkanDevice::createFence(bool signaled) { return nullptr; }
