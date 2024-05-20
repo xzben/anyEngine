@@ -15,16 +15,24 @@ public:
     CmdBeginRenderPass(GL3CommandBuffer& cmdBuf) : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
     virtual ~CmdBeginRenderPass() { reset(); }
 
-    void init(RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
-              const std::vector<ClearValue>& clearValues) {
-        m_renderpass = dynamic_cast<GL3RenderPass*>(renderpass);
+    void init(const BeginRenderPassInfo& info) {
+        m_renderpass = dynamic_cast<GL3RenderPass*>(info.renderPass);
         m_renderpass->addRef();
 
-        m_attachments = attachments;
-        for (auto& att : m_attachments) {
-            att->addRef();
+        m_attachments.resize(info.surfaceCount);
+        for (uint32_t i = 0; i < info.surfaceCount; i++) {
+            m_attachments[i] = info.pSurfaces[i];
+            m_attachments[i]->addRef();
         }
-        m_clearValues = clearValues;
+
+        if (info.pClearValues != nullptr) {
+            m_clearValues.resize(info.surfaceCount);
+            for (uint32_t i = 0; i < info.surfaceCount; i++) {
+                m_clearValues[i] = info.pClearValues[i];
+            }
+        }
+
+        m_viewport = info.viewport;
     }
 
     virtual void reset() override {
@@ -60,6 +68,7 @@ private:
     GL3RenderPass* m_renderpass;
     std::vector<DrawSurface*> m_attachments;
     std::vector<ClearValue> m_clearValues;
+    Viewport m_viewport;
     uint32_t m_curPassIndex{0};
 };
 END_GL3_CORE_NAMESPACE

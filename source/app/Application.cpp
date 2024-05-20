@@ -2,8 +2,7 @@
 
 #include "utils/Timer.h"
 
-Application::Application(const std::string& name, Window* window)
-    : m_name(name) {
+Application::Application(const std::string& name, Window* window) : m_name(name) {
     setWindow(window);
 }
 
@@ -25,6 +24,8 @@ void Application::setWindow(Window* window) {
     }
 
     onUpdateWindow(m_window);
+
+    m_window->setBeforeCloseCallback([&](Window* win) { m_exit = true; });
 }
 
 void Application::run() {
@@ -50,8 +51,7 @@ void Application::run() {
 void Application::update(float dt) {
     onUpdate(dt);
 
-    foreach ([&](System* sys) { sys->update(dt); })
-        ;
+    foreach ([&](System* sys) { sys->update(dt); });
 }
 
 void Application::exit() { m_exit = true; }

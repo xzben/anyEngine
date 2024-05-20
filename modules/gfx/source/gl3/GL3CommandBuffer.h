@@ -24,8 +24,7 @@ public:
 
     virtual bool reset() override;
     virtual void begin(CommandBufferUsage usage = CommandBufferUsage::ONE_TIME_SUBMIT) override;
-    virtual void beginRendPass(RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
-                               const std::vector<ClearValue>& clearValues) override;
+    virtual void beginRendPass(const BeginRenderPassInfo& info) override;
     virtual void enable(RenderState state) override;
     virtual void disable(RenderState state) override;
     virtual void draw(const DrawMeshInfo& info) override;

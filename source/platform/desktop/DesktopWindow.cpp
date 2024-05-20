@@ -8,7 +8,7 @@ public:
 
 void DesktopWindow::FramebufferResizeCallback(GLFWwindow *win, int width, int height) {
     auto context = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
-    // context->handle_window_resize(width, height);
+    context->handleResize(width, height);
 }
 
 void DesktopWindow::MouseCallback(GLFWwindow *win, int button, int action, int mods) {
@@ -35,7 +35,8 @@ void DesktopWindow::WindowCloseCallback(GLFWwindow *win) {
     context->handleBeforeClose();
 }
 
-DesktopWindow::DesktopWindow(const std::string &title, uint32_t w, uint32_t h) : Window(title, w, h) {}
+DesktopWindow::DesktopWindow(const std::string &title, uint32_t w, uint32_t h)
+    : Window(title, w, h) {}
 
 DesktopWindow::~DesktopWindow() { glfwDestroyWindow(m_handle); }
 

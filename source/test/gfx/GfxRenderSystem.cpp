@@ -16,18 +16,42 @@ GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
     m_renderSemaphore    = m_pDevice->createSemaphore();
     m_imageValidSemahore = m_pDevice->createSemaphore();
 
-    gfx::Attachment attachment;
-    attachment.load_op = gfx::LoadOp::CLEAR;
+    std::vector<gfx::Attachment> attachments;
+    attachments.resize(2);
+
+    attachments[0].format = gfx::PixelFormat::RGBA8;
+    attachments[0].loadOp = gfx::LoadOp::CLEAR;
+
+    attachments[1].format        = gfx::PixelFormat::Depth24Stencil8;
+    attachments[1].loadOp        = gfx::LoadOp::CLEAR;
+    attachments[1].stencilLoadOp = gfx::LoadOp::CLEAR;
+
     gfx::SubPass subpass;
 
     subpass.colorAttachments.push_back({0, gfx::ImageLayout::COLOR_ATTACHMENT_OPTIMAL});
-    m_renderPass = m_pDevice->createRenderPass({attachment}, {subpass}, {});
+    subpass.depthStencilAttachments.push_back(
+        {1, gfx::ImageLayout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL});
+
+    m_renderPass = m_pDevice->createRenderPass(attachments, {subpass}, {});
 
     uint32_t imageCount = m_swapChain->getImageCount();
-    m_drawSurfaces.resize(imageCount);
+    m_drawColorSurfaces.resize(imageCount);
+    m_drawDepthStencilSurfaces.resize(imageCount);
     for (uint32_t i = 0; i < imageCount; i++) {
-        m_drawSurfaces[i] = m_pDevice->createDrawSurface(m_swapChain, i, true);
+        m_drawColorSurfaces[i]        = m_pDevice->createDrawSurface(m_swapChain, i, true);
+        m_drawDepthStencilSurfaces[i] = m_pDevice->createDrawSurface(m_swapChain, i, false);
     }
+
+    window->setResizeCallback([&](uint32_t width, uint32_t height) {
+        gfx::SurfaceInfo info = m_swapChain->getInfo();
+        info.width            = width;
+        info.height           = height;
+        m_swapChain->handleUpdateSurfaceInfo(info);
+    });
+
+    window->setBeforeCloseCallback([&](Window* win) {
+
+    });
 }
 
 GfxRenderSystem::~GfxRenderSystem() {
@@ -61,10 +85,15 @@ GfxRenderSystem::~GfxRenderSystem() {
         m_renderPass = nullptr;
     }
 
-    for (auto& item : m_drawSurfaces) {
+    for (auto& item : m_drawColorSurfaces) {
         m_pDevice->destroyDrawSurface(item);
     }
-    m_drawSurfaces.clear();
+    m_drawColorSurfaces.clear();
+
+    for (auto& item : m_drawDepthStencilSurfaces) {
+        m_pDevice->destroyDrawSurface(item);
+    }
+    m_drawDepthStencilSurfaces.clear();
 }
 
 void GfxRenderSystem::onUpdate(float dt) {
@@ -78,14 +107,23 @@ void GfxRenderSystem::onUpdate(float dt) {
     m_commandPool->reset();
     auto cmd = m_commandPool->alloc(gfx::CommandBufferLevel::PRIMARY);
 
-    auto surface = m_drawSurfaces[imageIndex];
+    gfx::DrawSurface* pSurfaces[2];
+    pSurfaces[0] = m_drawColorSurfaces[imageIndex];
+    pSurfaces[1] = m_drawDepthStencilSurfaces[imageIndex];
     cmd->begin(gfx::CommandBufferUsage::ONE_TIME_SUBMIT);
 
     auto info = m_swapChain->getInfo();
-    gfx::ClearValue clear;
-    clear.color = {1.0, 0.0, 0.0, 1.0};
-    cmd->setViewport(0, 0, info.width, info.height);
-    cmd->beginRendPass(m_renderPass, {surface}, {clear});
+    gfx::ClearValue clear[2];
+    clear[0].color        = {1.0, 0.0, 0.0, 1.0};
+    clear[1].depthStencil = {1.0, 0};
+
+    gfx::BeginRenderPassInfo beginInfo;
+    beginInfo.renderPass   = m_renderPass;
+    beginInfo.surfaceCount = 2;
+    beginInfo.pSurfaces    = pSurfaces;
+    beginInfo.pClearValues = clear;
+    beginInfo.viewport     = {0.f, 0.f, (float)info.width, (float)info.height};
+    cmd->beginRendPass(beginInfo);
     cmd->end();
 
     m_queue->submit({cmd}, {m_imageValidSemahore}, {m_renderSemaphore}, m_renderFence);

@@ -591,12 +591,12 @@ CC_ENUM_BITWISE_OPERATORS(MemoryAccess)
 struct Attachment {
     PixelFormat format = PixelFormat::RGBA8;
     SampleCount samples{SampleCount::SAMPLE_COUNT_1_BIT};
-    LoadOp load_op{LoadOp::DONT_CARE};
-    StoreOp store_op{StoreOp::DONT_CARE};
-    LoadOp stencil_load_op{LoadOp::DONT_CARE};
-    StoreOp stencil_store_op{StoreOp::DONT_CARE};
-    ImageLayout initial_layout{ImageLayout::UNDEFINED};
-    ImageLayout final_layout{ImageLayout::UNDEFINED};
+    LoadOp loadOp{LoadOp::DONT_CARE};
+    StoreOp storeOp{StoreOp::DONT_CARE};
+    LoadOp stencilLoadOp{LoadOp::DONT_CARE};
+    StoreOp stencilStoreOp{StoreOp::DONT_CARE};
+    ImageLayout initialLayout{ImageLayout::UNDEFINED};
+    ImageLayout finalLayout{ImageLayout::UNDEFINED};
 };
 
 struct AttachmentReference {

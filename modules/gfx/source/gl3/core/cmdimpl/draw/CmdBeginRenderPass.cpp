@@ -64,6 +64,10 @@ void CmdBeginRenderPass::bindSubpassFbo(gl3::GLContext* context, uint32_t index)
         GL_CHECK(glFramebufferTexture2D(target, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
                                         textureHandle, 0));
     }
+
+    if (m_viewport.width > 0 && m_viewport.height > 0) {
+        GL_CHECK(glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height));
+    }
 }
 
 void CmdBeginRenderPass::clearSubpassFbo(gl3::GLContext* context, uint32_t index) {
@@ -79,7 +83,7 @@ void CmdBeginRenderPass::clearSubpassFbo(gl3::GLContext* context, uint32_t index
         const auto& colorAtt = pass.colorAttachments[i];
         const auto& att      = attachments[colorAtt.attachment];
 
-        if (att.load_op == LoadOp::CLEAR) {
+        if (att.loadOp == LoadOp::CLEAR) {
             const auto& clearValue = m_clearValues[colorAtt.attachment];
             GL_CHECK(glClearBufferfv(GL_COLOR, i, clearValue.color.values));
         }
@@ -89,7 +93,7 @@ void CmdBeginRenderPass::clearSubpassFbo(gl3::GLContext* context, uint32_t index
         const auto& depthAtt = pass.depthStencilAttachments[i];
         const auto& att      = attachments[depthAtt.attachment];
 
-        if (att.load_op == LoadOp::CLEAR) {
+        if (att.loadOp == LoadOp::CLEAR) {
             const auto& clearValue = m_clearValues[depthAtt.attachment];
             GL_CHECK(glClearBufferfi(GL_DEPTH_STENCIL, i, clearValue.depthStencil.depth,
                                      clearValue.depthStencil.stencil));

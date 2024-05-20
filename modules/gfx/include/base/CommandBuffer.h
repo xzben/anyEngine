@@ -69,12 +69,19 @@ enum class RenderState {
     SCISSOR = 1 << 0,
 };
 
+struct BeginRenderPassInfo {
+    RenderPass* renderPass{nullptr};
+    uint32_t surfaceCount{0};
+    DrawSurface** pSurfaces{nullptr};
+    ClearValue* pClearValues{nullptr};
+    Viewport viewport{0.f, 0.f, 0.f, 0.f};
+};
+
 class CommandBuffer : public GfxObject {
 public:
     virtual bool reset()                                                               = 0;
     virtual void begin(CommandBufferUsage usage = CommandBufferUsage::ONE_TIME_SUBMIT) = 0;
-    virtual void beginRendPass(RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
-                               const std::vector<ClearValue>& clearValues)             = 0;
+    virtual void beginRendPass(const BeginRenderPassInfo& info)                        = 0;
     virtual void draw(const DrawMeshInfo& info)                                        = 0;
     virtual void compute(const ComputeInfo& info)                                      = 0;
     virtual void nextSubPass()                                                         = 0;

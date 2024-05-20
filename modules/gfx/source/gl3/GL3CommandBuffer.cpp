@@ -5,8 +5,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-GL3CommandBuffer::GL3CommandBuffer(GL3Device& device, GL3CommandPool& pool,
-                                   uint32_t index)
+GL3CommandBuffer::GL3CommandBuffer(GL3Device& device, GL3CommandPool& pool, uint32_t index)
     : m_device(&device), m_pool(&pool), m_index(index) {}
 GL3CommandBuffer::~GL3CommandBuffer() { clearCmds(); }
 
@@ -18,11 +17,8 @@ bool GL3CommandBuffer::reset() {
     return true;
 }
 void GL3CommandBuffer::begin(CommandBufferUsage usage) {}
-void GL3CommandBuffer::beginRendPass(
-    RenderPass* renderpass, const std::vector<DrawSurface*>& attachments,
-    const std::vector<ClearValue>& clearValues) {
-    auto cmd =
-        allocCmd<gl3::CmdBeginRenderPass>(renderpass, attachments, clearValues);
+void GL3CommandBuffer::beginRendPass(const BeginRenderPassInfo& info) {
+    auto cmd              = allocCmd<gl3::CmdBeginRenderPass>(info);
     m_lastBeginRenderPass = cmd;
     m_cmds.push_back(cmd);
 }
@@ -55,8 +51,7 @@ void GL3CommandBuffer::endRendPass() {
 }
 void GL3CommandBuffer::end() {}
 
-void GL3CommandBuffer::setViewport(float x, float y, float width,
-                                   float height) {
+void GL3CommandBuffer::setViewport(float x, float y, float width, float height) {
     auto cmd = allocCmd<gl3::CmdSetViewport>(x, y, width, height);
     m_cmds.push_back(cmd);
 }
@@ -65,36 +60,28 @@ void GL3CommandBuffer::setScissor(float x, float y, float width, float height) {
     m_cmds.push_back(cmd);
 }
 
-void GL3CommandBuffer::updateBuffer(Buffer* buffer, const void* pData,
-                                    uint32_t size, uint32_t offset,
-                                    bool staticData) {
-    auto cmd =
-        allocCmd<gl3::CmdUpdateBuffer>(buffer, pData, size, offset, staticData);
+void GL3CommandBuffer::updateBuffer(Buffer* buffer, const void* pData, uint32_t size,
+                                    uint32_t offset, bool staticData) {
+    auto cmd = allocCmd<gl3::CmdUpdateBuffer>(buffer, pData, size, offset, staticData);
     m_cmds.push_back(cmd);
 }
 
-void GL3CommandBuffer::updateTexture(Texture* texture,
-                                     const TextureUpdateInfo& info,
-                                     const void* pData, uint32_t size,
-                                     bool staticData) {
-    auto cmd =
-        allocCmd<gl3::CmdUpdateTexture>(texture, info, pData, size, staticData);
+void GL3CommandBuffer::updateTexture(Texture* texture, const TextureUpdateInfo& info,
+                                     const void* pData, uint32_t size, bool staticData) {
+    auto cmd = allocCmd<gl3::CmdUpdateTexture>(texture, info, pData, size, staticData);
     m_cmds.push_back(cmd);
 }
 
-void GL3CommandBuffer::copyBuffer(Buffer* src, Buffer* dst, uint32_t size,
-                                  uint32_t srcOffset, uint32_t dstOffset) {
-    auto cmd =
-        allocCmd<gl3::CmdCopyBuffer>(src, dst, size, srcOffset, dstOffset);
+void GL3CommandBuffer::copyBuffer(Buffer* src, Buffer* dst, uint32_t size, uint32_t srcOffset,
+                                  uint32_t dstOffset) {
+    auto cmd = allocCmd<gl3::CmdCopyBuffer>(src, dst, size, srcOffset, dstOffset);
     m_cmds.push_back(cmd);
 }
-void GL3CommandBuffer::copyTexture(Texture* src, Texture* dst,
-                                   const TextureCopyInfo& info) {
+void GL3CommandBuffer::copyTexture(Texture* src, Texture* dst, const TextureCopyInfo& info) {
     auto cmd = allocCmd<gl3::CmdCopyTexture>(src, dst, info);
     m_cmds.push_back(cmd);
 }
-void GL3CommandBuffer::blitTexture(Texture* src, Texture* dst,
-                                   const TextureBliteInfo& info) {
+void GL3CommandBuffer::blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info) {
     auto cmd = allocCmd<gl3::CmdBlitTexture>(src, dst, info);
     m_cmds.push_back(cmd);
 }

@@ -19,5 +19,6 @@ private:
     gfx::CommandPool* m_commandPool{nullptr};
     gfx::Queue* m_queue{nullptr};
 
-    std::vector<gfx::DrawSurface*> m_drawSurfaces;
+    std::vector<gfx::DrawSurface*> m_drawColorSurfaces;
+    std::vector<gfx::DrawSurface*> m_drawDepthStencilSurfaces;
 };

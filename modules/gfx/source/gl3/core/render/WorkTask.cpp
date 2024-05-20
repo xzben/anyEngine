@@ -13,16 +13,10 @@ void WorkTask::finish() {
     m_finish.store(true);
 }
 //-----------------RenderWorkTask-----------------
-RenderWorkTask::RenderWorkTask(GL3Queue* queue,
-                               const std::vector<CommandBuffer*>& cmds,
+RenderWorkTask::RenderWorkTask(GL3Queue* queue, const std::vector<CommandBuffer*>& cmds,
                                const std::vector<Semaphore*>& waits,
-                               const std::vector<Semaphore*>& signals,
-                               Fence* fence)
-    : WorkTask(queue),
-      m_cmds(cmds),
-      m_waits(waits),
-      m_signals(signals),
-      m_fence(fence) {
+                               const std::vector<Semaphore*>& signals, Fence* fence)
+    : WorkTask(queue), m_cmds(cmds), m_waits(waits), m_signals(signals), m_fence(fence) {
     for (auto& cmd : m_cmds) {
         cmd->addRef();
     }
@@ -58,7 +52,7 @@ void RenderWorkTask::execute(GLContext* context) {
     }
     GL_CHECK(glFinish());
     //-------------------------------
-    for (auto& item : m_waits) {
+    for (auto& item : m_signals) {
         item->signal();
     }
     if (m_fence) {
@@ -66,8 +60,7 @@ void RenderWorkTask::execute(GLContext* context) {
     }
 }
 //-----------------PresentWorkTask-----------------
-PresentWorkTask::PresentWorkTask(GL3Queue* queue, SwapChain* swapChain,
-                                 uint32_t imageIndex,
+PresentWorkTask::PresentWorkTask(GL3Queue* queue, SwapChain* swapChain, uint32_t imageIndex,
                                  const std::vector<Semaphore*>& waits)
     : WorkTask(queue), m_swapChain(swapChain), m_waits(waits) {
     m_swapChain->addRef();
