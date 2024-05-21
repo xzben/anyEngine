@@ -38,8 +38,10 @@ GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
     m_drawColorSurfaces.resize(imageCount);
     m_drawDepthStencilSurfaces.resize(imageCount);
     for (uint32_t i = 0; i < imageCount; i++) {
-        m_drawColorSurfaces[i]        = m_pDevice->createDrawSurface(m_swapChain, i, true);
-        m_drawDepthStencilSurfaces[i] = m_pDevice->createDrawSurface(m_swapChain, i, false);
+        m_drawColorSurfaces[i] =
+            m_pDevice->createDrawSurface(m_swapChain, i, gfx::SwapChainAttachment::COLOR);
+        m_drawDepthStencilSurfaces[i] =
+            m_pDevice->createDrawSurface(m_swapChain, i, gfx::SwapChainAttachment::DEPTH_STENCIL);
     }
 
     window->setResizeCallback([&](uint32_t width, uint32_t height) {
@@ -122,7 +124,7 @@ void GfxRenderSystem::onUpdate(float dt) {
     beginInfo.surfaceCount = 2;
     beginInfo.pSurfaces    = pSurfaces;
     beginInfo.pClearValues = clear;
-    beginInfo.viewport     = {0.f, 0.f, (float)info.width, (float)info.height};
+    beginInfo.viewport     = {0, 0, info.width, info.height};
     cmd->beginRendPass(beginInfo);
     cmd->end();
 

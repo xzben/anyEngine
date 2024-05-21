@@ -140,6 +140,8 @@ struct Attribute {
     std::string name{""};
     DataFormat format{DataFormat::UNDEFINED};
     bool isNormalized{false};
+    uint32_t stride{0};
+    uint32_t offset{0};
 };
 
 enum class BufferType : uint32_t {
@@ -627,10 +629,10 @@ struct SizeImp {
 };
 
 struct Viewport {
-    float x{0.f};
-    float y{0.f};
-    float width{0.f};
-    float height{0.f};
+    uint32_t x{0};
+    uint32_t y{0};
+    uint32_t width{0};
+    uint32_t height{0};
 };
 
 using RectI = RectImp<int32_t>;
@@ -642,35 +644,36 @@ using SizeF = SizeImp<float>;
 struct BufferCopyRange {};
 
 struct Offset3D {
-    float x{0.f};
-    float y{0.f};
-    float z{0.f};
+    uint32_t x{0};
+    uint32_t y{0};
+    uint32_t z{0};
 };
 
 struct Range3D {
-    float x{0.f};
-    float y{0.f};
-    float z{0.f};
+    uint32_t x{0};
+    uint32_t y{0};
+    uint32_t z{0};
 };
 
-struct TextureUpdateInfo {
-    Offset3D offset;
-    Range3D range;
+struct TextureSubInfo {
+    Offset3D offset{0, 0, 0};
+    Range3D range{0, 0, 0};
+    uint32_t layerIndex{0};
 };
 
 struct TextureCopyInfo {
-    Offset3D srcOffset{0.f, 0.f, 0.f};
-    Offset3D dstOffset{0.f, 0.f, 0.f};
-    Range3D range{0.f, 0.f, 0.f};
+    Offset3D srcOffset{0, 0, 0};
+    Offset3D dstOffset{0, 0, 0};
+    Range3D range{0, 0, 0};
     uint32_t srcLayerIndex{0};
     uint32_t dstLayerIndex{0};
 };
 
 struct TextureBliteInfo {
-    Offset3D srcOffset{0.f, 0.f, 0.f};
-    Offset3D dstOffset{0.f, 0.f, 0.f};
-    Range3D srcRange{0.f, 0.f, 0.f};
-    Range3D dstRange{0.f, 0.f, 0.f};
+    Offset3D srcOffset{0, 0, 0};
+    Offset3D dstOffset{0, 0, 0};
+    Range3D srcRange{0, 0, 0};
+    Range3D dstRange{0, 0, 0};
     uint32_t srcLayerIndex{0};
     uint32_t dstLayerIndex{0};
 };

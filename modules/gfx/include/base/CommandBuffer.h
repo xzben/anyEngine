@@ -74,7 +74,22 @@ struct BeginRenderPassInfo {
     uint32_t surfaceCount{0};
     DrawSurface** pSurfaces{nullptr};
     ClearValue* pClearValues{nullptr};
-    Viewport viewport{0.f, 0.f, 0.f, 0.f};
+    Viewport viewport{0, 0, 0, 0};
+};
+
+struct UpdateAssemblerInfo {
+    const void* pVertexData{nullptr};
+    uint32_t vertexDataSize{0};
+    uint32_t vertexCount{0};
+
+    const void* pIndexData{nullptr};
+    uint32_t indexDataSize{0};
+    uint32_t indexCount{0};
+
+    const void* pInstanceData{nullptr};
+    uint32_t instanceDataSize{0};
+    uint32_t instanceCount{0};
+    bool staticData{false};
 };
 
 class CommandBuffer : public GfxObject {
@@ -89,21 +104,22 @@ public:
     virtual void end()                                                                 = 0;
     virtual void enable(RenderState state)                                             = 0;
     virtual void disable(RenderState state)                                            = 0;
-    virtual void setViewport(float x, float y, float width, float height)              = 0;
-
-    virtual void setScissor(float x, float y, float width, float height) = 0;
-
+    virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)  = 0;
+    virtual void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height)   = 0;
     virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size, uint32_t offset = 0,
-                              bool staticData = false) = 0;
+                              bool staticData = false)                                 = 0;
 
-    virtual void updateTexture(Texture* texture, const TextureUpdateInfo& info, const void* pData,
+    virtual void updateTexture(Texture* texture, const TextureSubInfo& info, const void* pData,
                                uint32_t size, bool staticData = false) = 0;
 
     virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size, uint32_t srcOffset = 0,
-                            uint32_t dstOffset = 0)                                    = 0;
-    virtual void copyTexture(Texture* src, Texture* dst, const TextureCopyInfo& info)  = 0;
-    virtual void blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info) = 0;
-    virtual void generateMipmaps(Texture* textre, uint32_t mipLevels)                  = 0;
+                            uint32_t dstOffset = 0)                                      = 0;
+    virtual void copyTexture(Texture* src, Texture* dst, const TextureCopyInfo& info)    = 0;
+    virtual void blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info)   = 0;
+    virtual void generateMipmaps(Texture* textre, uint32_t mipLevels)                    = 0;
+    virtual void clearTexture(Texture* src, TextureSubInfo& subInfo, const Color& color) = 0;
+
+    virtual void updateInputAssembler(InputAssembler* input, const UpdateAssemblerInfo& info) = 0;
 
 protected:
     CommandBuffer() : GfxObject(GfxObjectType::CommandBuffer) {}

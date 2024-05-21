@@ -17,16 +17,15 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
     GL_CHECK(glBindVertexArray(vao));
     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbuffer->getHandle<OGL_HANDLE>()));
 
-    uint32_t stride = input->getVertexAttribteStride();
     uint32_t count;
     GLenum formatType;
     uint32_t formatSize = 0;
-    uint32_t offset     = 0;
     bool intType        = false;
     for (auto& attr : attributes) {
-        GL3InputAssembler::GetAttributeDataInfo(attr.format, count, formatSize, formatType, intType);
+        GL3InputAssembler::GetAttributeDataInfo(attr.format, count, formatSize, formatType,
+                                                intType);
         if (count > 4) {
-            int step        = ceil(count / 4);
+            int step        = std::ceil(count / 4);
             int location    = attr.location;
             int remainCount = count;
             int stepOffset  = 0;
@@ -34,10 +33,12 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
                 int curCount = remainCount > 4 ? 4 : remainCount;
                 remainCount -= curCount;
                 if (intType) {
-                    GL_CHECK(glVertexAttribIPointer(location + i, curCount, formatType, stride, (void*)(0 + offset + stepOffset)));
+                    GL_CHECK(glVertexAttribIPointer(location + i, curCount, formatType, attr.stride,
+                                                    (void*)(attr.offset + stepOffset)));
                 } else {
-                    GL_CHECK(glVertexAttribPointer(location + i, curCount, formatType, attr.isNormalized ? GL_TRUE : GL_FALSE, stride,
-                                                   (void*)(0 + offset + stepOffset)));
+                    GL_CHECK(glVertexAttribPointer(location + i, curCount, formatType,
+                                                   attr.isNormalized ? GL_TRUE : GL_FALSE,
+                                                   attr.stride, (void*)(attr.offset + stepOffset)));
                 }
 
                 GL_CHECK(glVertexAttribDivisor(location + i, 0));
@@ -45,23 +46,24 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
             }
         } else {
             if (intType) {
-                GL_CHECK(glVertexAttribIPointer(attr.location, count, formatType, stride, (void*)(0 + offset)));
+                GL_CHECK(glVertexAttribIPointer(attr.location, count, formatType, attr.stride,
+                                                (void*)(attr.offset)));
             } else {
-                GL_CHECK(
-                    glVertexAttribPointer(attr.location, count, formatType, attr.isNormalized ? GL_TRUE : GL_FALSE, stride, (void*)(0 + offset)));
+                GL_CHECK(glVertexAttribPointer(attr.location, count, formatType,
+                                               attr.isNormalized ? GL_TRUE : GL_FALSE, attr.stride,
+                                               (void*)(attr.offset)));
             }
             GL_CHECK(glEnableVertexAttribArray(attr.location));
             GL_CHECK(glVertexAttribDivisor(attr.location, 0));
         }
-
-        offset += formatSize * count;
     }
 
     if (instanceBuf) {
         GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, instanceBuf->getHandle<OGL_HANDLE>()));
         auto& instanceAttribute = input->getInstanceAttributes();
         for (auto& attr : instanceAttribute) {
-            GL3InputAssembler::GetAttributeDataInfo(attr.format, count, formatSize, formatType, intType);
+            GL3InputAssembler::GetAttributeDataInfo(attr.format, count, formatSize, formatType,
+                                                    intType);
             if (count > 4) {
                 int step        = std::ceil(count / 4);
                 int location    = attr.location;
@@ -71,10 +73,14 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
                     int curCount = remainCount > 4 ? 4 : remainCount;
                     remainCount -= curCount;
                     if (intType) {
-                        GL_CHECK(glVertexAttribIPointer(location + i, curCount, formatType, stride, (void*)(0 + offset + stepOffset)));
+                        GL_CHECK(glVertexAttribIPointer(location + i, curCount, formatType,
+                                                        attr.stride,
+                                                        (void*)(attr.offset + stepOffset)));
                     } else {
-                        GL_CHECK(glVertexAttribPointer(location + i, curCount, formatType, attr.isNormalized ? GL_TRUE : GL_FALSE, stride,
-                                                       (void*)(0 + offset + stepOffset)));
+                        GL_CHECK(glVertexAttribPointer(location + i, curCount, formatType,
+                                                       attr.isNormalized ? GL_TRUE : GL_FALSE,
+                                                       attr.stride,
+                                                       (void*)(attr.offset + stepOffset)));
                     }
 
                     stepOffset += curCount * formatSize;
@@ -83,16 +89,17 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
                 }
             } else {
                 if (intType) {
-                    GL_CHECK(glVertexAttribIPointer(attr.location, count, formatType, stride, (void*)(0 + offset)));
+                    GL_CHECK(glVertexAttribIPointer(attr.location, count, formatType, attr.stride,
+                                                    (void*)(attr.offset)));
                 } else {
-                    GL_CHECK(
-                        glVertexAttribPointer(attr.location, count, formatType, attr.isNormalized ? GL_TRUE : GL_FALSE, stride, (void*)(0 + offset)));
+                    GL_CHECK(glVertexAttribPointer(attr.location, count, formatType,
+                                                   attr.isNormalized ? GL_TRUE : GL_FALSE,
+                                                   attr.stride, (void*)(attr.offset)));
                 }
 
                 GL_CHECK(glEnableVertexAttribArray(attr.location));
                 GL_CHECK(glVertexAttribDivisor(attr.location, 1));
             }
-            offset += formatSize * count;
         }
     }
 
@@ -131,7 +138,8 @@ void CmdDraw::execute(gl3::GLContext* context) {
         if (ibuffer == nullptr) {
             if (instanceBuf) {
                 CCASSERT(mesh.instanceCount > 0, "instance count must > 0");
-                GL_CHECK(glDrawArraysInstanced(primitiveType, mesh.offset, mesh.count, mesh.instanceCount));
+                GL_CHECK(glDrawArraysInstanced(primitiveType, mesh.offset, mesh.count,
+                                               mesh.instanceCount));
             } else {
                 GL_CHECK(glDrawArrays(primitiveType, mesh.offset, mesh.count));
             }
@@ -158,7 +166,8 @@ void CmdDraw::execute(gl3::GLContext* context) {
 
             if (instanceBuf) {
                 CCASSERT(mesh.instanceCount > 0, "instance count must > 0");
-                GL_CHECK(glDrawElementsInstanced(primitiveType, mesh.count, indexType, (void*)mesh.offset, mesh.instanceCount));
+                GL_CHECK(glDrawElementsInstanced(primitiveType, mesh.count, indexType,
+                                                 (void*)mesh.offset, mesh.instanceCount));
             } else {
                 GL_CHECK(glDrawElements(primitiveType, mesh.count, indexType, (void*)mesh.offset));
             }

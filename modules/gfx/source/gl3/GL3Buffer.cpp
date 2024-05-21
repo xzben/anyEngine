@@ -1,6 +1,7 @@
 #include "GL3Buffer.h"
 
 #include "GL3Device.h"
+
 BEGIN_GFX_NAMESPACE
 
 static GLenum g_buffer_tages[] = {
@@ -55,23 +56,17 @@ void GL3Buffer::update(const void* data, uint32_t size, uint32_t offset) {
     uint32_t curSize = size + offset;
     CCASSERT(curSize <= m_capacity, "update range need in capacity");
     m_size = m_size > curSize ? m_size : curSize;
-#if OPENGL_RESOURCE_ANSC
-    m_device.runWithContext([&](gl3::GLContext* ctx) {
-#endif
-        GL_CHECK(glBindBuffer(m_target, m_handle));
-        void* dst{nullptr};
-        GL_CHECK(dst = glMapBufferRange(m_target, offset, size,
-                                        GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
-        if (!dst) {
-            GL_CHECK(glBufferSubData(m_target, offset, size, data));
-            return;
-        }
-        memcpy(dst, data, size);
-        GL_CHECK(glUnmapBuffer(m_target));
-        GL_CHECK(glBindBuffer(m_target, 0));
-#if OPENGL_RESOURCE_ANSC
-    });
-#endif
-}
 
+    GL_CHECK(glBindBuffer(m_target, m_handle));
+    void* dst{nullptr};
+    GL_CHECK(dst = glMapBufferRange(m_target, offset, size,
+                                    GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
+    if (!dst) {
+        GL_CHECK(glBufferSubData(m_target, offset, size, data));
+        return;
+    }
+    memcpy(dst, data, size);
+    GL_CHECK(glUnmapBuffer(m_target));
+    GL_CHECK(glBindBuffer(m_target, 0));
+}
 END_GFX_NAMESPACE

@@ -13,8 +13,8 @@ public:
     GL3Semaphore(GL3Device& device);
     virtual ~GL3Semaphore();
 
-    virtual WaitResult wait(uint64_t timeout = 0) override;
-    virtual void signal() override;
+    virtual WaitResult wait(uint64_t timeout = 0);
+    virtual void signal();
 
 protected:
     virtual GFX_HANDLE getHandleImp() const override { return 0; }

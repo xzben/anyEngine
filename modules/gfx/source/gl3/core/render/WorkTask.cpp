@@ -3,6 +3,7 @@
 #include "../../GL3CommandBuffer.h"
 #include "../../GL3Fence.h"
 #include "../../GL3Queue.h"
+#include "../../GL3Semaphore.h"
 #include "../../GL3SwapChain.h"
 
 BEGIN_GFX_NAMESPACE
@@ -44,7 +45,7 @@ RenderWorkTask::~RenderWorkTask() {
 
 void RenderWorkTask::execute(GLContext* context) {
     for (auto& item : m_waits) {
-        item->wait();
+        dynamic_cast<GL3Semaphore*>(item)->wait();
     }
     //---------------------------------
     for (auto& cmd : m_cmds) {
@@ -53,7 +54,7 @@ void RenderWorkTask::execute(GLContext* context) {
     GL_CHECK(glFinish());
     //-------------------------------
     for (auto& item : m_signals) {
-        item->signal();
+        dynamic_cast<GL3Semaphore*>(item)->signal();
     }
     if (m_fence) {
         dynamic_cast<GL3Fence*>(m_fence)->signal();
@@ -78,7 +79,7 @@ PresentWorkTask::~PresentWorkTask() {
 }
 void PresentWorkTask::execute(GLContext* context) {
     for (auto& item : m_waits) {
-        item->wait();
+        dynamic_cast<GL3Semaphore*>(item)->wait();
     }
     dynamic_cast<GL3SwapChain*>(m_swapChain)->present(context);
 }

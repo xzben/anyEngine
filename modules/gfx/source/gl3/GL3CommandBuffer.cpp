@@ -51,12 +51,22 @@ void GL3CommandBuffer::endRendPass() {
 }
 void GL3CommandBuffer::end() {}
 
-void GL3CommandBuffer::setViewport(float x, float y, float width, float height) {
+void GL3CommandBuffer::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
     auto cmd = allocCmd<gl3::CmdSetViewport>(x, y, width, height);
     m_cmds.push_back(cmd);
 }
-void GL3CommandBuffer::setScissor(float x, float y, float width, float height) {
+void GL3CommandBuffer::setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
     auto cmd = allocCmd<gl3::CmdSetScissor>(x, y, width, height);
+    m_cmds.push_back(cmd);
+}
+
+void GL3CommandBuffer::clearTexture(Texture* src, TextureSubInfo& subInfo, const Color& color) {
+    auto cmd = allocCmd<gl3::CmdClearTexture>(src, subInfo, color);
+    m_cmds.push_back(cmd);
+}
+void GL3CommandBuffer::updateInputAssembler(InputAssembler* input,
+                                            const UpdateAssemblerInfo& info) {
+    auto cmd = allocCmd<gl3::CmdUpdateInputAssembler>(input, info);
     m_cmds.push_back(cmd);
 }
 
@@ -66,7 +76,7 @@ void GL3CommandBuffer::updateBuffer(Buffer* buffer, const void* pData, uint32_t 
     m_cmds.push_back(cmd);
 }
 
-void GL3CommandBuffer::updateTexture(Texture* texture, const TextureUpdateInfo& info,
+void GL3CommandBuffer::updateTexture(Texture* texture, const TextureSubInfo& info,
                                      const void* pData, uint32_t size, bool staticData) {
     auto cmd = allocCmd<gl3::CmdUpdateTexture>(texture, info, pData, size, staticData);
     m_cmds.push_back(cmd);

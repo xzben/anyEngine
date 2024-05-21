@@ -111,12 +111,12 @@ void VulkanCommandBuffer::nextSubPass() { vkCmdNextSubpass(m_handle, VK_SUBPASS_
 void VulkanCommandBuffer::endRendPass() { vkCmdEndRenderPass(m_handle); }
 void VulkanCommandBuffer::end() { vkEndCommandBuffer(m_handle); }
 
-void VulkanCommandBuffer::setViewport(float x, float y, float width, float height) {
+void VulkanCommandBuffer::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
     VkViewport viewport{x, y, width, height, 0.f, 1.f};
     vkCmdSetViewport(m_handle, 0, 1, &viewport);
 }
 
-void VulkanCommandBuffer::setScissor(float x, float y, float width, float height) {
+void VulkanCommandBuffer::setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
     VkRect2D rect{{x, y}, {width, height}};
     vkCmdSetScissor(m_handle, 0, 1, &rect);
 }
@@ -154,6 +154,10 @@ void VulkanCommandBuffer::copyTexture(Texture* src, Texture* dst, const TextureC
 }
 
 void VulkanCommandBuffer::blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info) {}
+void VulkanCommandBuffer::clearTexture(Texture* src, TextureSubInfo& subInfo, const Color& color) {}
+void VulkanCommandBuffer::updateInputAssembler(InputAssembler* input,
+                                               const UpdateAssemblerInfo& info) {}
+
 void VulkanCommandBuffer::generateMipmaps(Texture* textre, uint32_t mipLevels) {
     VkImage imgHandle              = textre->getHandle<VkImage>();
     VkCommandBuffer command_buffer = m_handle;
@@ -228,6 +232,6 @@ void VulkanCommandBuffer::generateMipmaps(Texture* textre, uint32_t mipLevels) {
 void VulkanCommandBuffer::updateBuffer(Buffer* buffer, const void* pData, uint32_t size,
                                        uint32_t offset, bool staticData) {}
 
-void VulkanCommandBuffer::updateTexture(Texture* texture, const TextureUpdateInfo& info,
+void VulkanCommandBuffer::updateTexture(Texture* texture, const TextureSubInfo& info,
                                         const void* pData, uint32_t size, bool staticData) {}
 END_GFX_NAMESPACE

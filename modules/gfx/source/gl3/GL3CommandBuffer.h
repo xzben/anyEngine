@@ -33,14 +33,14 @@ public:
     virtual void endRendPass() override;
     virtual void end() override;
 
-    virtual void setViewport(float x, float y, float width, float height) override;
+    virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 
-    virtual void setScissor(float x, float y, float width, float height) override;
+    virtual void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 
     virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size, uint32_t offset = 0,
                               bool staticData = false) override;
 
-    virtual void updateTexture(Texture* texture, const TextureUpdateInfo& info, const void* pData,
+    virtual void updateTexture(Texture* texture, const TextureSubInfo& info, const void* pData,
                                uint32_t size, bool staticData = false) override;
 
     virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size, uint32_t srcOffset = 0,
@@ -48,6 +48,9 @@ public:
     virtual void copyTexture(Texture* src, Texture* dst, const TextureCopyInfo& info) override;
     virtual void blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info) override;
     virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
+    virtual void clearTexture(Texture* src, TextureSubInfo& subInfo, const Color& color) override;
+    virtual void updateInputAssembler(InputAssembler* input,
+                                      const UpdateAssemblerInfo& info) override;
 
 public:
     void execute(gl3::GLContext* context);

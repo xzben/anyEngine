@@ -54,10 +54,15 @@ private:
     uint32_t m_layerIndex{0};
 };
 
+enum class SwapChainAttachment {
+    COLOR,
+    DEPTH_STENCIL,
+};
+
 class DrawSwaChainSurface : public DrawSurface {
 public:
-    DrawSwaChainSurface(SwapChain* swapChain, uint32_t imageIndex, bool color)
-        : m_swapChain(swapChain), m_isColor(color), m_imageIndex(imageIndex) {}
+    DrawSwaChainSurface(SwapChain* swapChain, uint32_t imageIndex, SwapChainAttachment attachment)
+        : m_swapChain(swapChain), m_attachment(attachment), m_imageIndex(imageIndex) {}
     virtual ~DrawSwaChainSurface() {
         m_swapChain->delRef();
         m_swapChain = nullptr;
@@ -66,16 +71,21 @@ public:
     virtual DrawSurfaceType getType() override { return DrawSurfaceType::SWAPCHAIN; }
 
     virtual Texture* getTexture() override {
-        if (m_isColor) {
-            return m_swapChain->getColorTexture(m_imageIndex);
-        } else {
-            return m_swapChain->getDepthTexture(m_imageIndex);
+        switch (m_attachment) {
+            case SwapChainAttachment::COLOR: {
+                return m_swapChain->getColorTexture(m_imageIndex);
+            }
+            case SwapChainAttachment::DEPTH_STENCIL: {
+                return m_swapChain->getDepthTexture(m_imageIndex);
+            }
         }
+        CCASSERT(false, "can't find attachment type[%d] texture", (int)m_attachment);
+        return nullptr;
     }
     virtual uint32_t getLayerIndex() override { return 0; }
 
     SwapChain* m_swapChain{nullptr};
     uint32_t m_imageIndex{0};
-    bool m_isColor{true};
+    SwapChainAttachment m_attachment{SwapChainAttachment::COLOR};
 };
 END_GFX_NAMESPACE

@@ -13,14 +13,13 @@ public:
     CmdSetScissor(GL3CommandBuffer& cmdBuf) : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
     virtual ~CmdSetScissor() {}
 
-    void init(float x, float y, float width, float height) {
+    void init(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
         m_viewport = {x, y, width, height};
     }
 
     virtual void reset() override {}
     virtual void execute(gl3::GLContext* context) override {
-        GL_CHECK(glScissor(m_viewport.x, m_viewport.y, m_viewport.width,
-                           m_viewport.height));
+        GL_CHECK(glScissor(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height));
     }
 
 private:

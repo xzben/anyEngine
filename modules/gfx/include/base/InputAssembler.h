@@ -21,13 +21,6 @@ public:
     virtual uint32_t getInstanceAttribteStride() const = 0;
     virtual uint32_t getIndexItemSize() const          = 0;
 
-    virtual void updateVertexData(const void* pData, uint32_t size,
-                                  uint32_t vertexCount)     = 0;
-    virtual void updateIndexData(const void* pData, uint32_t size,
-                                 uint32_t indexCount)       = 0;
-    virtual void updateInstanceData(const void* pData, uint32_t size,
-                                    uint32_t instanceCount) = 0;
-
 protected:
     InputAssembler() : GfxObject(GfxObjectType::InputAssembler) {}
     virtual ~InputAssembler() = default;

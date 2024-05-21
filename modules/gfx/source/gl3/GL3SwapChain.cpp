@@ -1,8 +1,8 @@
 #include "GL3SwapChain.h"
 
 #include "GL3Fence.h"
+#include "GL3Semaphore.h"
 #include "core/GLContext.h"
-
 BEGIN_GFX_NAMESPACE
 
 GL3SwapChain::GL3SwapChain(GL3Device& device, const SurfaceInfo& info, bool needDepthStencil)
@@ -15,7 +15,7 @@ GL3SwapChain::~GL3SwapChain() {}
 std::pair<bool, uint32_t> GL3SwapChain::acquireNextImage(Semaphore* semophore, Fence* fence,
                                                          uint32_t timeout) {
     if (fence) dynamic_cast<GL3Fence*>(fence)->signal();
-    semophore->signal();
+    dynamic_cast<GL3Semaphore*>(semophore)->signal();
     return std::make_pair(true, 0);
 }
 

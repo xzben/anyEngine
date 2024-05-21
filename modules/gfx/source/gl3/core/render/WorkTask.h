@@ -21,10 +21,7 @@ public:
     virtual void execute(GLContext* context) = 0;
 
     void finish();
-    void waitFinish() {
-        while (!m_finish.load())
-            ;
-    }
+    void waitFinish() { while (!m_finish.load()); }
 
 protected:
     GL3Queue* m_queue{nullptr};
@@ -34,8 +31,8 @@ protected:
 class RenderWorkTask : public WorkTask {
 public:
     RenderWorkTask(GL3Queue* queue, const std::vector<CommandBuffer*>& cmd,
-                   const std::vector<Semaphore*>& wait,
-                   const std::vector<Semaphore*>& signal, Fence* fence);
+                   const std::vector<Semaphore*>& wait, const std::vector<Semaphore*>& signal,
+                   Fence* fence);
     virtual ~RenderWorkTask();
     void execute(GLContext* context) override;
 
@@ -63,8 +60,7 @@ public:
     using WorkFunc = std::function<void(GLContext* ctx)>;
 
 public:
-    CustomWorkTask(GL3Queue* queue, WorkFunc func)
-        : WorkTask(queue), m_func(func) {}
+    CustomWorkTask(GL3Queue* queue, WorkFunc func) : WorkTask(queue), m_func(func) {}
 
     void execute(GLContext* context) override;
 

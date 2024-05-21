@@ -7,27 +7,25 @@ BEGIN_GFX_NAMESPACE
 
 class VulkanBuffer : public Buffer {
 public:
-    VulkanBuffer(const vk::LogicDevice& logicDevice, BufferType type,
-                 uint32_t size,
+    VulkanBuffer(const vk::LogicDevice& logicDevice, BufferType type, uint32_t size,
                  const std::vector<uint32_t>& queue_family_indices);
     virtual ~VulkanBuffer();
 
-    virtual uint32_t size() override { return m_size; }
-    virtual uint32_t capacity() override { return m_capacity; }
+    uint32_t size() override { return m_size; }
+    uint32_t capacity() override { return m_capacity; }
+    BufferType getType() override { return m_type; }
 
     void flush(uint32_t size = 0, uint32_t offset = 0);
     void* map();
     void unmap();
 
-    void setSize(uint32_t size) override { m_size = size; }
+    void setSize(uint32_t size) { m_size = size; }
     void update(const void* data, uint32_t size, uint32_t offset = 0);
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkBuffer() const { return m_handle; }
 
 protected:
-    virtual GFX_HANDLE getHandleImp() const override {
-        return (GFX_HANDLE)m_handle;
-    }
+    virtual GFX_HANDLE getHandleImp() const override { return (GFX_HANDLE)m_handle; }
 
 private:
     const vk::LogicDevice& m_logicDevice;

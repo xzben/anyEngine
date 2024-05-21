@@ -53,7 +53,7 @@ public:
     }
 
     DrawSwaChainSurface* createDrawSurface(SwapChain* swapchain, uint32_t imageIndex,
-                                           bool colorAttachment) {
+                                           SwapChainAttachment colorAttachment) {
         return new DrawSwaChainSurface(swapchain, imageIndex, colorAttachment);
     }
 
