@@ -20,6 +20,7 @@ std::pair<bool, uint32_t> GL3SwapChain::acquireNextImage(Semaphore* semophore, F
 }
 
 void GL3SwapChain::updateAttachment(uint32_t width, uint32_t height) {
+    std::lock_guard<std::mutex> locker(m_lock);
     if (m_colorTexture != nullptr) {
         auto& info = m_colorTexture->getInfo();
         if (info.width != width || info.height != height) {
@@ -63,7 +64,18 @@ void GL3SwapChain::updateAttachment(uint32_t width, uint32_t height) {
     }
 }
 
+Texture* GL3SwapChain::getColorTexture(uint32_t imageIndex) const {
+    std::lock_guard<std::mutex> locker(m_lock);
+    return m_colorTexture;
+}
+
+Texture* GL3SwapChain::getDepthTexture(uint32_t imageIndex) const {
+    std::lock_guard<std::mutex> locker(m_lock);
+    return m_depthTexture;
+}
+
 void GL3SwapChain::present(gl3::GLContext* context) {
+    std::lock_guard<std::mutex> locker(m_lock);
     context->makeCurrent(this);
     if (m_imageFbo == OGL_NULL_HANDLE) {
         GL_CHECK(glGenFramebuffers(1, &m_imageFbo));
@@ -83,7 +95,7 @@ void GL3SwapChain::present(gl3::GLContext* context) {
 
     GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
     GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
-
+    GL_CHECK(glFlush());
     swapBuffer();
     context->makeCurrent(nullptr);
 }

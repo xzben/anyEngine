@@ -20,3 +20,5 @@
 #undef CUR_GL_TYPE
 #define CUR_GL_TYPE OPENGL_AGL
 #endif
+
+#define ENABLE_FENCE_SYNC true

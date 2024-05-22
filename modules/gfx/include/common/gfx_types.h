@@ -53,6 +53,7 @@ struct DeviceInfo {
 enum class WaitResult {
     SUCCESS = 0,
     TIMEOUT,
+    FAILED,
 };
 
 enum class GfxObjectType : uint8_t {

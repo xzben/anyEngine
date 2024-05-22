@@ -18,6 +18,8 @@ public:
 
 protected:
     virtual GFX_HANDLE getHandleImp() const { return 0; };
+    void freeSync();
+    WaitResult doSyncWait(uint64_t timeout);
 
 private:
     GL3Device& m_device;
@@ -25,6 +27,10 @@ private:
     std::mutex m_conditionLock;
     std::condition_variable m_condition;
     std::atomic<bool> m_signed;
+
+#if ENABLE_FENCE_SYNC
+    GLsync m_sync{0};
+#endif
 };
 
 END_GFX_NAMESPACE

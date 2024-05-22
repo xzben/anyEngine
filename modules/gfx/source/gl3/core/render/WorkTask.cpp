@@ -51,7 +51,11 @@ void RenderWorkTask::execute(GLContext* context) {
     for (auto& cmd : m_cmds) {
         dynamic_cast<GL3CommandBuffer*>(cmd)->execute(context);
     }
+#if ENABLE_FENCE_SYNC
+    GL_CHECK(glFlush());
+#else
     GL_CHECK(glFinish());
+#endif
     //-------------------------------
     for (auto& item : m_signals) {
         dynamic_cast<GL3Semaphore*>(item)->signal();

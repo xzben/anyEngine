@@ -1,9 +1,10 @@
 #pragma once
 
+#include <mutex>
+
 #include "GL3Texture.h"
 #include "base/SwapChain.h"
 #include "gl_common.h"
-
 BEGIN_GFX_NAMESPACE
 
 BEGIN_GL3_CORE_NAMESPACE
@@ -25,8 +26,8 @@ public:
     virtual OGL_HANDLE getPresentFbo() { return 0; }
     virtual void setActiveImageIndex(uint32_t imageIndex) override {}
     virtual uint32_t getCurImageIndex() const override { return 0; }
-    virtual Texture* getColorTexture(uint32_t imageIndex) const override { return m_colorTexture; }
-    virtual Texture* getDepthTexture(uint32_t imageIndex) const override { return m_depthTexture; }
+    virtual Texture* getColorTexture(uint32_t imageIndex) const override;
+    virtual Texture* getDepthTexture(uint32_t imageIndex) const override;
 
     void updateAttachment(uint32_t width, uint32_t height);
 
@@ -39,7 +40,7 @@ protected:
     bool m_needDepthStencil{false};
     GL3Texture* m_colorTexture{nullptr};
     GL3Texture* m_depthTexture{nullptr};
-
+    mutable std::mutex m_lock;
     OGL_HANDLE m_imageFbo{OGL_NULL_HANDLE};
 };
 

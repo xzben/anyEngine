@@ -3,6 +3,7 @@
 #include "GL/glew.h"
 #include "common/gfx_common.h"
 #include "core/gl3_core.h"
+#include "core/glconfig.h"
 #include "gl3_types.h"
 
 BEGIN_GFX_NAMESPACE
