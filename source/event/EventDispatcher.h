@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <unordered_map>
 #include <vector>
 
@@ -9,31 +10,37 @@ class EventDispatcher {
 public:
     using EventCallback = std::function<void(const Event& event)>;
 
-    EventId addEventListener(EventType event, EventCallback func) {
-        auto& handles = m_events[event];
+    EventId addEventListener(EventType eventType, EventCallback func) {
+        auto& handles = m_events[eventType];
         m_eventId++;
         handles.emplace_back(m_eventId, func);
+
+        return m_eventId;
     }
 
-    void dispatchEvent(EventType event, const Event& event) {
-        auto it = m_events.find(event);
+    void dispatchEvent(const Event& event) { dispatchEvent(event.type, event); }
+
+    void dispatchEvent(EventType eventType, const Event& event) {
+        assert(event.type == eventType);
+
+        auto it = m_events.find(eventType);
         if (it == m_events.end()) {
             return;
         }
         m_dispatching = true;
-        auto& handles = m_events[event];
+        auto& handles = m_events[eventType];
 
         for (auto& item : handles) {
             item.func(event);
         }
     }
 
-    void removeEventHandle(EventType event, EventId eventId) {
-        auto it = m_events.find(event);
+    void removeEventHandle(EventType eventType, EventId eventId) {
+        auto it = m_events.find(eventType);
         if (it == m_events.end()) {
             return;
         }
-        auto& handles = m_events[event];
+        auto& handles = m_events[eventType];
 
         if (m_dispatching) {
             for (auto& item : handles) {
@@ -69,12 +76,15 @@ protected:
             this->eventId = rhs.eventId;
             this->func    = rhs.func;
             this->valided = rhs.valided;
+
+            return *this;
         }
 
         EventHandle& operator=(EventHandle&& rhs) {
             this->eventId = rhs.eventId;
             this->func    = rhs.func;
             this->valided = rhs.valided;
+            return *this;
         }
 
         EventId eventId;

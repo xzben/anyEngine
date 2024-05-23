@@ -8,7 +8,7 @@ int main() {
     win->init();
 
     GfxTestApp app(win);
-    win->setBeforeCloseCallback([&](Window* win) { app.exit(); });
+    win->addEventListener(EventType::WINDOW_BEFORE_CLOSE, [&](const Event& event) { app.exit(); });
     app.run();
 
     RELEASE_OBJ(win);

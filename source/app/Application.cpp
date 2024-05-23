@@ -24,8 +24,6 @@ void Application::setWindow(Window* window) {
     }
 
     onUpdateWindow(m_window);
-
-    m_window->setBeforeCloseCallback([&](Window* win) { m_exit = true; });
 }
 
 void Application::run() {

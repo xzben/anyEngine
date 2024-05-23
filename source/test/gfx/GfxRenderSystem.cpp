@@ -44,15 +44,13 @@ GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
             m_pDevice->createDrawSurface(m_swapChain, i, gfx::SwapChainAttachment::DEPTH_STENCIL);
     }
 
-    window->setResizeCallback([&](uint32_t width, uint32_t height) {
+    window->addEventListener(EventType::WINDOW_RESIZE, [&](const Event& event) {
+        auto resizeEvent = event.cast<WindowResizeEvent>();
+
         gfx::SurfaceInfo info = m_swapChain->getInfo();
-        info.width            = width;
-        info.height           = height;
+        info.width            = resizeEvent.width;
+        info.height           = resizeEvent.height;
         m_swapChain->handleUpdateSurfaceInfo(info);
-    });
-
-    window->setBeforeCloseCallback([&](Window* win) {
-
     });
 }
 

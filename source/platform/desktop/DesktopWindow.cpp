@@ -1,5 +1,7 @@
 #include "DesktopWindow.h"
 
+#include "glfwConfig.h"
+
 class GlfwLoader {
 public:
     GlfwLoader() { auto result = glfwInit(); }
@@ -7,32 +9,94 @@ public:
 };
 
 void DesktopWindow::FramebufferResizeCallback(GLFWwindow *win, int width, int height) {
-    auto context = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
-    context->handleResize(width, height);
+    auto window = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
+    WindowResizeEvent event;
+    event.width  = width;
+    event.height = height;
+    window->dispatchEvent(event);
 }
 
 void DesktopWindow::MouseCallback(GLFWwindow *win, int button, int action, int mods) {
-    auto context = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
+    auto window = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
 
-    // context->handle_mouse_event(button, action, mods);
+    auto itButton = g_mapMouseButon.find(button);
+    auto itPress  = g_pressMap.find(action);
+    assert(itButton != g_mapMouseButon.end());
+    assert(itPress != g_pressMap.end());
+
+    MouseButton btn = itButton->second;
+    bool preIsDown  = window->m_mouseButtonStatus[(int)btn];
+    bool curIsDown  = action != GLFW_RELEASE;
+
+    window->m_mouseButtonStatus[(int)btn] = curIsDown;
+
+    MouseEvent mouseEvent;
+    mouseEvent.button = btn;
+    mouseEvent.status = itPress->second;
+    window->dispatchEvent(mouseEvent);
+
+    if (btn == MouseButton::LEFT) {
+        TouchEvent event;
+        event.prePos = window->m_preCursorPos;
+        event.curPos = window->m_curCursorPos;
+
+        if (preIsDown && !curIsDown) {
+            event.status = TouchStatus::END;
+            window->dispatchEvent(event);
+        } else if (!preIsDown && curIsDown) {
+            event.status = TouchStatus::BEGIN;
+            window->dispatchEvent(event);
+        }
+    }
 }
 
 void DesktopWindow::KeyboardCallback(GLFWwindow *win, int key, int scancode, int action, int mods) {
-    auto context = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
+    auto window = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
 
-    // context->handle_keyboard_event(key, scancode, action, mods);
+    auto itPress = g_pressMap.find(action);
+    auto it      = g_mapKeyCodeMap.find(key);
+
+    assert(itPress != g_pressMap.end());
+    assert(it != g_mapKeyCodeMap.end());
+
+    KeyboardEvent event;
+    event.code   = it->second;
+    event.status = itPress->second;
+    window->dispatchEvent(event);
 }
 
 void DesktopWindow::CursorPosCallback(GLFWwindow *win, double x, double y) {
-    auto context = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
+    auto window = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
     // context->handle_cursor_pos_event(x, y);
+
+    window->m_preCursorPos = window->m_curCursorPos;
+    window->m_curCursorPos = {(float)x, (float)y};
+
+    if (window->m_mouseButtonStatus[(int)MouseButton::LEFT]) {
+        TouchEvent event;
+        event.status = TouchStatus::MOVE;
+        event.curPos = window->m_curCursorPos;
+        event.prePos = window->m_preCursorPos;
+        window->dispatchEvent(event);
+    }
 }
 
-void DesktopWindow::CursorEnterCallback(GLFWwindow *win, int entered) {}
+void DesktopWindow::CursorEnterCallback(GLFWwindow *win, int entered) {
+    auto window = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
+
+    if (entered) {
+        Event event(EventType::CURSOR_ENTER);
+        window->dispatchEvent(event);
+    } else {
+        Event event(EventType::CURSOR_EXIT);
+        window->dispatchEvent(event);
+    }
+}
 
 void DesktopWindow::WindowCloseCallback(GLFWwindow *win) {
-    auto context = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
-    context->handleBeforeClose();
+    auto window = reinterpret_cast<DesktopWindow *>(glfwGetWindowUserPointer(win));
+    Event event(EventType::WINDOW_BEFORE_CLOSE);
+    window->dispatchEvent(event);
 }
 
 DesktopWindow::DesktopWindow(const std::string &title, uint32_t w, uint32_t h)
