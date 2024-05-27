@@ -23,11 +23,6 @@ public:
     static Device* createDevice(const DeviceInfo& info);
 
 public:
-    Device()          = default;
-    virtual ~Device() = default;
-
-    virtual bool init(const DeviceInfo& info) = 0;
-
     /*
      *  获取 命令队列，按照创建 Device 时 DeviceInfo 申请的 QueueType 和 count
      *  去获取
@@ -158,6 +153,12 @@ public:
     virtual void destroyShader(Shader* shader)                = 0;
     virtual void destroySwapChain(SwapChain* swapChain)       = 0;
     virtual void destroyTexture(Texture* texture)             = 0;
+
+protected:
+    Device()          = default;
+    virtual ~Device() = default;
+
+    virtual bool init(const DeviceInfo& info) = 0;
 };
 
 END_GFX_NAMESPACE

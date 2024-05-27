@@ -17,17 +17,30 @@ void WorkTask::finish() {
 RenderWorkTask::RenderWorkTask(GL3Queue* queue, const std::vector<CommandBuffer*>& cmds,
                                const std::vector<Semaphore*>& waits,
                                const std::vector<Semaphore*>& signals, Fence* fence)
-    : WorkTask(queue), m_cmds(cmds), m_waits(waits), m_signals(signals), m_fence(fence) {
-    for (auto& cmd : m_cmds) {
-        cmd->addRef();
+    : WorkTask(queue) {
+    m_cmds.resize((cmds.size()));
+    for (int i = 0; i < cmds.size(); i++) {
+        m_cmds[i] = dynamic_cast<GL3CommandBuffer*>(cmds[i]);
+        m_cmds[i]->addRef();
+        m_cmds[i]->changeStatus(GL3CommandBuffer::Status::Pending);
     }
-    for (auto& wait : m_waits) {
-        wait->addRef();
+
+    m_waits.resize(waits.size());
+    for (int i = 0; i < waits.size(); i++) {
+        m_waits[i] = dynamic_cast<GL3Semaphore*>(waits[i]);
+        m_waits[i]->addRef();
     }
-    for (auto& singal : m_signals) {
-        singal->addRef();
+
+    m_signals.resize(signals.size());
+    for (int i = 0; i < signals.size(); i++) {
+        m_signals[i] = dynamic_cast<GL3Semaphore*>(signals[i]);
+        m_signals[i]->addRef();
     }
-    if (m_fence) m_fence->addRef();
+
+    if (fence) {
+        m_fence = dynamic_cast<GL3Fence*>(fence);
+        m_fence->addRef();
+    }
 }
 
 RenderWorkTask::~RenderWorkTask() {
@@ -45,12 +58,14 @@ RenderWorkTask::~RenderWorkTask() {
 
 void RenderWorkTask::execute(GLContext* context) {
     for (auto& item : m_waits) {
-        dynamic_cast<GL3Semaphore*>(item)->wait();
+        item->wait();
     }
     //---------------------------------
     for (auto& cmd : m_cmds) {
-        dynamic_cast<GL3CommandBuffer*>(cmd)->execute(context);
+        cmd->execute(context);
+        cmd->changeStatus(GL3CommandBuffer::Status::Executable);
     }
+
 #if ENABLE_FENCE_SYNC
     GL_CHECK(glFlush());
 #else
@@ -58,21 +73,26 @@ void RenderWorkTask::execute(GLContext* context) {
 #endif
     //-------------------------------
     for (auto& item : m_signals) {
-        dynamic_cast<GL3Semaphore*>(item)->signal();
+        item->signal();
     }
     if (m_fence) {
-        dynamic_cast<GL3Fence*>(m_fence)->signal();
+        m_fence->signal();
     }
 }
 //-----------------PresentWorkTask-----------------
 PresentWorkTask::PresentWorkTask(GL3Queue* queue, SwapChain* swapChain, uint32_t imageIndex,
                                  const std::vector<Semaphore*>& waits)
-    : WorkTask(queue), m_swapChain(swapChain), m_waits(waits) {
+    : WorkTask(queue) {
+    m_swapChain = dynamic_cast<GL3SwapChain*>(swapChain);
     m_swapChain->addRef();
-    for (auto& it : m_waits) {
-        it->addRef();
+
+    m_waits.resize(waits.size());
+    for (int i = 0; i < waits.size(); i++) {
+        m_waits[i] = dynamic_cast<GL3Semaphore*>(waits[i]);
+        m_waits[i]->addRef();
     }
 }
+
 PresentWorkTask::~PresentWorkTask() {
     m_swapChain->delRef();
     m_swapChain = nullptr;
@@ -81,11 +101,12 @@ PresentWorkTask::~PresentWorkTask() {
     }
     m_waits.clear();
 }
+
 void PresentWorkTask::execute(GLContext* context) {
     for (auto& item : m_waits) {
-        dynamic_cast<GL3Semaphore*>(item)->wait();
+        item->wait();
     }
-    dynamic_cast<GL3SwapChain*>(m_swapChain)->present(context);
+    (m_swapChain)->present(context);
 }
 
 ///

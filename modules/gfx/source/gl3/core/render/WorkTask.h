@@ -3,6 +3,10 @@
 #include "../gl3_core_common.h"
 
 BEGIN_GFX_NAMESPACE
+class GL3CommandBuffer;
+class GL3Semaphore;
+class GL3Fence;
+class GL3SwapChain;
 class CommandBuffer;
 class Semaphore;
 class Fence;
@@ -37,10 +41,10 @@ public:
     void execute(GLContext* context) override;
 
 private:
-    std::vector<CommandBuffer*> m_cmds;
-    std::vector<Semaphore*> m_waits;
-    std::vector<Semaphore*> m_signals;
-    Fence* m_fence = nullptr;
+    std::vector<GL3CommandBuffer*> m_cmds;
+    std::vector<GL3Semaphore*> m_waits;
+    std::vector<GL3Semaphore*> m_signals;
+    GL3Fence* m_fence = nullptr;
 };
 
 class PresentWorkTask : public WorkTask {
@@ -51,8 +55,8 @@ public:
     void execute(GLContext* context) override;
 
 private:
-    SwapChain* m_swapChain{nullptr};
-    std::vector<Semaphore*> m_waits;
+    GL3SwapChain* m_swapChain{nullptr};
+    std::vector<GL3Semaphore*> m_waits;
 };
 
 class CustomWorkTask : public WorkTask {

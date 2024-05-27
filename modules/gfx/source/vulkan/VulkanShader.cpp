@@ -1,5 +1,5 @@
 #include "VulkanShader.h"
-
+#include <algorithm>
 #include "spirv_reflect.h"
 
 BEGIN_GFX_NAMESPACE

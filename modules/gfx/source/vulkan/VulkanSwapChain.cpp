@@ -1,4 +1,7 @@
 #include "VulkanSwapChain.h"
+#include <cmath>
+#include <stdexcept>
+#include <algorithm>
 
 BEGIN_GFX_NAMESPACE
 VulkanSwapChain::VulkanSwapChain(const vk::LogicDevice& device,

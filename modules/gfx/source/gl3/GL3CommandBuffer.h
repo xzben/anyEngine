@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <type_traits>
 
@@ -53,7 +53,15 @@ public:
                                       const UpdateAssemblerInfo& info) override;
 
 public:
+    enum class Status {
+        Initial,
+        Recording,
+        Executable,
+        Pending,
+    };
     void execute(gl3::GLContext* context);
+    const Status getCurStatus() const { return m_curStatus; }
+    void changeStatus(Status status);
 
 protected:
     template <class CmdClass, typename... Params>
@@ -94,6 +102,7 @@ private:
     uint32_t m_index;
 
     gl3::CmdBeginRenderPass* m_lastBeginRenderPass{nullptr};
+    Status m_curStatus{Status::Initial};
 };
 
 END_GFX_NAMESPACE

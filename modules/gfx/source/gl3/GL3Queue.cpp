@@ -15,19 +15,16 @@ CommandPool* GL3Queue::createPool(ResetMode resetModel) {
     return new GL3CommandPool(m_device, *this, resetModel);
 }
 
-bool GL3Queue::submit(const std::vector<CommandBuffer*>& cmd,
-                      const std::vector<Semaphore*>& wait,
+bool GL3Queue::submit(const std::vector<CommandBuffer*>& cmd, const std::vector<Semaphore*>& wait,
                       const std::vector<Semaphore*>& signal, Fence* fence) {
-    gl3::WorkTask* task =
-        new gl3::RenderWorkTask(this, cmd, wait, signal, fence);
+    gl3::WorkTask* task = new gl3::RenderWorkTask(this, cmd, wait, signal, fence);
     addTask(task);
     return true;
 }
 
 uint32_t GL3Queue::present(SwapChain* swapChain, uint32_t imageIndex,
                            const std::vector<Semaphore*>& waits) {
-    gl3::WorkTask* task =
-        new gl3::PresentWorkTask(this, swapChain, imageIndex, waits);
+    gl3::WorkTask* task = new gl3::PresentWorkTask(this, swapChain, imageIndex, waits);
 
     addTask(task);
     return 0;

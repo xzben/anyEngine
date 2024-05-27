@@ -6,3 +6,4 @@
 #include "common/gfx_common.h"
 #include "vulkan_namespace.h"
 #include "vulkan_types.h"
+#include <stdexcept>
