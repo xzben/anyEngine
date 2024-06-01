@@ -1,6 +1,15 @@
 #pragma once
 
+#include "platformDefine.h"
+
 #ifndef NDEBUG
+
+#if CUR_PLATFORM == PLATFORM_WINDOWS
+#define DEBUG_BREAK __debugbreak();
+#else
+#define DEBUG_BREAK
+#endif
+
 #define CCASSERT(condition, fmt, ...)                                                         \
     do {                                                                                      \
         if (!(condition)) {                                                                   \
@@ -9,7 +18,6 @@
                     __LINE__);                                                                \
             fprintf(stderr, fmt, __VA_ARGS__);                                                \
             fprintf(stderr, "\r\n");                                                          \
-            __debugbreak();                                                                   \
         }                                                                                     \
     } while (false)
 
@@ -36,7 +44,6 @@
                 __LINE__);                                                                        \
         fprintf(stderr, fmt, __VA_ARGS__);                                                        \
         fprintf(stderr, "\r\n");                                                                  \
-        __debugbreak();                                                                           \
     } while (false)
 #else
 #define RELEASE true
