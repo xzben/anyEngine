@@ -8,7 +8,7 @@ BEGIN_GL3_CORE_NAMESPACE
 
 AGLSwapChain::AGLSwapChain(GL3Device& device, const SurfaceInfo& info, bool needDepthStencil,
                  AGLContext* shareContext)
-:GL3SwapChain(GL3Device& device, const SurfaceInfo& info, bool needDepthStencil),
+:GL3SwapChain(device, info, needDepthStencil),
 m_context(shareContext)
 {
     glGenFramebuffers(1, &m_fbo);
@@ -21,7 +21,7 @@ AGLSwapChain::~AGLSwapChain()
 {
     glDeleteBuffers(1, &m_fbo);
     m_fbo = 0;
-    glDeleteBuffers(1, &_colorBm_colorTextureuffer);
+    glDeleteBuffers(1, &m_colorTexture);
     m_colorTexture = 0;
 }
 
@@ -31,7 +31,7 @@ void AGLSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info)
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorTexture);
-    [(__bridge EAGLContext)(m_context->handle) renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)info.handle];
+    [((__bridge EAGLContext*)m_context->handle) renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)info.handle];
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorTexture);
     GLenum error = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     updateAttachment(info.width, info.height);
@@ -41,7 +41,7 @@ void AGLSwapChain::swapBuffer()
 {
     AGLHelper::makeCurrent(m_context);
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorTexture);
-    [(__bridge EAGLContext)(m_context->handle)  presentRenderbuffer:GL_RENDERBUFFER];
+    [((__bridge EAGLContext*)m_context->handle)  presentRenderbuffer:GL_RENDERBUFFER];
     AGLHelper::exitCurrent(m_context);
 }
 
@@ -100,14 +100,8 @@ void AGLHelper::deleteContext(AGLContext* context){
 
 AGLSwapChain* AGLHelper::createWindowSurface(GL3Device& device, const SurfaceInfo& info,
                                         bool needDepthStencil, AGLContext* mainContext){
-#if CUR_PLATFORM == PLATFORM_MAC
-
-#elif CUR_PLATFORM == PLATFORM_IOS
-
-#else
-    return nullptr;
-#endif
-
+    
+    return new AGLSwapChain(device, info, needDepthStencil, mainContext);
 }
 
 thread_local WGlContext* s_lastContext = nullptr;

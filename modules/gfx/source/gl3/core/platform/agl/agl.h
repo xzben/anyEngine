@@ -24,7 +24,7 @@ BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
 
 struct AGLContext {
-    AGLContext* shareContext{nullptr};
+    AGLContext* share{nullptr};
     void* handle{nullptr};
 };
 
