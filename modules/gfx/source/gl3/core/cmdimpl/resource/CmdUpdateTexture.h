@@ -35,7 +35,11 @@ public:
         m_texture  = nullptr;
         m_pSrcData = nullptr;
         m_size     = 0;
-        m_data.swap(std::vector<uint8_t>());
+
+        {
+            std::vector<uint8_t> empty;
+            m_data.swap(empty);
+        }
     }
 
     virtual void execute(gl3::GLContext* context) override {

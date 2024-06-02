@@ -1,5 +1,7 @@
 #include "Win32Window.h"
 
+#if CUR_PLATFORM == PLATFORM_WIN32
+
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include "GLFW/glfw3native.h"
 
@@ -11,3 +13,5 @@ void *Win32Window::getNativeWinHandle() {
     HWND hwnd = glfwGetWin32Window(m_handle);
     return (void *)hwnd;
 }
+
+#endif

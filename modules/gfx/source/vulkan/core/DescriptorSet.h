@@ -12,14 +12,14 @@ public:
     DescriptorSet(const LogicDevice& device, const DescriptorSetLayout& layout,
                   VkDescriptorSet handle);
 
-    DescriptorSet(DescriptorSet&&)            = default;
-    DescriptorSet& operator=(DescriptorSet&&) = default;
+    DescriptorSet(DescriptorSet&& rhs)            = default;
+    DescriptorSet& operator=(DescriptorSet&& rhs) = default;
 
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkDescriptorSet() const { return m_handle; }
 
 private:
-    const LogicDevice& m_logicDevice;
+    const LogicDevice* m_logicDevice;
     VkDescriptorSet m_handle{VK_NULL_HANDLE};
 };
 

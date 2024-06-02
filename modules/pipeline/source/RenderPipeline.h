@@ -63,13 +63,23 @@ public:
         : m_device(device), m_attachments(attachments) {}
     RenderSubpass* addSubpass(const std::vector<ShaderCode>& codes,
                               const gfx::PipelineState& state) {
-        gfx::Shader* shader = m_device.createShader();
-        for (const auto& code : codes) {
-            shader->addStage(code.code, code.stage, code.entryName);
+        
+        std::vector<gfx::ShaderModuleInfo> infos;
+        infos.resize(codes.size());
+        
+        for(int i = 0; i < codes.size(); i++)
+        {
+            auto& code = codes[i];
+            auto& info = infos[i];
+            info.pData = code.code.data();
+            info.size = code.code.size();
+            info.stage = code.stage;
+            info.entryName = code.entryName;
         }
-
+        gfx::Shader* shader = m_device.createShader(infos.data(), infos.size());
+        
         uint32_t index         = m_subpasses.size();
-        RenderSubpass* subpass = new RenderSubpass(index, shader, state);
+        RenderSubpass* subpass = new RenderSubpass(m_device, index, shader, state);
 
         return subpass;
     }
@@ -88,7 +98,7 @@ public:
         for (int i = 0; i < count; i++) {
             subpassInfos[i] = m_subpasses[i]->getSubpassInfo();
         }
-        gfx::RenderPass* renderPass = m_device->createRenderPass(
+        gfx::RenderPass* renderPass = m_device.createRenderPass(
             m_attachments, subpassInfos, m_dependencies);
 
         for (int i = 0; i < count; i++) {

@@ -25,25 +25,25 @@ public:
                       uint32_t indexItemSize = sizeof(uint32_t));
     virtual ~GL3InputAssembler();
 
-    virtual const std::vector<Attribute>& getAttributes() const override { return m_attributes; }
-    virtual const std::vector<Attribute>& getInstanceAttributes() const override {
+    const std::vector<Attribute>& getAttributes() const override { return m_attributes; }
+    const std::vector<Attribute>& getInstanceAttributes() const override {
         return m_instanceAttributes;
     }
 
-    virtual GL3Buffer* getVertexBuffer() const override { return m_vertexBuffer; }
-    virtual GL3Buffer* getIndexBuffer() const override { return m_indexBuffer; }
-    virtual GL3Buffer* getInstanceBuffer() const override { return m_instanceBuffer; }
-    virtual uint32_t getVertexCount() const override { return m_vertexCount; }
-    virtual uint32_t getIndexCount() const override { return m_indexCount; }
-    virtual uint32_t getVertexAttribteStride() const { return m_vertexStripe; }
-    virtual uint32_t getInstanceAttribteStride() const { return m_instanceStrip; }
-    virtual uint32_t getIndexItemSize() const override { return m_indexSize; }
+    GL3Buffer* getVertexBuffer() const override { return m_vertexBuffer; }
+    GL3Buffer* getIndexBuffer() const override { return m_indexBuffer; }
+    GL3Buffer* getInstanceBuffer() const override { return m_instanceBuffer; }
+    uint32_t getVertexCount() const override { return m_vertexCount; }
+    uint32_t getIndexCount() const override { return m_indexCount; }
+    uint32_t getVertexAttribteStride() const override { return m_vertexStripe; }
+    uint32_t getInstanceAttribteStride() const override { return m_instanceStrip; }
+    uint32_t getIndexItemSize() const override { return m_indexSize; }
 
     void updateVertexData(const void* pData, uint32_t size, uint32_t vertexCount);
     void updateIndexData(const void* pData, uint32_t size, uint32_t indexCount);
     void updateInstanceData(const void* pData, uint32_t size, uint32_t instanceCount);
 
-    virtual PrimitiveType getPrimitiveType() { return m_primitiveType; };
+    PrimitiveType getPrimitiveType() override { return m_primitiveType; };
 
 private:
     GL3Device& m_device;

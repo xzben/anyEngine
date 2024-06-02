@@ -1,10 +1,17 @@
 #include "FileSystem.h"
 
-#include <cstdio>
+#include <stdio.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+#if CUR_PLATFORM != PLATFORM_WIN32
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#endif
 
 namespace fs = std::filesystem;
 

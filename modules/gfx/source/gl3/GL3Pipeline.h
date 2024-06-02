@@ -10,16 +10,16 @@ class RenderPass;
 
 class GL3Pipeline : public Pipeline {
 public:
-    GL3Pipeline(GL3Device& device, RenderPass* renderPass, uint32_t subpass,
-                Shader* shader, const PipelineState& state);
+    GL3Pipeline(GL3Device& device, RenderPass* renderPass, uint32_t subpass, Shader* shader,
+                const PipelineState& state);
     virtual ~GL3Pipeline();
 
-    virtual GL3Shader* getShader() override { return m_shader; }
+    GL3Shader* getShader() override { return m_shader; }
 
-    virtual const PipelineState& getState() const { return m_state; };
+    const PipelineState& getState() const override { return m_state; };
 
 protected:
-    virtual GFX_HANDLE getHandleImp() const { return 0; };
+    GFX_HANDLE getHandleImp() const override { return 0; };
 
 private:
     GL3Device& m_device;

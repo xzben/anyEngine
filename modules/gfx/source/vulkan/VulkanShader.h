@@ -7,11 +7,10 @@ BEGIN_GFX_NAMESPACE
 
 class ShaderModule {
 public:
-    ShaderModule(const vk::LogicDevice& device,
-                 const std::vector<uint8_t>& code,
+    ShaderModule(const vk::LogicDevice& device, const std::vector<uint8_t>& code,
                  std::string entryName = "main");
-    ShaderModule(const vk::LogicDevice& device, const uint8_t* code,
-                 uint32_t size, std::string entryName = "main");
+    ShaderModule(const vk::LogicDevice& device, const uint8_t* code, uint32_t size,
+                 std::string entryName = "main");
     virtual ~ShaderModule();
 
     VkShaderStageFlagBits getStage() { return m_stage; }
@@ -22,8 +21,7 @@ public:
         return m_inputBindings;
     }
 
-    const std::vector<vk::DescriptorSetLayoutInfo>& getDescriptorSetLayouts()
-        const {
+    const std::vector<vk::DescriptorSetLayoutInfo>& getDescriptorSetLayouts() const {
         return m_setLayouts;
     }
 
@@ -53,23 +51,19 @@ public:
 
     virtual bool build() override;
 
-    void getDescriptorSetBindings(
-        uint32_t set_index,
-        std::vector<VkDescriptorSetLayoutBinding>& layout_bindings);
+    void getDescriptorSetBindings(uint32_t set_index,
+                                  std::vector<VkDescriptorSetLayoutBinding>& layout_bindings);
 
     const std::vector<vk::DescriptorSetLayout>& descriptorSetLayouts() const {
         return m_layoutLists;
     }
 
-    const vk::PipelineLayout& getPipelineLayout() const {
-        return *m_pipelineLayout;
-    }
+    const vk::PipelineLayout& getPipelineLayout() const { return *m_pipelineLayout; }
 
     const std::vector<vk::VertexInputBinding>& getVertexInputBingdings() const {
         return m_inputBindings;
     }
-    const std::vector<vk::DescriptorSetLayoutInfo>& getDescriptorLayoutSets()
-        const {
+    const std::vector<vk::DescriptorSetLayoutInfo>& getDescriptorLayoutSets() const {
         return m_setLayouts;
     }
 
@@ -77,23 +71,20 @@ public:
         return m_stageInfos;
     }
 
-    const std::vector<VkVertexInputBindingDescription>&
-    getVkVertexBindingDescriptions() const {
+    const std::vector<VkVertexInputBindingDescription>& getVkVertexBindingDescriptions() const {
         return m_vertexBindings;
     }
 
-    const std::vector<VkVertexInputAttributeDescription>&
-    getVkVertexAttributeDescriptions() const {
+    const std::vector<VkVertexInputAttributeDescription>& getVkVertexAttributeDescriptions() const {
         return m_vertexAttributes;
     }
 
 protected:
     const std::vector<ShaderModule*>& getModules() { return m_modules; }
-    virtual GFX_HANDLE getHandleImp() const { return 0; }
+    GFX_HANDLE getHandleImp() const override { return 0; }
 
 protected:
-    const vk::DescriptorSetLayout& createDescriptorSetLayout(
-        uint32_t set_index);
+    const vk::DescriptorSetLayout& createDescriptorSetLayout(uint32_t set_index);
     bool buildLayoutSet();
 
 private:

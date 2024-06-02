@@ -48,7 +48,7 @@ public:
         m_clearValues.clear();
     }
 
-    virtual void execute(gl3::GLContext* context) {
+    void execute(gl3::GLContext* context) override {
         m_curPassIndex = 0;
         switchSubpass(context, m_curPassIndex);
     }

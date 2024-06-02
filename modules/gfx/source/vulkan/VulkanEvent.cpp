@@ -1,5 +1,6 @@
 #include "VulkanEvent.h"
 
+#include "common/gfx_log.h"
 BEGIN_GFX_NAMESPACE
 
 VulkanEvent::VulkanEvent(const vk::LogicDevice& device, bool createDeviceOnly)
@@ -11,12 +12,10 @@ VulkanEvent::VulkanEvent(const vk::LogicDevice& device, bool createDeviceOnly)
     }
 
     VkResult result = vkCreateEvent(device, &info, nullptr, &m_handle);
-    CCASSERT(result == VK_SUCCESS, "create event failed");
+    CCASSERT(result == VK_SUCCESS, "create event failed %d", result);
 }
 
-VulkanEvent::~VulkanEvent() {
-    vkDestroyEvent(m_logicDevice, m_handle, nullptr);
-}
+VulkanEvent::~VulkanEvent() { vkDestroyEvent(m_logicDevice, m_handle, nullptr); }
 
 bool VulkanEvent::isSet() {
     auto result = vkGetEventStatus(m_logicDevice, m_handle);

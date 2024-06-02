@@ -12,7 +12,7 @@ static const GLenum g_glStage[] = {
     GL_COMPUTE_SHADER,
 };
 
-static inline OGL_HANDLE createShaderModel(uint8_t* code, uint32_t size, ShaderStage stage) {
+static inline OGL_HANDLE createShaderModel(const uint8_t* code, uint32_t size, ShaderStage stage) {
     OGL_HANDLE handle{OGL_NULL_HANDLE};
     GLenum glStage = g_glStage[int(stage)];
 
@@ -25,10 +25,7 @@ static inline OGL_HANDLE createShaderModel(uint8_t* code, uint32_t size, ShaderS
     if (status != GL_TRUE) {
         char infoLog[1024];
         GL_CHECK(glGetShaderInfoLog(handle, 1024, nullptr, infoLog));
-
-        CCERROR("%s compilation failed.", source);
-        CCERROR(infoLog);
-
+        CCERROR("%s compilation failed.\r\n errorInfo:%s", source, infoLog);
         GL_CHECK(glDeleteShader(handle));
         return OGL_NULL_HANDLE;
     }

@@ -6,20 +6,6 @@
 #include "GL/glew.h"
 #include "gl3/GL3SwapChain.h"
 
-#if CUR_PLATFORM == PLATFORM_MAC
-#import <Cocoa/Cocoa.h>
-#import <OpenGL/gl3.h>
-#elif CUR_PLATFORM == PLATFORM_IOS
-#import <CoreFoundation/CoreFoundation.h>
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/EAGLDrawable.h>
-#import <OpenGLES/ES3/gl.h>
-#import <OpenGLES/ES3/glext.h>
-#import <UIKit/UIKit.h>
-#else
-static_asset(false);  // unknown platform
-#endif
-
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
 
@@ -37,6 +23,7 @@ public:
     virtual void handleUpdateSurfaceInfo(const SurfaceInfo& info) override;
     void swapBuffer() override;
 
+    AGLContext* getContext(){ return m_context;}
 private:
     uint32_t m_fbo;
     uint32_t m_colorTexture;

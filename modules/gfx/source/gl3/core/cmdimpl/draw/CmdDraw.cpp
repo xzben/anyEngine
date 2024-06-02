@@ -33,12 +33,13 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
                 int curCount = remainCount > 4 ? 4 : remainCount;
                 remainCount -= curCount;
                 if (intType) {
-                    GL_CHECK(glVertexAttribIPointer(location + i, curCount, formatType, attr.stride,
-                                                    (void*)(attr.offset + stepOffset)));
+                    GL_CHECK(
+                        glVertexAttribIPointer(location + i, curCount, formatType, attr.stride,
+                                               reinterpret_cast<void*>(attr.offset + stepOffset)));
                 } else {
-                    GL_CHECK(glVertexAttribPointer(location + i, curCount, formatType,
-                                                   attr.isNormalized ? GL_TRUE : GL_FALSE,
-                                                   attr.stride, (void*)(attr.offset + stepOffset)));
+                    GL_CHECK(glVertexAttribPointer(
+                        location + i, curCount, formatType, attr.isNormalized ? GL_TRUE : GL_FALSE,
+                        attr.stride, reinterpret_cast<void*>(attr.offset + stepOffset)));
                 }
 
                 GL_CHECK(glVertexAttribDivisor(location + i, 0));
@@ -47,11 +48,11 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
         } else {
             if (intType) {
                 GL_CHECK(glVertexAttribIPointer(attr.location, count, formatType, attr.stride,
-                                                (void*)(attr.offset)));
+                                                reinterpret_cast<void*>(attr.offset)));
             } else {
                 GL_CHECK(glVertexAttribPointer(attr.location, count, formatType,
                                                attr.isNormalized ? GL_TRUE : GL_FALSE, attr.stride,
-                                               (void*)(attr.offset)));
+                                               reinterpret_cast<void*>(attr.offset)));
             }
             GL_CHECK(glEnableVertexAttribArray(attr.location));
             GL_CHECK(glVertexAttribDivisor(attr.location, 0));
@@ -73,14 +74,14 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
                     int curCount = remainCount > 4 ? 4 : remainCount;
                     remainCount -= curCount;
                     if (intType) {
-                        GL_CHECK(glVertexAttribIPointer(location + i, curCount, formatType,
-                                                        attr.stride,
-                                                        (void*)(attr.offset + stepOffset)));
+                        GL_CHECK(glVertexAttribIPointer(
+                            location + i, curCount, formatType, attr.stride,
+                            reinterpret_cast<void*>(attr.offset + stepOffset)));
                     } else {
-                        GL_CHECK(glVertexAttribPointer(location + i, curCount, formatType,
-                                                       attr.isNormalized ? GL_TRUE : GL_FALSE,
-                                                       attr.stride,
-                                                       (void*)(attr.offset + stepOffset)));
+                        GL_CHECK(glVertexAttribPointer(
+                            location + i, curCount, formatType,
+                            attr.isNormalized ? GL_TRUE : GL_FALSE, attr.stride,
+                            reinterpret_cast<void*>(attr.offset + stepOffset)));
                     }
 
                     stepOffset += curCount * formatSize;
@@ -90,11 +91,11 @@ static void bindInput(uint32_t vao, InputAssembler* input) {
             } else {
                 if (intType) {
                     GL_CHECK(glVertexAttribIPointer(attr.location, count, formatType, attr.stride,
-                                                    (void*)(attr.offset)));
+                                                    reinterpret_cast<void*>(attr.offset)));
                 } else {
-                    GL_CHECK(glVertexAttribPointer(attr.location, count, formatType,
-                                                   attr.isNormalized ? GL_TRUE : GL_FALSE,
-                                                   attr.stride, (void*)(attr.offset)));
+                    GL_CHECK(glVertexAttribPointer(
+                        attr.location, count, formatType, attr.isNormalized ? GL_TRUE : GL_FALSE,
+                        attr.stride, reinterpret_cast<void*>(attr.offset)));
                 }
 
                 GL_CHECK(glEnableVertexAttribArray(attr.location));
@@ -167,9 +168,11 @@ void CmdDraw::execute(gl3::GLContext* context) {
             if (instanceBuf) {
                 CCASSERT(mesh.instanceCount > 0, "instance count must > 0");
                 GL_CHECK(glDrawElementsInstanced(primitiveType, mesh.count, indexType,
-                                                 (void*)mesh.offset, mesh.instanceCount));
+                                                 reinterpret_cast<void*>(mesh.offset),
+                                                 mesh.instanceCount));
             } else {
-                GL_CHECK(glDrawElements(primitiveType, mesh.count, indexType, (void*)mesh.offset));
+                GL_CHECK(glDrawElements(primitiveType, mesh.count, indexType,
+                                        reinterpret_cast<void*>(mesh.offset)));
             }
         }
 

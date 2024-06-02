@@ -8,16 +8,12 @@ BEGIN_GFX_NAMESPACE
 
 class VulkanInputAssembler : public InputAssembler {
 public:
-    VulkanInputAssembler(const vk::LogicDevice& device,
-                         const std::vector<Attribute>& attribute);
+    VulkanInputAssembler(const vk::LogicDevice& device, const std::vector<Attribute>& attribute);
     virtual ~VulkanInputAssembler();
 
-    const std::vector<Attribute>& getAttributes() const override {
-        return m_attributes;
-    }
+    const std::vector<Attribute>& getAttributes() const override { return m_attributes; }
 
-    virtual const std::vector<Attribute>& getInstanceAttributes()
-        const override {
+    virtual const std::vector<Attribute>& getInstanceAttributes() const override {
         return m_instanceAttributes;
     }
 
@@ -25,16 +21,11 @@ public:
     Buffer* getIndexBuffer() const override { return m_indexBuf.get(); }
     uint32_t getVertexCount() const override { return m_vertexCount; }
     uint32_t getIndexCount() const override { return m_indexCount; }
-    virtual uint32_t getVertexAttribteStride() const {
-        return m_vertexItemSize;
-    }
-    virtual uint32_t getInstanceAttribteStride() const {
-        return m_instanceStrip;
-    }
+    uint32_t getVertexAttribteStride() const override { return m_vertexItemSize; }
+
+    uint32_t getInstanceAttribteStride() const override { return m_instanceStrip; }
     uint32_t getIndexItemSize() const override { return m_indexItemSize; }
-    virtual PrimitiveType getPrimitiveType() override {
-        return m_primitiveType;
-    };
+    PrimitiveType getPrimitiveType() override { return m_primitiveType; };
 
 private:
     uint32_t m_location = 0;

@@ -10,7 +10,7 @@
 
 BEGIN_GFX_NAMESPACE
 
-using GFX_HANDLE                        = uint32_t;
+using GFX_HANDLE                        = uint64_t;
 static const GFX_HANDLE GFX_NULL_HANDLE = 0;
 
 enum class GFX_API {
@@ -706,7 +706,7 @@ struct ClearValue {
 };
 
 struct ShaderModuleInfo {
-    uint8_t *pData{nullptr};
+    const uint8_t *pData{nullptr};
     uint32_t size{0};
     ShaderStage stage;
     std::string entryName{"main"};

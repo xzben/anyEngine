@@ -39,9 +39,20 @@ public:
 
     virtual void reset() override {
         m_input->delRef();
-        m_vertexData.swap(std::vector<uint8_t>());
-        m_indexData.swap(std::vector<uint8_t>());
-        m_instanceData.swap(std::vector<uint8_t>());
+        {
+            std::vector<uint8_t> empty;
+            m_vertexData.swap(empty);
+        }
+
+        {
+            std::vector<uint8_t> empty;
+            m_indexData.swap(empty);
+        }
+
+        {
+            std::vector<uint8_t> empty;
+            m_instanceData.swap(empty);
+        }
     }
 
     virtual void execute(gl3::GLContext* context) override {

@@ -1,7 +1,19 @@
 #include "agl.h"
 
+
+#if CUR_PLATFORM == PLATFORM_MAC
 #import <Cocoa/Cocoa.h>
 #import <OpenGL/gl3.h>
+#elif CUR_PLATFORM == PLATFORM_IOS
+#import <CoreFoundation/CoreFoundation.h>
+#import <OpenGLES/EAGL.h>
+#import <OpenGLES/EAGLDrawable.h>
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#import <UIKit/UIKit.h>
+#else
+static_asset(false);  // unknown platform
+#endif
 
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
@@ -31,8 +43,12 @@ void AGLSwapChain::handleUpdateSurfaceInfo(const SurfaceInfo& info)
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorTexture);
+#if CUR_PLATFORM == PLATFORM_MAC
+    
+#else
     [((__bridge EAGLContext*)m_context->handle) renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)info.handle];
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorTexture);
+#endif
     GLenum error = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     updateAttachment(info.width, info.height);
 }
@@ -41,7 +57,11 @@ void AGLSwapChain::swapBuffer()
 {
     AGLHelper::makeCurrent(m_context);
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorTexture);
+#if CUR_PLATFORM == PLATFORM_MAC
+    
+#else
     [((__bridge EAGLContext*)m_context->handle)  presentRenderbuffer:GL_RENDERBUFFER];
+#endif
     AGLHelper::exitCurrent(m_context);
 }
 
@@ -104,8 +124,8 @@ AGLSwapChain* AGLHelper::createWindowSurface(GL3Device& device, const SurfaceInf
     return new AGLSwapChain(device, info, needDepthStencil, mainContext);
 }
 
-thread_local WGlContext* s_lastContext = nullptr;
-thread_local WGlContext* s_preContext  = nullptr;
+thread_local AGLContext* s_lastContext = nullptr;
+thread_local AGLContext* s_preContext  = nullptr;
 
 void AGLHelper::makeCurrent(AGLContext* context)
 {

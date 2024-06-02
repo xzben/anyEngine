@@ -19,7 +19,7 @@ public:
     virtual ~GL3SwapChain();
 
     virtual std::pair<bool, uint32_t> acquireNextImage(Semaphore* semophore, Fence* fence = nullptr,
-                                                       uint32_t timeout = 0);
+                                                       uint32_t timeout = 0) override;
     virtual void swapBuffer() = 0;
     virtual uint32_t getImageCount() const override { return 1; }
 

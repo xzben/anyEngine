@@ -23,32 +23,31 @@ public:
     void bindStorageBuffer(const std::string& name, Buffer* buf);
     void draw();
     void dispatch(uint32_t groupNumX, uint32_t groupNumY, uint32_t groupNumZ);
-    virtual void enable(RenderState state) override;
-    virtual void disable(RenderState state) override;
-    virtual void draw(const DrawMeshInfo& info) override;
-    virtual void compute(const ComputeInfo& info) override;
+    void enable(RenderState state) override;
+    void disable(RenderState state) override;
+    void draw(const DrawMeshInfo& info) override;
+    void compute(const ComputeInfo& info) override;
 
-    virtual void nextSubPass() override;
-    virtual void endRendPass() override;
-    virtual void end() override;
+    void nextSubPass() override;
+    void endRendPass() override;
+    void end() override;
 
-    virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
-    virtual void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+    void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+    void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 
-    virtual void updateBuffer(Buffer* buffer, const void* pData, uint32_t size, uint32_t offset = 0,
-                              bool staticData = false) override;
+    void updateBuffer(Buffer* buffer, const void* pData, uint32_t size, uint32_t offset = 0,
+                      bool staticData = false) override;
 
-    virtual void updateTexture(Texture* texture, const TextureSubInfo& info, const void* pData,
-                               uint32_t size, bool staticData = false) override;
+    void updateTexture(Texture* texture, const TextureSubInfo& info, const void* pData,
+                       uint32_t size, bool staticData = false) override;
 
-    virtual void copyBuffer(Buffer* src, Buffer* dst, uint32_t size, uint32_t srcOffset = 0,
-                            uint32_t dstOffset = 0) override;
-    virtual void copyTexture(Texture* src, Texture* dst, const TextureCopyInfo& info) override;
-    virtual void blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info);
-    virtual void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
-    virtual void clearTexture(Texture* src, TextureSubInfo& subInfo, const Color& color) override;
-    virtual void updateInputAssembler(InputAssembler* input,
-                                      const UpdateAssemblerInfo& info) override;
+    void copyBuffer(Buffer* src, Buffer* dst, uint32_t size, uint32_t srcOffset = 0,
+                    uint32_t dstOffset = 0) override;
+    void copyTexture(Texture* src, Texture* dst, const TextureCopyInfo& info) override;
+    void blitTexture(Texture* src, Texture* dst, const TextureBliteInfo& info) override;
+    void generateMipmaps(Texture* textre, uint32_t mipLevels) override;
+    void clearTexture(Texture* src, TextureSubInfo& subInfo, const Color& color) override;
+    void updateInputAssembler(InputAssembler* input, const UpdateAssemblerInfo& info) override;
 
     operator bool() const { return m_handle != VK_NULL_HANDLE; }
     operator VkCommandBuffer() const { return m_handle; }

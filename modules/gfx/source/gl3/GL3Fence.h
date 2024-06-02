@@ -12,12 +12,12 @@ class GL3Fence : public Fence {
 public:
     GL3Fence(GL3Device& device, bool createSignaled = false);
     virtual ~GL3Fence();
-    virtual bool reset() override;
-    virtual WaitResult wait(uint64_t timeout = 0) override;
+    bool reset() override;
+    WaitResult wait(uint64_t timeout = 0) override;
     void signal();
 
 protected:
-    virtual GFX_HANDLE getHandleImp() const { return 0; };
+    GFX_HANDLE getHandleImp() const override { return 0; };
     void freeSync();
     WaitResult doSyncWait(uint64_t timeout);
 

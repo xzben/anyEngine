@@ -10,40 +10,33 @@
 #define DEBUG_BREAK
 #endif
 
-#define CCASSERT(condition, fmt, ...)                                                         \
-    do {                                                                                      \
-        if (!(condition)) {                                                                   \
-            assert(false);                                                                    \
-            fprintf(stderr, "[file %s \r\nfunction %s line: %d]\r\n", __FILE__, __FUNCTION__, \
-                    __LINE__);                                                                \
-            fprintf(stderr, fmt, __VA_ARGS__);                                                \
-            fprintf(stderr, "\r\n");                                                          \
-        }                                                                                     \
+#define CCASSERT(condition, fmt, ...)                                                          \
+    do {                                                                                       \
+        if (!(condition)) {                                                                    \
+            assert(false);                                                                     \
+            fprintf(stderr, "[file] %s \r\n[function] %s \r\n[line] %d\r\n[ERROR]" fmt "\r\n", \
+                    __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);                          \
+        }                                                                                      \
     } while (false)
 
 // log
-#define CCLOG(fmt, ...)                                                                         \
-    do {                                                                                        \
-        fprintf(stdout, "[info][file %s \r\nfunction %s line: %d]\r\n", __FILE__, __FUNCTION__, \
-                __LINE__);                                                                      \
-        fprintf(stdout, fmt, __VA_ARGS__);                                                      \
-        fprintf(stdout, "\r\n");                                                                \
+#define CCLOG(fmt, ...)                                                                            \
+    do {                                                                                           \
+        fprintf(stderr, "[file] %s \r\n[function] %s \r\n[line] %d\r\n[LOG]" fmt "\r\n", __FILE__, \
+                __FUNCTION__, __LINE__, ##__VA_ARGS__);                                            \
     } while (false)
 
-#define CCWARN(fmt, ...)                                                                        \
-    do {                                                                                        \
-        fprintf(stderr, "[warn][file %s \r\nfunction %s line: %d]\r\n", __FILE__, __FUNCTION__, \
-                __LINE__);                                                                      \
-        fprintf(stderr, fmt, __VA_ARGS__);                                                      \
-        fprintf(stderr, "\r\n");                                                                \
+#define CCWARN(fmt, ...)                                                                  \
+    do {                                                                                  \
+        fprintf(stderr, "[file] %s \r\n[function] %s \r\n[line] %d\r\n[WARN]" fmt "\r\n", \
+                __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);                         \
     } while (false)
 
-#define CCERROR(fmt, ...)                                                                         \
-    do {                                                                                          \
-        fprintf(stderr, "[error][ file %s \r\nfunction %s line: %d]\r\n", __FILE__, __FUNCTION__, \
-                __LINE__);                                                                        \
-        fprintf(stderr, fmt, __VA_ARGS__);                                                        \
-        fprintf(stderr, "\r\n");                                                                  \
+#define CCERROR(fmt, ...)                                                                  \
+    do {                                                                                   \
+        assert(false);                                                                     \
+        fprintf(stderr, "[file] %s \r\n[function] %s \r\n[line] %d\r\n[ERROR]" fmt "\r\n", \
+                __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);                          \
     } while (false)
 #else
 #define RELEASE true

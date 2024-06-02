@@ -37,18 +37,19 @@ GLContextType GLContext::createContext(GLContextType share) {
 #if CUR_GL_TYPE == OPENGL_WGL
     return WGLHelper::createContext(NULL, share, true);
 #elif CUR_GL_TYPE == OPENGL_AGL
-
+    return AGLHelper::createContext(share, true);
 #elif CUR_GL_TYPE == OPENGL_EGL
 
 #else
     static_assert(false);  // unsupport OPEN TYPE
 #endif
 }
+
 GLContext::~GLContext() {
 #if CUR_GL_TYPE == OPENGL_WGL
     WGLHelper::deleteContext(m_context);
 #elif CUR_GL_TYPE == OPENGL_AGL
-
+    AGLHelper::deleteContext(m_context);
 #elif CUR_GL_TYPE == OPENGL_EGL
 
 #else
@@ -60,7 +61,7 @@ GL3SwapChain* GLContext::createSwapChain(const SurfaceInfo& info, bool needDepth
 #if CUR_GL_TYPE == OPENGL_WGL
     return WGLHelper::createWindowSurface(m_device, info, needDepthStencil, m_context);
 #elif CUR_GL_TYPE == OPENGL_AGL
-
+    return AGLHelper::createWindowSurface(m_device, info, needDepthStencil, m_context);
 #elif CUR_GL_TYPE == OPENGL_EGL
 
 #else
@@ -72,7 +73,7 @@ void GLContext::destroySwapChain(GL3SwapChain* swapChain) {
 #if CUR_GL_TYPE == OPENGL_WGL
     WGLHelper::deleteWindowSurface(dynamic_cast<WGLSwapChain*>(swapChain));
 #elif CUR_GL_TYPE == OPENGL_AGL
-
+    return AGLHelper::deleteWindowSurface(dynamic_cast<AGLSwapChain*>(swapChain));
 #elif CUR_GL_TYPE == OPENGL_EGL
 
 #else
@@ -83,7 +84,7 @@ void GLContext::swapBuffer(GL3SwapChain* swapChain) {
 #if CUR_GL_TYPE == OPENGL_WGL
     dynamic_cast<WGLSwapChain*>(swapChain)->swapBuffer();
 #elif CUR_GL_TYPE == OPENGL_AGL
-
+    dynamic_cast<AGLSwapChain*>(swapChain)->swapBuffer();
 #elif CUR_GL_TYPE == OPENGL_EGL
 
 #else
@@ -99,6 +100,11 @@ void GLContext::makeCurrent(GL3SwapChain* swapChain) {
         WGLHelper::makeCurrent(dynamic_cast<WGLSwapChain*>(swapChain)->getContext());
     }
 #elif CUR_GL_TYPE == OPENGL_AGL
+    if (swapChain) {
+        AGLHelper::makeCurrent(m_context);
+    } else {
+        AGLHelper::makeCurrent(dynamic_cast<AGLSwapChain*>(swapChain)->getContext());
+    }
 
 #elif CUR_GL_TYPE == OPENGL_EGL
 
@@ -115,7 +121,11 @@ void GLContext::exitCurrent(GL3SwapChain* swapChain) {
         WGLHelper::exitCurrent(dynamic_cast<WGLSwapChain*>(swapChain)->getContext());
     }
 #elif CUR_GL_TYPE == OPENGL_AGL
-
+    if (swapChain == nullptr) {
+        AGLHelper::exitCurrent(m_context);
+    } else {
+        AGLHelper::exitCurrent(dynamic_cast<AGLSwapChain*>(swapChain)->getContext());
+    }
 #elif CUR_GL_TYPE == OPENGL_EGL
 
 #else

@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include "platformDefine.h"
+
 #if CUR_PLATFORM == PLATFORM_WINDOWS
 #include "win32/Win32Window.h"
 #define WindowImpClass Win32Window

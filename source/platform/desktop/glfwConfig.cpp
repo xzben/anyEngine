@@ -1,6 +1,6 @@
 #include "glfwConfig.h"
 
-#include "glfw/glfw3.h"
+#include "GLFW/glfw3.h"
 
 const std::unordered_map<int, MouseButton> g_mapMouseButon = {
     {GLFW_MOUSE_BUTTON_LEFT, MouseButton::LEFT},

@@ -53,7 +53,7 @@ void VulkanCommandBuffer::begin(CommandBufferUsage usage) {
 void VulkanCommandBuffer::beginRendPass(const BeginRenderPassInfo& info) {}
 
 void VulkanCommandBuffer::bindPipeline(Pipeline* pipeline) {
-    CCASSERT(pipeline != nullptr, "pipeline to been nullptr");
+    CCASSERT(pipeline != nullptr, "pipeline cannot been nullptr%d", pipeline);
 
     m_curPipeline = pipeline;
     vkCmdBindPipeline(m_handle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getHandle<VkPipeline>());
@@ -112,12 +112,12 @@ void VulkanCommandBuffer::endRendPass() { vkCmdEndRenderPass(m_handle); }
 void VulkanCommandBuffer::end() { vkEndCommandBuffer(m_handle); }
 
 void VulkanCommandBuffer::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-    VkViewport viewport{x, y, width, height, 0.f, 1.f};
+    VkViewport viewport{(float)x, (float)y, (float)width, (float)height, 0.f, 1.f};
     vkCmdSetViewport(m_handle, 0, 1, &viewport);
 }
 
 void VulkanCommandBuffer::setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-    VkRect2D rect{{x, y}, {width, height}};
+    VkRect2D rect{{(int32_t)x, (int32_t)y}, {width, height}};
     vkCmdSetScissor(m_handle, 0, 1, &rect);
 }
 

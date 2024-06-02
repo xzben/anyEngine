@@ -13,8 +13,7 @@ public:
     CmdUpdateBuffer(GL3CommandBuffer& cmdBuf) : CmdBase(cmdBuf, CUR_CMD_TYPE) {}
     virtual ~CmdUpdateBuffer() {}
 
-    void init(Buffer* buffer, const void* pData, uint32_t size, uint32_t offset,
-              bool staticData) {
+    void init(Buffer* buffer, const void* pData, uint32_t size, uint32_t offset, bool staticData) {
         m_buffer = buffer;
         m_buffer->addRef();
 
@@ -34,7 +33,8 @@ public:
         m_buffer   = nullptr;
         m_pSrcData = nullptr;
         m_size     = 0;
-        m_data.swap(std::vector<uint8_t>());
+        std::vector<uint8_t> empty;
+        m_data.swap(empty);
     }
 
     virtual void execute(gl3::GLContext* context) override {
@@ -46,12 +46,10 @@ public:
 
         GL_CHECK(glBindBuffer(GL_COPY_WRITE_BUFFER, handle));
         void* dst{nullptr};
-        GL_CHECK(dst = glMapBufferRange(
-                     GL_COPY_WRITE_BUFFER, m_offset, m_size,
-                     GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
+        GL_CHECK(dst = glMapBufferRange(GL_COPY_WRITE_BUFFER, m_offset, m_size,
+                                        GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
         if (nullptr == dst) {
-            GL_CHECK(
-                glBufferSubData(GL_COPY_WRITE_BUFFER, m_offset, m_size, data));
+            GL_CHECK(glBufferSubData(GL_COPY_WRITE_BUFFER, m_offset, m_size, data));
             return;
         } else {
             memcpy(dst, data, m_size);

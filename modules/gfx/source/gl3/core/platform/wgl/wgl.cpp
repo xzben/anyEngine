@@ -1,5 +1,8 @@
 #include "wgl.h"
 
+
+#if CUR_GL_TYPE == OPENGL_WGL
+
 #include <conio.h>
 #include <windows.h>
 
@@ -7,8 +10,6 @@
 #include <mutex>
 
 #include "wgl_config.h"
-
-#if CUR_GL_TYPE == OPENGL_WGL
 
 BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
@@ -120,13 +121,7 @@ void WGLHelper::deleteContext(WGlContext* context) {
 thread_local WGlContext* s_lastContext = nullptr;
 thread_local WGlContext* s_preContext  = nullptr;
 
-WGlContext* WGLHelper::getLastContext() {
-    g_context_lock.lock();
-    WGlContext* lastContext = s_lastContext;
-    g_context_lock.unlock();
-
-    return lastContext;
-}
+WGlContext* WGLHelper::getLastContext() { return s_lastContext; }
 
 void WGLHelper::makeCurrent(WGlContext* context) {
     if (s_lastContext == context) {
