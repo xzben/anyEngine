@@ -1,5 +1,7 @@
 set(TARGET_NAME AnyEngine)
 
+option(USE_GFX_TEST "run gfx test app" ON)
+
 set(THIRD_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rd")
 set(ENGINE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(COMMON_LIB_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../modules/common/include/")
@@ -16,6 +18,10 @@ ${COMMON_LIB_INCLUDE})
 include_directories( 
 	${ENGINE_HEAD_DIRS}
 )
+
+if(USE_GFX_TEST)
+	add_definitions(-DUSE_GFX_TEST)
+endif()
 
 add_library(${TARGET_NAME} ${RUNTIME_HEADERS} ${RUNTIME_SOURCES})
 
