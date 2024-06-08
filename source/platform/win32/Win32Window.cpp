@@ -1,6 +1,6 @@
 #include "Win32Window.h"
 
-#if CUR_PLATFORM == PLATFORM_WIN32
+#if CUR_PLATFORM == PLATFORM_WINDOWS
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include "GLFW/glfw3native.h"

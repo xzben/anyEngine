@@ -6,7 +6,7 @@
 #define PLATFORM_IOS 3
 #define PLATFORM_MAC 4
 
-#if defined(__WIN32) || defined(WINDOWS)
+#if defined(__WIN32) || defined(WINDOWS) || defined(WIN32)
 #define CUR_PLATFORM PLATFORM_WINDOWS
 #elif defined(__APPLE__)
 #include <TargetConditionals.h>

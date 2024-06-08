@@ -1,5 +1,6 @@
 #include "MacWindow.h"
 
+#if CUR_PLATFORM == PLATFORM_MAC
 #define GLFW_EXPOSE_NATIVE_NSGL
 #include "GLFW/glfw3native.h"
 
@@ -11,3 +12,5 @@ void *MacWindow::getNativeWinHandle() {
     NSView *nsglView = glfwGetCocoaWindow(m_handle);
     return (void *)nsglView;
 }
+
+#endif  // #if CUR_PLATFORM == PLATFORM_MAC
