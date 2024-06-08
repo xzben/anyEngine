@@ -9,8 +9,6 @@ GL3Queue::GL3Queue(GL3Device& device, QueueType queueType, float priority)
     : m_device(device), m_queueType(queueType), m_priority(priority) {}
 GL3Queue::~GL3Queue() {}
 
-void GL3Queue::destroyPool(CommandPool* pool) { pool->delRef(); }
-
 CommandPool* GL3Queue::createPool(ResetMode resetModel) {
     return new GL3CommandPool(m_device, *this, resetModel);
 }

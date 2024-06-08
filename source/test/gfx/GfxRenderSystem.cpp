@@ -56,45 +56,47 @@ GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
 
 GfxRenderSystem::~GfxRenderSystem() {
     if (m_swapChain != nullptr) {
-        m_pDevice->destroySwapChain(m_swapChain);
+        m_pDevice->destroyObject(m_swapChain);
         m_swapChain = nullptr;
     }
 
     if (m_commandPool) {
-        m_queue->destroyPool(m_commandPool);
+        m_pDevice->destroyObject(m_commandPool);
         m_commandPool = nullptr;
     }
 
     if (m_renderFence) {
-        m_pDevice->destroyFence(m_renderFence);
+        m_pDevice->destroyObject(m_renderFence);
         m_renderFence = nullptr;
     }
 
     if (m_renderSemaphore) {
-        m_pDevice->destroySemaphore(m_renderSemaphore);
+        m_pDevice->destroyObject(m_renderSemaphore);
         m_renderSemaphore = nullptr;
     }
 
     if (m_imageValidSemahore) {
-        m_pDevice->destroySemaphore(m_imageValidSemahore);
+        m_pDevice->destroyObject(m_imageValidSemahore);
         m_imageValidSemahore = nullptr;
     }
 
     if (m_renderPass) {
-        m_pDevice->destroyRenderPasss(m_renderPass);
+        m_pDevice->destroyObject(m_renderPass);
         m_renderPass = nullptr;
     }
 
     for (auto& item : m_drawColorSurfaces) {
-        m_pDevice->destroyDrawSurface(item);
+        m_pDevice->destroyObject(item);
     }
     m_drawColorSurfaces.clear();
 
     for (auto& item : m_drawDepthStencilSurfaces) {
-        m_pDevice->destroyDrawSurface(item);
+        m_pDevice->destroyObject(item);
     }
     m_drawDepthStencilSurfaces.clear();
 }
+
+void GfxRenderSystem::draw(gfx::CommandBuffer* cmd) {}
 
 void GfxRenderSystem::onUpdate(float dt) {
     auto waitResult = m_renderFence->wait(1000);

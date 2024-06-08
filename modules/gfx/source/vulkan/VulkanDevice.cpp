@@ -185,15 +185,6 @@ void VulkanDevice::withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callba
 //------------------
 
 //-------------------------------------------------------------
-void VulkanDevice::destroyBuffer(Buffer* buffer) { buffer->delRef(); }
-void VulkanDevice::destroyEvent(Event* event) { event->delRef(); }
-void VulkanDevice::destroyFence(Fence* fence) { fence->delRef(); }
-void VulkanDevice::destroyInputAssembler(InputAssembler* input) { input->delRef(); }
-void VulkanDevice::destroyPipeline(Pipeline* pipeline) { pipeline->delRef(); }
-void VulkanDevice::destroyRenderPasss(RenderPass* renderPass) { renderPass->delRef(); }
-void VulkanDevice::destroySampler(Sampler* sampler) { sampler->delRef(); }
-void VulkanDevice::destroySemaphore(Semaphore* semaphore) { semaphore->delRef(); }
-void VulkanDevice::destroyShader(Shader* shader) { shader->delRef(); }
-void VulkanDevice::destroySwapChain(SwapChain* swapChain) { swapChain->delRef(); }
-void VulkanDevice::destroyTexture(Texture* texture) { texture->delRef(); }
+void VulkanDevice::destroyObject(GfxObject* obj) { obj->delRef(); }
+
 END_GFX_NAMESPACE

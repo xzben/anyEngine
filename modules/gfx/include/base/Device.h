@@ -141,18 +141,7 @@ public:
      */
     virtual void withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callback) = 0;
 
-public:
-    virtual void destroyBuffer(Buffer* buffer)                = 0;
-    virtual void destroyEvent(Event* event)                   = 0;
-    virtual void destroyFence(Fence* fence)                   = 0;
-    virtual void destroyInputAssembler(InputAssembler* input) = 0;
-    virtual void destroyPipeline(Pipeline* pipeline)          = 0;
-    virtual void destroyRenderPasss(RenderPass* renderPass)   = 0;
-    virtual void destroySampler(Sampler* sampler)             = 0;
-    virtual void destroySemaphore(Semaphore* semaphore)       = 0;
-    virtual void destroyShader(Shader* shader)                = 0;
-    virtual void destroySwapChain(SwapChain* swapChain)       = 0;
-    virtual void destroyTexture(Texture* texture)             = 0;
+    virtual void destroyObject(GfxObject* obj) = 0;
 
 protected:
     Device()          = default;

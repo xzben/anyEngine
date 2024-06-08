@@ -66,19 +66,7 @@ public:
     virtual void waitIdle() override;
 
     virtual void withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callback) override;
-
-public:
-    virtual void destroyBuffer(Buffer* buffer) override;
-    virtual void destroyEvent(Event* event) override;
-    virtual void destroyFence(Fence* fence) override;
-    virtual void destroyInputAssembler(InputAssembler* input) override;
-    virtual void destroyPipeline(Pipeline* pipeline) override;
-    virtual void destroyRenderPasss(RenderPass* renderPass) override;
-    virtual void destroySampler(Sampler* sampler) override;
-    virtual void destroySemaphore(Semaphore* semaphore) override;
-    virtual void destroyShader(Shader* shader) override;
-    virtual void destroySwapChain(SwapChain* swapChain) override;
-    virtual void destroyTexture(Texture* texture) override;
+    virtual void destroyObject(GfxObject* obj) override;
 
 protected:
     static std::unique_ptr<vk::Instance> getInstance(const DeviceInfo& info);

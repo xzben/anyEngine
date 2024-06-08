@@ -171,16 +171,7 @@ void GL3Device::withOneTimeCmd(std::function<void(CommandBuffer& cmd)> callback)
 }
 
 //-------------------------------------------------------------
-void GL3Device::destroyBuffer(Buffer* buffer) { buffer->delRef(); }
-void GL3Device::destroyEvent(Event* event) { event->delRef(); }
-void GL3Device::destroyFence(Fence* fence) { fence->delRef(); }
-void GL3Device::destroyInputAssembler(InputAssembler* input) { input->delRef(); }
-void GL3Device::destroyPipeline(Pipeline* pipeline) { pipeline->delRef(); }
-void GL3Device::destroyRenderPasss(RenderPass* renderPass) { renderPass->delRef(); }
-void GL3Device::destroySampler(Sampler* sampler) { sampler->delRef(); }
-void GL3Device::destroySemaphore(Semaphore* semaphore) { semaphore->delRef(); }
-void GL3Device::destroyShader(Shader* shader) { shader->delRef(); }
-void GL3Device::destroySwapChain(SwapChain* swapChain) { swapChain->delRef(); }
-void GL3Device::destroyTexture(Texture* texture) { texture->delRef(); }
+
+void GL3Device::destroyObject(GfxObject* obj) { obj->delRef(); }
 
 END_GFX_NAMESPACE

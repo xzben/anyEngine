@@ -16,13 +16,9 @@ public:
     GL3Queue(GL3Device& device, QueueType queueType, float priority);
     virtual ~GL3Queue();
 
-    void destroyPool(CommandPool* pool) override;
-    virtual CommandPool* createPool(
-        ResetMode resetModel = ResetMode::ResetPool) override;
-    virtual bool submit(const std::vector<CommandBuffer*>& cmd,
-                        const std::vector<Semaphore*>& wait,
-                        const std::vector<Semaphore*>& signal,
-                        Fence* fence = nullptr) override;
+    virtual CommandPool* createPool(ResetMode resetModel = ResetMode::ResetPool) override;
+    virtual bool submit(const std::vector<CommandBuffer*>& cmd, const std::vector<Semaphore*>& wait,
+                        const std::vector<Semaphore*>& signal, Fence* fence = nullptr) override;
     virtual uint32_t present(SwapChain* swapChain, uint32_t imageIndex,
                              const std::vector<Semaphore*>& waits) override;
     virtual bool waitIdle() override;

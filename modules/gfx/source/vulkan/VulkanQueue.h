@@ -7,22 +7,18 @@ BEGIN_GFX_NAMESPACE
 
 class VulkanQueue : public Queue {
 public:
-    VulkanQueue(vk::LogicDevice& logicDeivce, QueueType queueType,
-                float priority, uint32_t familyIndex, uint32_t index);
+    VulkanQueue(vk::LogicDevice& logicDeivce, QueueType queueType, float priority,
+                uint32_t familyIndex, uint32_t index);
 
     virtual ~VulkanQueue();
-    virtual void destroyPool(CommandPool* pool) override;
 
-    virtual bool submit(const std::vector<CommandBuffer*>& cmd,
-                        const std::vector<Semaphore*>& wait,
-                        const std::vector<Semaphore*>& signal,
-                        Fence* fence = nullptr) override;
+    virtual bool submit(const std::vector<CommandBuffer*>& cmd, const std::vector<Semaphore*>& wait,
+                        const std::vector<Semaphore*>& signal, Fence* fence = nullptr) override;
     virtual uint32_t present(SwapChain* swapChain, uint32_t imageIndex,
                              const std::vector<Semaphore*>& waits) override;
     virtual bool waitIdle() override;
 
-    virtual CommandPool* createPool(
-        ResetMode resetModel = ResetMode::ResetPool) override;
+    virtual CommandPool* createPool(ResetMode resetModel = ResetMode::ResetPool) override;
 
     virtual QueueType getType() override { return m_queueType; }
 

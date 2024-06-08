@@ -14,18 +14,14 @@ class Semaphore;
 
 class Queue : public GfxObject {
 public:
-    virtual CommandPool* createPool(
-        ResetMode resetModel = ResetMode::ResetPool) = 0;
-    virtual void destroyPool(CommandPool* pool)      = 0;
+    virtual CommandPool* createPool(ResetMode resetModel = ResetMode::ResetPool) = 0;
 
-    virtual bool submit(const std::vector<CommandBuffer*>& cmd,
-                        const std::vector<Semaphore*>& wait,
-                        const std::vector<Semaphore*>& signal,
-                        Fence* fence = nullptr)                    = 0;
+    virtual bool submit(const std::vector<CommandBuffer*>& cmd, const std::vector<Semaphore*>& wait,
+                        const std::vector<Semaphore*>& signal, Fence* fence = nullptr) = 0;
     virtual uint32_t present(SwapChain* swapChain, uint32_t imageIndex,
-                             const std::vector<Semaphore*>& waits) = 0;
-    virtual bool waitIdle()                                        = 0;
-    virtual QueueType getType()                                    = 0;
+                             const std::vector<Semaphore*>& waits)                     = 0;
+    virtual bool waitIdle()                                                            = 0;
+    virtual QueueType getType()                                                        = 0;
 
 protected:
     Queue() : GfxObject(GfxObjectType::Queue) {}

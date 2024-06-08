@@ -10,6 +10,8 @@ public:
 protected:
     virtual void onUpdate(float dt) override;
 
+    void draw(gfx::CommandBuffer* cmd);
+
 private:
     gfx::SwapChain* m_swapChain{nullptr};
     gfx::RenderPass* m_renderPass{nullptr};

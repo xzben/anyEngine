@@ -102,7 +102,8 @@ static const bool g_intType[] = {
     false,  // DataFormat::Mat3
 };
 
-void GL3InputAssembler::GetAttributeDataInfo(DataFormat format, uint32_t& count, uint32_t& size, GLenum& gltype, bool& intType) {
+void GL3InputAssembler::GetAttributeDataInfo(DataFormat format, uint32_t& count, uint32_t& size,
+                                             GLenum& gltype, bool& intType) {
     int index = (int)format;
     count     = g_dataTypeCount[index];
     size      = g_dataFmtSize[index];
@@ -112,8 +113,10 @@ void GL3InputAssembler::GetAttributeDataInfo(DataFormat format, uint32_t& count,
 
 GLenum GL3InputAssembler::GetPrimivteGLType(PrimitiveType type) { return g_primitives[(int)type]; }
 
-GL3InputAssembler::GL3InputAssembler(GL3Device& device, PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-                                     const void* pVertexData, uint32_t vertexCount, const void* pIndexData, uint32_t indexCount,
+GL3InputAssembler::GL3InputAssembler(GL3Device& device, PrimitiveType primitiveType,
+                                     const std::vector<Attribute>& attributes,
+                                     const void* pVertexData, uint32_t vertexCount,
+                                     const void* pIndexData, uint32_t indexCount,
                                      uint32_t indexItemSize)
     : m_device(device),
       m_primitiveType(primitiveType),
@@ -127,18 +130,24 @@ GL3InputAssembler::GL3InputAssembler(GL3Device& device, PrimitiveType primitiveT
         uint32_t count    = g_dataTypeCount[(int)attr.format];
         m_vertexStripe += itemSize * count;
     }
-    m_vertexBuffer = new GL3Buffer(m_device, BufferType::VERTEX, vertexCount * m_vertexStripe, pVertexData);
+    m_vertexBuffer =
+        new GL3Buffer(m_device, BufferType::VERTEX, vertexCount * m_vertexStripe, pVertexData);
 
     if (pIndexData != nullptr && indexCount > 0) {
-        m_indexBuffer = new GL3Buffer(m_device, BufferType::INDEX, indexItemSize * indexCount, pIndexData);
+        m_indexBuffer =
+            new GL3Buffer(m_device, BufferType::INDEX, indexItemSize * indexCount, pIndexData);
     }
 }
 
-GL3InputAssembler::GL3InputAssembler(GL3Device& device, PrimitiveType primitiveType, const std::vector<Attribute>& attributes,
-                                     const std::vector<Attribute>& InstanceAttributes, const void* pVertexData, uint32_t vertexCount,
-                                     const void* pInstanceData, uint32_t instanceCount, const void* pIndexData, uint32_t indexCount,
+GL3InputAssembler::GL3InputAssembler(GL3Device& device, PrimitiveType primitiveType,
+                                     const std::vector<Attribute>& attributes,
+                                     const std::vector<Attribute>& InstanceAttributes,
+                                     const void* pVertexData, uint32_t vertexCount,
+                                     const void* pInstanceData, uint32_t instanceCount,
+                                     const void* pIndexData, uint32_t indexCount,
                                      uint32_t indexItemSize)
-    : GL3InputAssembler(device, primitiveType, attributes, pVertexData, vertexCount, pIndexData, indexCount, indexItemSize) {
+    : GL3InputAssembler(device, primitiveType, attributes, pVertexData, vertexCount, pIndexData,
+                        indexCount, indexItemSize) {
     m_instanceAttributes = InstanceAttributes;
     m_instanceCount      = instanceCount;
 
@@ -149,22 +158,23 @@ GL3InputAssembler::GL3InputAssembler(GL3Device& device, PrimitiveType primitiveT
         m_instanceStrip += itemSize * count;
     }
 
-    m_instanceBuffer = new GL3Buffer(m_device, BufferType::VERTEX, vertexCount * m_vertexStripe, pInstanceData);
+    m_instanceBuffer =
+        new GL3Buffer(m_device, BufferType::VERTEX, vertexCount * m_vertexStripe, pInstanceData);
 }
 
 GL3InputAssembler::~GL3InputAssembler() {
     if (m_vertexBuffer) {
-        m_device.destroyBuffer(m_vertexBuffer);
+        m_device.destroyObject(m_vertexBuffer);
         m_vertexBuffer = nullptr;
     }
 
     if (m_indexBuffer) {
-        m_device.destroyBuffer(m_indexBuffer);
+        m_device.destroyObject(m_indexBuffer);
         m_indexBuffer = nullptr;
     }
 
     if (m_instanceBuffer) {
-        m_device.destroyBuffer(m_instanceBuffer);
+        m_device.destroyObject(m_instanceBuffer);
         m_instanceBuffer = nullptr;
     }
 }
@@ -179,7 +189,8 @@ void GL3InputAssembler::updateIndexData(const void* pData, uint32_t size, uint32
     m_indexCount = indexCount;
 }
 
-void GL3InputAssembler::updateInstanceData(const void* pData, uint32_t size, uint32_t instanceCount) {
+void GL3InputAssembler::updateInstanceData(const void* pData, uint32_t size,
+                                           uint32_t instanceCount) {
     m_instanceBuffer->update(pData, size, 0);
     m_instanceCount = instanceCount;
 }
