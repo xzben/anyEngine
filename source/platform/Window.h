@@ -8,6 +8,7 @@
 #include "event/EventDispatcher.h"
 #include "math/math.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class Window : public Object, public EventDispatcher {
 protected:
     Window(const std::string &title, uint32_t w, uint32_t h) : m_title(title), m_size(w, h){};
@@ -36,3 +37,5 @@ protected:
     std::unordered_map<uint32_t, RESIZE_HANDLE> m_resizeCallbacks;
     uint32_t m_eventId{0};
 };
+
+END_NS_SCENCE_GRAPH

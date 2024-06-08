@@ -1,5 +1,6 @@
 #include "GfxRenderSystem.h"
 
+BEGIN_NS_SCENCE_GRAPH
 GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
     auto hwnd = window->getNativeWinHandle();
     auto size = window->getSize();
@@ -131,3 +132,5 @@ void GfxRenderSystem::onUpdate(float dt) {
     m_queue->submit({cmd}, {m_imageValidSemahore}, {m_renderSemaphore}, m_renderFence);
     m_queue->present(m_swapChain, imageIndex, {m_renderSemaphore});
 }
+
+END_NS_SCENCE_GRAPH

@@ -1,5 +1,7 @@
 #include "Win32Window.h"
 
+BEGIN_NS_SCENCE_GRAPH
+
 #if CUR_PLATFORM == PLATFORM_WINDOWS
 
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -15,3 +17,5 @@ void *Win32Window::getNativeWinHandle() {
 }
 
 #endif
+
+END_NS_SCENCE_GRAPH

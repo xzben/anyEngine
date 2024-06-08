@@ -4,6 +4,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include "sceneGraphDefine.h"
+
+BEGIN_NS_SCENCE_GRAPH
 template <class OBJ_TYPE>
 class ObjectContainor {
 public:
@@ -96,14 +99,12 @@ public:
 
         obj->delRef();
         m_name2Object.erase(name);
-        m_objList.erase(
-            std::remove_if(m_objList.begin(), m_objList.end(), obj));
+        m_objList.erase(std::remove_if(m_objList.begin(), m_objList.end(), obj));
 
         auto hashIt = m_type2Object.find(hasCode);
         if (hashIt == m_type2Object.end()) return true;
 
-        m_objList.erase(
-            std::remove_if(hashIt.second.begin(), hashIt.second.end(), obj));
+        m_objList.erase(std::remove_if(hashIt.second.begin(), hashIt.second.end(), obj));
 
         return true;
     }
@@ -119,3 +120,5 @@ protected:
     std::unordered_map<std::string, OBJ_TYPE*> m_name2Object;
     std::unordered_map<size_t, std::vector<OBJ_TYPE*>> m_type2Object;
 };
+
+END_NS_SCENCE_GRAPH

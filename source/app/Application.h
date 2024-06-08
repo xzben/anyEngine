@@ -9,6 +9,7 @@
 #include "common/ObjectContainor.h"
 #include "platform/Window.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class Application : public Object, protected ObjectContainor<System> {
 public:
     Application(const std::string& name, Window* window);
@@ -53,3 +54,5 @@ protected:
     std::string m_name;
     Window* m_window{nullptr};
 };
+
+END_NS_SCENCE_GRAPH

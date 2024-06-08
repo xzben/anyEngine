@@ -4,8 +4,13 @@
 #include <vector>
 
 #include "Data.h"
+#include "sceneGraphDefine.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class FileSystem {
+public:
+    static FileSystem *getInstance();
+
 public:
     FileSystem();
     ~FileSystem();
@@ -25,12 +30,9 @@ public:
     bool remove(const std::string &path);
     bool createDirectories(const std::string &path);
 
-    bool getDirectoryContents(const std::string &path,
-                              std::vector<std::string> &files,
-                              std::vector<std::string> &directories,
-                              bool recursive = false);
-    bool getDirectoryFiles(const std::string &path,
-                           std::vector<std::string> &files,
+    bool getDirectoryContents(const std::string &path, std::vector<std::string> &files,
+                              std::vector<std::string> &directories, bool recursive = false);
+    bool getDirectoryFiles(const std::string &path, std::vector<std::string> &files,
                            bool recursive = false, bool filterDirectory = true);
 
     std::string getFilename(const std::string &filepath);
@@ -46,3 +48,5 @@ private:
     std::vector<std::string> m_searchPaths;
     std::unordered_map<std::string, std::string> m_filecaches;
 };
+
+END_NS_SCENCE_GRAPH

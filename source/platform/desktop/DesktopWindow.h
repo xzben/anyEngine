@@ -3,7 +3,9 @@
 #include <GLFW/glfw3.h>
 
 #include "../Window.h"
+#include "sceneGraphDefine.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class DesktopWindow : public Window {
 protected:
     static void FramebufferResizeCallback(GLFWwindow *win, int width, int height);
@@ -27,3 +29,4 @@ protected:
     Position m_curCursorPos{0.f, 0.f};
     Position m_preCursorPos{0.f, 0.f};
 };
+END_NS_SCENCE_GRAPH

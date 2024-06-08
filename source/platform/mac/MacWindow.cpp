@@ -1,5 +1,6 @@
 #include "MacWindow.h"
 
+BEGIN_NS_SCENCE_GRAPH
 #if CUR_PLATFORM == PLATFORM_MAC
 #define GLFW_EXPOSE_NATIVE_NSGL
 #include "GLFW/glfw3native.h"
@@ -14,3 +15,5 @@ void *MacWindow::getNativeWinHandle() {
 }
 
 #endif  // #if CUR_PLATFORM == PLATFORM_MAC
+
+END_NS_SCENCE_GRAPH

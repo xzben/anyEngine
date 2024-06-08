@@ -2,6 +2,7 @@
 
 #include "glfwConfig.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class GlfwLoader {
 public:
     GlfwLoader() { auto result = glfwInit(); }
@@ -134,3 +135,5 @@ bool DesktopWindow::init() {
 
 bool DesktopWindow::shoudleClose() { return glfwWindowShouldClose(m_handle); }
 void DesktopWindow::updateEvents() { glfwPollEvents(); }
+
+END_NS_SCENCE_GRAPH

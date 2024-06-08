@@ -3,7 +3,7 @@
 #include "CurRunApp.h"
 
 int main() {
-    auto app = createRunApp("test", 800, 800);
+    auto app = NS_SG::createRunApp("test", 800, 800);
     app->run();
     delete app;
 

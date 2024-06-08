@@ -2,6 +2,7 @@
 
 #include "utils/Timer.h"
 
+BEGIN_NS_SCENCE_GRAPH
 Application::Application(const std::string& name, Window* window) : m_name(name) {
     setWindow(window);
 }
@@ -53,3 +54,5 @@ void Application::update(float dt) {
 }
 
 void Application::exit() { m_exit = true; }
+
+END_NS_SCENCE_GRAPH

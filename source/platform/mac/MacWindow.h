@@ -2,6 +2,7 @@
 
 #include "platform/desktop/DesktopWindow.h"
 
+BEGIN_NS_SCENCE_GRAPH
 #if CUR_PLATFORM == PLATFORM_MAC
 class MacWindow : public DesktopWindow {
 public:
@@ -12,3 +13,5 @@ public:
 };
 
 #endif  // #if CUR_PLATFORM == PLATFORM_MAC
+
+END_NS_SCENCE_GRAPH

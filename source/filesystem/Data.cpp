@@ -2,6 +2,7 @@
 
 #include <cstdio>
 
+BEGIN_NS_SCENCE_GRAPH
 Data::Data() { reverse(MIN_DATA_BUFF); }
 
 Data::~Data() {
@@ -82,3 +83,5 @@ uint32_t Data::writeOffset(uint32_t offset) {
 
     return m_size;
 }
+
+END_NS_SCENCE_GRAPH

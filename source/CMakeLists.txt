@@ -19,6 +19,10 @@ include_directories(
 	${ENGINE_HEAD_DIRS}
 )
 
+set(BUILD_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources")
+
+add_compile_definitions("BUILTIN_RESOURCE_DIR=${BUILD_RESOURCE_DIR}")
+
 if(USE_GFX_TEST)
 	add_definitions(-DUSE_GFX_TEST)
 endif()

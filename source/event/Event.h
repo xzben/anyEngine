@@ -3,7 +3,9 @@
 #include <cstdint>
 
 #include "KeyCode.h"
+#include "sceneGraphDefine.h"
 
+BEGIN_NS_SCENCE_GRAPH
 enum class EventType {
     UNKNOW = 0,
     WINDOW_RESIZE,        // 窗口 resize
@@ -81,3 +83,5 @@ struct KeyboardEvent : public Event {
 };
 
 using EventId = uint32_t;
+
+END_NS_SCENCE_GRAPH

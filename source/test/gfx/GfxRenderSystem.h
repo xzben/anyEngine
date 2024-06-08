@@ -2,6 +2,7 @@
 
 #include "app/system/RenderSystem.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class GfxRenderSystem : public RenderSystem {
 public:
     GfxRenderSystem(Window* window);
@@ -24,3 +25,5 @@ private:
     std::vector<gfx::DrawSurface*> m_drawColorSurfaces;
     std::vector<gfx::DrawSurface*> m_drawDepthStencilSurfaces;
 };
+
+END_NS_SCENCE_GRAPH

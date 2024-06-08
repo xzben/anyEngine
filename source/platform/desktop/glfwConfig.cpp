@@ -2,6 +2,7 @@
 
 #include "GLFW/glfw3.h"
 
+BEGIN_NS_SCENCE_GRAPH
 const std::unordered_map<int, MouseButton> g_mapMouseButon = {
     {GLFW_MOUSE_BUTTON_LEFT, MouseButton::LEFT},
     {GLFW_MOUSE_BUTTON_MIDDLE, MouseButton::MIDDLE},
@@ -136,3 +137,5 @@ const std::unordered_map<int, KeyCode> g_mapKeyCodeMap = {
     {GLFW_KEY_RIGHT_SUPER, KeyCode::KEY_RIGHT_SUPER},
     {GLFW_KEY_MENU, KeyCode::KEY_MENU},
 };
+
+END_NS_SCENCE_GRAPH

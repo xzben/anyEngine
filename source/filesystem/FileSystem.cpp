@@ -1,26 +1,39 @@
 #include "FileSystem.h"
 
 #include <stdio.h>
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
+#include "safe_macro.h"
+
 #if CUR_PLATFORM != PLATFORM_WIN32
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 
+BEGIN_NS_SCENCE_GRAPH
 namespace fs = std::filesystem;
 
-FileSystem::FileSystem() {}
+FileSystem *FileSystem::getInstance() {
+    static FileSystem s_instance;
+
+    return &s_instance;
+}
+
+FileSystem::FileSystem() {
+#ifdef BUILTIN_RESOURCE_DIR
+    addSearchPath(MACRO_XSTR(BUILTIN_RESOURCE_DIR));
+#endif  // BUILTIN_RESOURCE_DIR
+}
 
 FileSystem::~FileSystem() {}
 
-void FileSystem::addSearchPath(const std::string &path,
-                               bool front /*= false */) {
+void FileSystem::addSearchPath(const std::string &path, bool front /*= false */) {
     if (front) {
         m_searchPaths.insert(m_searchPaths.begin(), path);
     } else {
@@ -76,12 +89,9 @@ bool FileSystem::isDirectory(const std::string &path) {
     return fs::is_directory(temppath);
 }
 
-bool FileSystem::isDirectoryExists(const std::string &path) {
-    return isDirectory(path);
-}
+bool FileSystem::isDirectoryExists(const std::string &path) { return isDirectory(path); }
 
-static void getDirectoryFiles(std::string &fullpath,
-                              std::vector<std::string> &files) {
+static void getDirectoryFiles(std::string &fullpath, std::vector<std::string> &files) {
     fs::path temppath(fullpath);
     fs::directory_entry entry(temppath);
     if (entry.status().type() != fs::file_type::directory) {
@@ -94,8 +104,7 @@ static void getDirectoryFiles(std::string &fullpath,
     }
 }
 
-bool FileSystem::getDirectoryContents(const std::string &path,
-                                      std::vector<std::string> &files,
+bool FileSystem::getDirectoryContents(const std::string &path, std::vector<std::string> &files,
                                       std::vector<std::string> &directories,
                                       bool recursive /*= false*/) {
     std::string fullpath = getFullPath(path);
@@ -105,27 +114,21 @@ bool FileSystem::getDirectoryContents(const std::string &path,
     if (!fs::is_directory(directory)) return false;
 
     if (recursive) {
-        for (auto const &directory_entry :
-             fs::recursive_directory_iterator{directory}) {
+        for (auto const &directory_entry : fs::recursive_directory_iterator{directory}) {
             if (directory_entry.is_regular_file()) {
-                files.push_back(directory_entry.path()
-                                    .lexically_relative(directory)
-                                    .string());
+                files.push_back(directory_entry.path().lexically_relative(directory).string());
             } else {
-                directories.push_back(directory_entry.path()
-                                          .lexically_relative(directory)
-                                          .string());
+                directories.push_back(
+                    directory_entry.path().lexically_relative(directory).string());
             }
         }
     } else {
         fs::directory_iterator list(directory);
         for (auto &it : list) {
             if (it.is_regular_file()) {
-                files.push_back(
-                    it.path().lexically_relative(directory).string());
+                files.push_back(it.path().lexically_relative(directory).string());
             } else {
-                directories.push_back(
-                    it.path().lexically_relative(directory).string());
+                directories.push_back(it.path().lexically_relative(directory).string());
             }
         }
     }
@@ -133,10 +136,8 @@ bool FileSystem::getDirectoryContents(const std::string &path,
     return true;
 }
 
-bool FileSystem::getDirectoryFiles(const std::string &path,
-                                   std::vector<std::string> &files,
-                                   bool recursive /*= false*/,
-                                   bool filterDirectory /*= true*/) {
+bool FileSystem::getDirectoryFiles(const std::string &path, std::vector<std::string> &files,
+                                   bool recursive /*= false*/, bool filterDirectory /*= true*/) {
     std::string fullpath = getFullPath(path);
     if (fullpath == "") return false;
 
@@ -144,18 +145,13 @@ bool FileSystem::getDirectoryFiles(const std::string &path,
     if (!fs::is_directory(directory)) return false;
 
     if (recursive) {
-        for (auto const &directory_entry :
-             fs::recursive_directory_iterator{directory}) {
+        for (auto const &directory_entry : fs::recursive_directory_iterator{directory}) {
             if (filterDirectory) {
                 if (directory_entry.is_regular_file()) {
-                    files.push_back(directory_entry.path()
-                                        .lexically_relative(directory)
-                                        .string());
+                    files.push_back(directory_entry.path().lexically_relative(directory).string());
                 }
             } else {
-                files.push_back(directory_entry.path()
-                                    .lexically_relative(directory)
-                                    .string());
+                files.push_back(directory_entry.path().lexically_relative(directory).string());
             }
         }
     } else {
@@ -163,12 +159,10 @@ bool FileSystem::getDirectoryFiles(const std::string &path,
         for (auto &it : list) {
             if (filterDirectory) {
                 if (it.is_regular_file()) {
-                    files.push_back(
-                        it.path().lexically_relative(directory).string());
+                    files.push_back(it.path().lexically_relative(directory).string());
                 }
             } else {
-                files.push_back(
-                    it.path().lexically_relative(directory).string());
+                files.push_back(it.path().lexically_relative(directory).string());
             }
         }
     }
@@ -185,13 +179,9 @@ bool FileSystem::rename(const std::string &from, const std::string &dest) {
     return true;
 }
 
-bool FileSystem::remove(const std::string &path) {
-    return fs::remove_all(getFullPath(path));
-}
+bool FileSystem::remove(const std::string &path) { return fs::remove_all(getFullPath(path)); }
 
-bool FileSystem::createDirectories(const std::string &path) {
-    return fs::create_directories(path);
-}
+bool FileSystem::createDirectories(const std::string &path) { return fs::create_directories(path); }
 
 std::string FileSystem::getString(const std::string &path) {
     Data data;
@@ -243,8 +233,7 @@ std::string FileSystem::getFileExt(const std::string &filepath) {
     return fs::path(filepath).extension().string();
 }
 
-bool FileSystem::writeString(const std::string &fullpath,
-                             const std::string &content) {
+bool FileSystem::writeString(const std::string &fullpath, const std::string &content) {
     FILE *fp = fopen(fullpath.c_str(), "w+");
     if (!fp) return false;
 
@@ -275,3 +264,5 @@ bool FileSystem::writeData(const std::string &fullpath, Data *data) {
     fclose(fp);
     return true;
 }
+
+END_NS_SCENCE_GRAPH

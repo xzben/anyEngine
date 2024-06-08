@@ -5,7 +5,9 @@
 #include <vector>
 
 #include "Event.h"
+#include "sceneGraphDefine.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class EventDispatcher {
 public:
     using EventCallback = std::function<void(const Event& event)>;
@@ -97,3 +99,5 @@ protected:
     EventId m_eventId{0};
     bool m_dispatching{false};
 };
+
+END_NS_SCENCE_GRAPH

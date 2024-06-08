@@ -4,7 +4,9 @@
 #include <string>
 
 #include "common/Object.h"
+#include "sceneGraphDefine.h"
 
+BEGIN_NS_SCENCE_GRAPH
 #define MIN_DATA_BUFF 64
 using byte = uint8_t;
 
@@ -39,3 +41,5 @@ private:
     uint32_t m_size{0};
     uint32_t m_rIndex{0};
 };
+
+END_NS_SCENCE_GRAPH

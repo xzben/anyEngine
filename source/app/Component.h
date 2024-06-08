@@ -1,5 +1,8 @@
 #pragma once
 #include "common/Object.h"
+#include "sceneGraphDefine.h"
+
+BEGIN_NS_SCENCE_GRAPH
 
 class Component : public Object {
     friend class Node;
@@ -16,3 +19,5 @@ public:
 
 protected:
 };
+
+END_NS_SCENCE_GRAPH

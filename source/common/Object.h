@@ -1,6 +1,9 @@
 #pragma once
-
 #include <string>
+
+#include "sceneGraphDefine.h"
+
+BEGIN_NS_SCENCE_GRAPH
 
 #define RELEASE_OBJ(obj)  \
     if (obj != nullptr) { \
@@ -31,3 +34,5 @@ private:
 
     int32_t m_refCount{1};
 };
+
+END_NS_SCENCE_GRAPH

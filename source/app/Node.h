@@ -7,6 +7,7 @@
 #include "common/Object.h"
 #include "common/ObjectContainor.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class Node : public Object, protected ObjectContainor<Component> {
 public:
     Node();
@@ -17,8 +18,7 @@ protected:
 
 protected:
     void update(float dt) {
-        foreach ([&](Component* com) { com->update(dt); })
-            ;
+        foreach ([&](Component* com) { com->update(dt); });
         onUpdate(dt);
     }
 
@@ -52,3 +52,5 @@ protected:
     Node* m_parent{nullptr};
     std::vector<Node*> m_childrens;
 };
+
+END_NS_SCENCE_GRAPH

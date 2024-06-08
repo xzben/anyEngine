@@ -1,5 +1,8 @@
 #pragma once
 
+#include "sceneGraphDefine.h"
+
+BEGIN_NS_SCENCE_GRAPH
 enum class KeyCode {
     KEY_SPACE,
     KEY_APOSTROPHE,
@@ -122,3 +125,5 @@ enum class KeyCode {
     KEY_RIGHT_SUPER,
     KEY_MENU,
 };
+
+END_NS_SCENCE_GRAPH

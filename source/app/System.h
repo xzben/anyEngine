@@ -1,6 +1,7 @@
 #pragma once
 #include "common/Object.h"
 
+BEGIN_NS_SCENCE_GRAPH
 class System : public Object {
     friend class Application;
 
@@ -16,3 +17,5 @@ protected:
 
 protected:
 };
+
+END_NS_SCENCE_GRAPH
