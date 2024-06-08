@@ -2,9 +2,6 @@
 
 BEGIN_NS_SCENCE_GRAPH
 
-void AssetMgr::freeAsset(Asset* asset) {
-    auto& fullpath = asset->getResPath();
-    removeObject(fullpath);
-}
+void AssetMgr::freeAsset(Asset* asset) { removeObject(asset); }
 
 END_NS_SCENCE_GRAPH
