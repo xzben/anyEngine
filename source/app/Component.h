@@ -1,10 +1,13 @@
 #pragma once
 #include "common/Object.h"
+#include "rtti.h"
 #include "sceneGraphDefine.h"
 
 BEGIN_NS_SCENCE_GRAPH
 
 class Component : public Object {
+    DECLARE_RUNTIME_CLASS(Component)
+public:
     friend class Node;
 
 protected:

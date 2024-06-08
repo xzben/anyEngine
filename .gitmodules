@@ -16,3 +16,6 @@
 [submodule "modules/gfx/3rd/VulkanMemoryAllocator"]
 	path = modules/gfx/3rd/VulkanMemoryAllocator
 	url = git@github.com:GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+[submodule "modules/reflex/3rd/jsoncpp"]
+	path = modules/reflex/3rd/jsoncpp
+	url = git@github.com:open-source-parsers/jsoncpp.git
