@@ -19,12 +19,6 @@
 BEGIN_NS_SCENCE_GRAPH
 namespace fs = std::filesystem;
 
-FileSystem *FileSystem::getInstance() {
-    static FileSystem s_instance;
-
-    return &s_instance;
-}
-
 FileSystem::FileSystem() {
 #ifdef BUILTIN_RESOURCE_DIR
     addSearchPath(MACRO_XSTR(BUILTIN_RESOURCE_DIR));
@@ -71,12 +65,12 @@ std::string FileSystem::getFullPath(const std::string &path) {
         }
     }
 
-    return "";
+    return std::string("");
 }
 
 bool FileSystem::isFileExists(const std::string &path) {
     std::string fullpath = getFullPath(path);
-    if (fullpath == "") return false;
+    if (fullpath.empty()) return false;
 
     return fs::exists(fullpath);
 }
@@ -185,12 +179,12 @@ bool FileSystem::createDirectories(const std::string &path) { return fs::create_
 
 std::string FileSystem::getString(const std::string &path) {
     Data data;
-    if (!getContentData(path, &data)) return "";
+    if (!getContentData(path, data)) return "";
 
     return (char *)data.getData();
 }
 
-bool FileSystem::getContentData(const std::string &path, Data *data) {
+bool FileSystem::getContentData(const std::string &path, Data &data) {
     if (!isFileExists(path)) false;
 
     std::string fullpath = getFullPath(path);
@@ -210,10 +204,10 @@ bool FileSystem::getContentData(const std::string &path, Data *data) {
     }
 
     size_t size = statBuf.st_size;
-    data->reverse(size);
-    size_t readsize = fread(data->getData(), 1, size, fp);
+    data.reverse(size);
+    size_t readsize = fread(data.getData(), 1, size, fp);
     fclose(fp);
-    data->writeOffset(readsize);
+    data.writeOffset(readsize);
 
     return true;
 }

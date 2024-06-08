@@ -12,6 +12,9 @@
 BEGIN_NS_SCENCE_GRAPH
 class Application : public Object, protected ObjectContainor<System> {
 public:
+    static Application* getInstance();
+
+public:
     Application(const std::string& name, Window* window);
     virtual ~Application();
 

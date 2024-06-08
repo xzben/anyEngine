@@ -20,11 +20,14 @@ public:
         m_type2Object.clear();
     }
 
+    virtual const std::string& getObjectName(OBJ_TYPE* obj) { return obj->getName(); }
+    virtual void setObjectName(OBJ_TYPE* obj, const std::string& name) { obj->setName(name); }
+
     template <class SUB_OBJ_TYPE, typename... Args>
     SUB_OBJ_TYPE* addObject(const std::string& name, Args&... args) {
         static_assert(std::is_base_of_v<OBJ_TYPE, SUB_OBJ_TYPE>);
         auto* com = new SUB_OBJ_TYPE(args...);
-        com->setName(name);
+        setObjectName(com, name);
         addObject(com);
 
         return com;
@@ -45,13 +48,13 @@ public:
         static_assert(std::is_base_of_v<OBJ_TYPE, SUB_OBJ_TYPE>);
         auto* obj = getObject(name);
 
-        if (obj == nullptr) return obj;
+        if (obj == nullptr) return nullptr;
 
         return dynamic_cast<SUB_OBJ_TYPE*>(obj);
     }
 
     bool addObject(OBJ_TYPE* obj) {
-        auto& name   = obj->getName();
+        auto& name   = getObjectName(obj);
         auto hasCode = typeid(*obj).hash_code();
 
         auto it = m_name2Object.find(name);
@@ -90,21 +93,29 @@ public:
         return it->second[0];
     }
 
+    bool removeObject(const std::string& name) {
+        auto obj = getObject(name);
+        return removeObject(obj);
+    }
+
     bool removeObject(OBJ_TYPE* obj) {
-        const auto& name = obj->getName();
-        auto hasCode     = typeid(*obj).hash_code();
+        auto& name = getObjectName(obj);
+
+        auto hasCode = typeid(*obj).hash_code();
 
         auto it = m_name2Object.find(name);
         if (it == m_name2Object.end()) return false;
 
         obj->delRef();
         m_name2Object.erase(name);
-        m_objList.erase(std::remove_if(m_objList.begin(), m_objList.end(), obj));
+
+        m_objList.erase(std::remove(m_objList.begin(), m_objList.end(), obj), m_objList.end());
 
         auto hashIt = m_type2Object.find(hasCode);
         if (hashIt == m_type2Object.end()) return true;
 
-        m_objList.erase(std::remove_if(hashIt.second.begin(), hashIt.second.end(), obj));
+        auto& hasVec = hashIt->second;
+        hasVec.erase(std::remove(hasVec.begin(), hasVec.end(), obj), hasVec.end());
 
         return true;
     }

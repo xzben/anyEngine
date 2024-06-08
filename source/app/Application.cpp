@@ -3,7 +3,17 @@
 #include "utils/Timer.h"
 
 BEGIN_NS_SCENCE_GRAPH
+
+static Application* s_instance = nullptr;
+
+Application* Application::getInstance() {
+    CCASSERT(s_instance != nullptr, "please create application");
+
+    return s_instance;
+}
 Application::Application(const std::string& name, Window* window) : m_name(name) {
+    CCASSERT(s_instance == nullptr, "only one application can been create");
+    s_instance = this;
     setWindow(window);
 }
 

@@ -4,13 +4,10 @@
 #include <vector>
 
 #include "Data.h"
+#include "common/InstanceObject.h"
 #include "sceneGraphDefine.h"
-
 BEGIN_NS_SCENCE_GRAPH
-class FileSystem {
-public:
-    static FileSystem *getInstance();
-
+class FileSystem : public InstanceObject<FileSystem> {
 public:
     FileSystem();
     ~FileSystem();
@@ -19,7 +16,7 @@ public:
     bool isDirectory(const std::string &path);
     bool isDirectoryExists(const std::string &path);
     std::string getString(const std::string &path);
-    bool getContentData(const std::string &path, Data *data);
+    bool getContentData(const std::string &path, Data &data);
 
     void addSearchPath(const std::string &path, bool front = false);
     void removeSearchPath(const std::string &path);

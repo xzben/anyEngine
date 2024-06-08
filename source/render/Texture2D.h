@@ -1,8 +1,21 @@
 #pragma once
 
 #include "common/Object.h"
+#include "gfx.h"
 
 BEGIN_NS_SCENCE_GRAPH
-class Texture2D : public Object {};
+
+class Image;
+
+class Texture2D : public Object {
+public:
+    Texture2D(const char* filename);
+    Texture2D(const Image* image);
+    virtual ~Texture2D();
+
+private:
+    gfx::Texture* m_texture{nullptr};
+    const Image* m_image{nullptr};
+};
 
 END_NS_SCENCE_GRAPH

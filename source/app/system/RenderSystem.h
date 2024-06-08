@@ -13,6 +13,8 @@ public:
 
     virtual void onUpdate(float dt) override;
 
+    gfx::Device* getDevice() { return m_pDevice; }
+
 protected:
     gfx::Device* m_pDevice;
 };
