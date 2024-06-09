@@ -8,6 +8,7 @@ BEGIN_NS_SCENCE_GRAPH
 class Image;
 
 class Texture2D : public Object {
+    DECLARE_RUNTIME_CLASS(Texture2D)
 public:
     Texture2D(const char* filename);
     Texture2D(const Image* image);

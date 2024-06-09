@@ -1,0 +1,7 @@
+#include "Transform2D.h"
+
+BEGIN_NS_SCENCE_GRAPH
+
+IMPLEMENT_RUNTIME_CLASS(Transform2D)
+
+END_NS_SCENCE_GRAPH

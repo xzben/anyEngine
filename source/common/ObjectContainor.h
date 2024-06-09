@@ -23,6 +23,9 @@ public:
     virtual const std::string& getObjectName(OBJ_TYPE* obj) { return obj->getName(); }
     virtual void setObjectName(OBJ_TYPE* obj, const std::string& name) { obj->setName(name); }
 
+    virtual void handleAddObject(OBJ_TYPE* obj) {}
+    virtual void handleRemoveObject(OBJ_TYPE* obj) {}
+
     template <class SUB_OBJ_TYPE, typename... Args>
     SUB_OBJ_TYPE* addObject(const std::string& name, Args&... args) {
         static_assert(std::is_base_of_v<OBJ_TYPE, SUB_OBJ_TYPE>);
@@ -72,6 +75,8 @@ public:
         } else {
             itHash->second.push_back(obj);
         }
+
+        handleAddObject(obj);
         return true;
     }
 
@@ -116,6 +121,8 @@ public:
 
         auto& hasVec = hashIt->second;
         hasVec.erase(std::remove(hasVec.begin(), hasVec.end(), obj), hasVec.end());
+
+        handleRemoveObject(obj);
 
         return true;
     }

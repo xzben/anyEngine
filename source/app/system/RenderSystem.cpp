@@ -1,6 +1,9 @@
 #include "RenderSystem.h"
 
 BEGIN_NS_SCENCE_GRAPH
+
+IMPLEMENT_RUNTIME_CLASS(RenderSystem)
+
 RenderSystem::RenderSystem(Window* window) {
     gfx::DeviceInfo deviceInfo;
     deviceInfo.api                  = gfx::GFX_API::GL3;
@@ -35,5 +38,8 @@ RenderSystem::RenderSystem(Window* window) {
 
 RenderSystem::~RenderSystem() {}
 void RenderSystem::onUpdate(float dt) {}
+
+void RenderSystem::onInit() {}
+void RenderSystem::onUnInit() {}
 
 END_NS_SCENCE_GRAPH

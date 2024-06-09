@@ -5,6 +5,9 @@
 
 BEGIN_NS_SCENCE_GRAPH
 
-class Transform3D : public Component {};
+class Transform3D : public Component {
+    DECLARE_RUNTIME_CLASS(Transform3D)
+public:
+};
 
 END_NS_SCENCE_GRAPH

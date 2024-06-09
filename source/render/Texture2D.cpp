@@ -3,6 +3,8 @@
 #include "assets/AssetMgr.h"
 BEGIN_NS_SCENCE_GRAPH
 
+IMPLEMENT_RUNTIME_CLASS(Texture2D)
+
 Texture2D::Texture2D(const char* filename) {
     m_image = AssetMgr::getInstance()->loadAsset<Image>(filename);
 }

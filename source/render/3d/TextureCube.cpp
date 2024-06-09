@@ -1,0 +1,7 @@
+#include "TextureCube.h"
+
+BEGIN_NS_SCENCE_GRAPH
+
+IMPLEMENT_RUNTIME_CLASS(TextureCube)
+
+END_NS_SCENCE_GRAPH

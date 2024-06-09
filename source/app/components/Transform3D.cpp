@@ -1,0 +1,7 @@
+#include "Transform3D.h"
+
+BEGIN_NS_SCENCE_GRAPH
+
+IMPLEMENT_RUNTIME_CLASS(Transform3D)
+
+END_NS_SCENCE_GRAPH

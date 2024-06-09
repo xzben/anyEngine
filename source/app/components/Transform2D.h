@@ -4,6 +4,9 @@
 #include "sceneGraphDefine.h"
 
 BEGIN_NS_SCENCE_GRAPH
-class Transform2D : public Component {};
+class Transform2D : public Component {
+    DECLARE_RUNTIME_CLASS(Transform2D)
+public:
+};
 
 END_NS_SCENCE_GRAPH

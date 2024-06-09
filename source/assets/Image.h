@@ -6,6 +6,7 @@
 BEGIN_NS_SCENCE_GRAPH
 
 class Image : public Asset {
+    DECLARE_RUNTIME_CLASS(Image)
 public:
     Image();
     virtual ~Image();

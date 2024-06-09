@@ -6,6 +6,7 @@
 
 BEGIN_NS_SCENCE_GRAPH
 class SpriteFrame : public Object {
+    DECLARE_RUNTIME_CLASS(SpriteFrame)
 public:
 protected:
     Texture2D* m_texture{nullptr};

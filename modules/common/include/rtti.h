@@ -10,14 +10,14 @@ BEGIN_NS_RTTI
 
 class Runtime final {
 public:
-    Runtime(const char* name, Runtime* pParent = nullptr) : m_name(name), m_parent(pParent) {}
+    Runtime(const char* name, Runtime* pBase = nullptr) : m_name(name), m_pBase(pBase) {}
     Runtime() = default;
 
-    Runtime* getParent() { return m_parent; }
+    Runtime* getBase() { return m_pBase; }
     const std::string& getName() { return m_name; }
 
 protected:
-    Runtime* m_parent{nullptr};
+    Runtime* m_pBase{nullptr};
     std::string m_name;
 };
 
@@ -30,27 +30,27 @@ END_NS_RTTI;  // namespace rtti
 
 using RuntimeThisType = NS_RTTI::EmptyRuntimeSuper;
 
-#define DECLARE_RUNTIME_CLASS(CLS)                                         \
-public:                                                                    \
-    using RuntimeSuperType = RuntimeThisType;                              \
-    using RuntimeThisType  = CLS;                                          \
-    static NS_RTTI::Runtime s_Runtime##CLS##Obj;                           \
-    static NS_RTTI::Runtime* GetRuntime() { return &s_Runtime##CLS##Obj; } \
-    NS_RTTI::Runtime* getRuntime() { return &s_Runtime##CLS##Obj; }        \
-                                                                           \
+#define DECLARE_RUNTIME_CLASS(CLS)                                          \
+public:                                                                     \
+    using RuntimeSuperType = RuntimeThisType;                               \
+    using RuntimeThisType  = CLS;                                           \
+    static NS_RTTI::Runtime s_Runtime##CLS##Obj;                            \
+    static NS_RTTI::Runtime* GetRuntime() { return &s_Runtime##CLS##Obj; }  \
+    virtual NS_RTTI::Runtime* getRuntime() { return &s_Runtime##CLS##Obj; } \
+                                                                            \
 private:
 
 #define IMPLEMENT_RUNTIME_CLASS(CLS) \
     NS_RTTI::Runtime CLS::s_Runtime##CLS##Obj(#CLS, CLS::RuntimeSuperType::GetRuntime());
 
-#define DECLARE_RUNTIME_TEMPLATE_CLASS(CLS, T)                             \
-public:                                                                    \
-    using RuntimeSuperType = RuntimeThisType;                              \
-    using RuntimeThisType  = CLS<T>;                                       \
-    static NS_RTTI::Runtime s_Runtime##CLS##Obj;                           \
-    static NS_RTTI::Runtime* GetRuntime() { return &s_Runtime##CLS##Obj; } \
-    NS_RTTI::Runtime* getRuntime() { return &s_Runtime##CLS##Obj; }        \
-                                                                           \
+#define DECLARE_RUNTIME_TEMPLATE_CLASS(CLS, T)                              \
+public:                                                                     \
+    using RuntimeSuperType = RuntimeThisType;                               \
+    using RuntimeThisType  = CLS<T>;                                        \
+    static NS_RTTI::Runtime s_Runtime##CLS##Obj;                            \
+    static NS_RTTI::Runtime* GetRuntime() { return &s_Runtime##CLS##Obj; }  \
+    virtual NS_RTTI::Runtime* getRuntime() { return &s_Runtime##CLS##Obj; } \
+                                                                            \
 private:
 
 #define IMPLEMENT_RUNTIME_TEMPLATE_CLASS(CLS, T) \

@@ -9,6 +9,7 @@
 
 BEGIN_NS_SCENCE_GRAPH
 class Node : public Object, protected ObjectContainor<Component> {
+    DECLARE_RUNTIME_CLASS(Node)
 public:
     Node();
     virtual ~Node();

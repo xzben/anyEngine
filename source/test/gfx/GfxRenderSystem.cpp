@@ -1,6 +1,9 @@
 #include "GfxRenderSystem.h"
 
 BEGIN_NS_SCENCE_GRAPH
+
+IMPLEMENT_RUNTIME_CLASS(GfxRenderSystem)
+
 GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
     auto hwnd = window->getNativeWinHandle();
     auto size = window->getSize();

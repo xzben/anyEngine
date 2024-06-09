@@ -1,0 +1,7 @@
+#include "Renderable.h"
+
+BEGIN_NS_SCENCE_GRAPH
+
+IMPLEMENT_RUNTIME_CLASS(Renderable)
+
+END_NS_SCENCE_GRAPH

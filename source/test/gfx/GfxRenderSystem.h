@@ -4,6 +4,7 @@
 
 BEGIN_NS_SCENCE_GRAPH
 class GfxRenderSystem : public RenderSystem {
+    DECLARE_RUNTIME_CLASS(GfxRenderSystem)
 public:
     GfxRenderSystem(Window* window);
     virtual ~GfxRenderSystem();

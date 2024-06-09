@@ -10,6 +10,8 @@ enum class AssetType {
 };
 
 class Asset : public Object {
+    DECLARE_RUNTIME_CLASS(Asset)
+public:
     friend class AssetMgr;
 
 protected:

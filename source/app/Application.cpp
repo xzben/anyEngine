@@ -4,6 +4,8 @@
 
 BEGIN_NS_SCENCE_GRAPH
 
+IMPLEMENT_RUNTIME_CLASS(Application)
+
 static Application* s_instance = nullptr;
 
 Application* Application::getInstance() {
@@ -16,6 +18,19 @@ Application::Application(const std::string& name, Window* window) : m_name(name)
     s_instance = this;
     setWindow(window);
 }
+
+bool Application::init() { return onInit(); }
+
+bool Application::onInit() {
+    addSystem<RenderSystem>("RenderSystem", m_window);
+    addSystem<SceneSystem>("SceneSystem");
+
+    return true;
+}
+
+void Application::unInit() { onUnInit(); }
+
+void Application::onUnInit() {}
 
 Application::~Application() {
     if (m_window) {
@@ -34,6 +49,8 @@ void Application::setWindow(Window* window) {
         m_window->addRef();
     }
 
+    m_window->addEventListener(EventType::WINDOW_BEFORE_CLOSE,
+                               [&](const Event& event) { this->exit(); });
     onUpdateWindow(m_window);
 }
 
@@ -55,6 +72,7 @@ void Application::run() {
             m_frameCount++;
         }
     }
+    unInit();
 }
 
 void Application::update(float dt) {
@@ -65,4 +83,14 @@ void Application::update(float dt) {
 
 void Application::exit() { m_exit = true; }
 
+void Application::handleAddObject(System* sys) {
+    if (sys->isKindOf<RenderSystem>()) {
+        m_renderSystem = dynamic_cast<RenderSystem*>(sys);
+    } else if (sys->isKindOf<SceneSystem>()) {
+        m_sceneSystem = dynamic_cast<SceneSystem*>(sys);
+    }
+    sys->init();
+}
+
+void Application::handleRemoveObject(System* sys) { sys->unInit(); }
 END_NS_SCENCE_GRAPH

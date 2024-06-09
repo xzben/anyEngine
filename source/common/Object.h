@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include "rtti.h"
 #include "sceneGraphDefine.h"
 
 BEGIN_NS_SCENCE_GRAPH
@@ -12,6 +13,7 @@ BEGIN_NS_SCENCE_GRAPH
     }
 
 class Object {
+    DECLARE_RUNTIME_CLASS(Object)
 public:
     Object(const std::string& name) : m_name(name){};
     Object(){};
@@ -24,6 +26,27 @@ public:
         if (--m_refCount <= 0) {
             delete this;
         }
+    }
+
+    template <class CHECK_CLS>
+    bool isKindOf() {
+        NS_RTTI::Runtime* needRuntime = CHECK_CLS::GetRuntime();
+        NS_RTTI::Runtime* runtime     = this->getRuntime();
+
+        while (true) {
+            if (runtime == nullptr) break;
+
+            if (runtime == needRuntime) return true;
+
+            runtime = runtime->getBase();
+        }
+
+        return false;
+    }
+
+    template <class CLS>
+    CLS* toCast() {
+        return isKindOf<CLS>() ? dynamic_cast<CLS*>(this) : nullptr;
     }
 
 protected:
