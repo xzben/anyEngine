@@ -16,7 +16,7 @@ public:
 
 private:
     gfx::Texture* m_texture{nullptr};
-    const Image* m_image{nullptr};
+    Image* m_image{nullptr};
 };
 
 END_NS_SCENCE_GRAPH

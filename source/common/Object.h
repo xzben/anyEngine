@@ -21,11 +21,16 @@ public:
     void setName(const std::string& name) { m_name = name; }
     const std::string& getName() { return m_name; }
 
+    uint32_t getRef() { return m_refCount; }
     void addRef() { ++m_refCount; }
-    void delRef() {
-        if (--m_refCount <= 0) {
+    uint32_t delRef() {
+        --m_refCount;
+        uint32_t curRef = m_refCount;
+        if (curRef <= 0) {
             delete this;
         }
+
+        return curRef;
     }
 
     template <class CHECK_CLS>

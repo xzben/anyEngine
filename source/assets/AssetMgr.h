@@ -21,12 +21,11 @@ public:
 
         AssetCls* obj = getObject<AssetCls>(fullpath);
 
-        if (obj != nullptr) {
-            return obj;
+        if (obj == nullptr) {
+            obj = addObject<AssetCls>(fullpath);
+            obj->load(fullpath);
         }
-
-        obj = addObject<AssetCls>(fullpath);
-        obj->load(fullpath);
+        obj->addRef();
         return obj;
     }
 

@@ -1,0 +1,33 @@
+#version 310 es
+
+layout(binding = 1, std140) uniform BuiltinCamera
+{
+    mat4 cc_matView;
+    mat4 cc_matProj;
+    mat4 cc_matInvView;
+} _13;
+
+layout(binding = 2, std140) uniform BuiltinLocalModel
+{
+    mat4 cc_matModel;
+    mat4 cc_matNormal;
+    vec4 cc_color;
+} _25;
+
+layout(binding = 0, std140) uniform BuiltinGlobal
+{
+    vec4 cc_time;
+    vec4 cc_screenSize;
+} _54;
+
+layout(location = 0) in vec2 a_position;
+layout(location = 0) out vec2 vTexcoord;
+layout(location = 1) in vec2 a_texcoord;
+
+void main()
+{
+    vec4 basePos = ((_13.cc_matProj * _13.cc_matView) * _25.cc_matModel) * vec4(a_position, 0.0, 1.0);
+    gl_Position = basePos;
+    vTexcoord = a_texcoord;
+}
+

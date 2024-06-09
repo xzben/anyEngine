@@ -31,12 +31,12 @@ bool Image::initWithImageData(void* imgData, uint32_t dataSize) {
 
     m_width  = width;
     m_height = height;
-    m_format = gfx::PixelFormat::RGBA8;
+    m_format = NS_GFX::PixelFormat::RGBA8;
 
     return true;
 }
 
-bool Image::initWithPixelData(void* pixelData, uint32_t dataSize, gfx::PixelFormat format,
+bool Image::initWithPixelData(void* pixelData, uint32_t dataSize, NS_GFX::PixelFormat format,
                               uint32_t width, uint32_t height) {
     freePixelData();
     m_width               = width;

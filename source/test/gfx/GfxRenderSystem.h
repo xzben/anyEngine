@@ -11,7 +11,8 @@ public:
 
 protected:
     virtual void onUpdate(float dt) override;
-
+    virtual void onInit() override;
+    virtual void onUnInit() override;
     void draw(gfx::CommandBuffer* cmd);
 
 private:

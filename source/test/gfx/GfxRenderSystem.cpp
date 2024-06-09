@@ -4,7 +4,9 @@ BEGIN_NS_SCENCE_GRAPH
 
 IMPLEMENT_RUNTIME_CLASS(GfxRenderSystem)
 
-GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
+GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {}
+
+void GfxRenderSystem::onInit() {
     auto hwnd = window->getNativeWinHandle();
     auto size = window->getSize();
 
@@ -57,8 +59,7 @@ GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {
         m_swapChain->handleUpdateSurfaceInfo(info);
     });
 }
-
-GfxRenderSystem::~GfxRenderSystem() {
+void GfxRenderSystem::onUnInit() {
     if (m_swapChain != nullptr) {
         m_pDevice->destroyObject(m_swapChain);
         m_swapChain = nullptr;
@@ -99,6 +100,8 @@ GfxRenderSystem::~GfxRenderSystem() {
     }
     m_drawDepthStencilSurfaces.clear();
 }
+
+GfxRenderSystem::~GfxRenderSystem() {}
 
 void GfxRenderSystem::draw(gfx::CommandBuffer* cmd) {}
 
