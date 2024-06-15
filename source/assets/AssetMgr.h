@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "Asset.h"
 #include "Image.h"
 #include "common/ObjectContainor.h"
@@ -20,17 +22,27 @@ public:
         std::string fullpath = FileSystem::getInstance()->getFullPath(path);
 
         AssetCls* obj = getObject<AssetCls>(fullpath);
-
         if (obj == nullptr) {
             obj = addObject<AssetCls>(fullpath);
             obj->load(fullpath);
         }
-        obj->addRef();
+
         return obj;
     }
 
 protected:
+    void handleAddObject(Asset* obj) override;
+    void handleRemoveObject(Asset* obj) override;
+
+protected:
+    uint32_t removeRecordAsset(Asset* asset);
+    uint32_t addRecordAsset(Asset* asset);
+
+protected:
     const std::string& getObjectName(Asset* asset) override { return asset->getResPath(); }
     void setObjectName(Asset* asset, const std::string& name) override { asset->setResPath(name); }
+
+private:
+    std::unordered_map<Asset*, int> m_assetInfos;
 };
 END_NS_SCENCE_GRAPH

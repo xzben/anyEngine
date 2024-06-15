@@ -4,19 +4,27 @@
 
 BEGIN_NS_SCENCE_GRAPH
 
-bool Asset::load(const std::string& path) {
+bool Asset::getResData(const std::string& path, Data& data) {
     if (!FileSystem::getInstance()->isFileExists(path)) return false;
 
     m_fullpath = FileSystem::getInstance()->getFullPath(path);
-    Data data;
-    FileSystem::getInstance()->getContentData(m_fullpath, data);
 
-    if (!onLoaded(data)) {
-        return false;
-    }
-
-    m_valid = true;
-    return true;
+    return FileSystem::getInstance()->getContentData(m_fullpath, data);
 }
+
+void Asset::loadedFinish() { m_valid = true; }
+
+uint32_t Asset::addFlag(AssetFlags flag) {
+    m_flags |= (uint32_t)flag;
+    return m_flags;
+}
+
+uint32_t Asset::removeFlag(AssetFlags flag) {
+    m_flags &= (~uint32_t(flag));
+
+    return m_flags;
+}
+
+bool Asset::checkFlag(AssetFlags flags) { return (m_flags & flags) == flags; }
 
 END_NS_SCENCE_GRAPH

@@ -19,6 +19,7 @@ void Image::freePixelData() {
     }
     m_pixelData.stbPixels = nullptr;
     m_pixelData.pixelData = nullptr;
+    m_valid               = false;
 }
 
 bool Image::initWithImageData(void* imgData, uint32_t dataSize) {
@@ -33,6 +34,8 @@ bool Image::initWithImageData(void* imgData, uint32_t dataSize) {
     m_height = height;
     m_format = NS_GFX::PixelFormat::RGBA8;
 
+    loadedFinish();
+
     return true;
 }
 
@@ -44,9 +47,19 @@ bool Image::initWithPixelData(void* pixelData, uint32_t dataSize, NS_GFX::PixelF
     m_format              = format;
     m_pixelData.pixelData = malloc(dataSize);
     memcpy(m_pixelData.pixelData, pixelData, dataSize);
+
+    loadedFinish();
     return true;
 }
 
-bool Image::onLoaded(Data& data) { return initWithImageData(data.getData(), data.getSize()); }
+bool Image::load(const std::string& path) {
+    Data data;
+    getResData(path, data);
+    bool ok = initWithImageData(data.getData(), data.getSize());
+
+    loadedFinish();
+
+    return ok;
+}
 
 END_NS_SCENCE_GRAPH

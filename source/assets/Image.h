@@ -5,10 +5,18 @@
 
 BEGIN_NS_SCENCE_GRAPH
 
+template <class T>
+class ObjectContainor;
 class Image : public Asset {
     DECLARE_RUNTIME_CLASS(Image)
-public:
+
+private:
+    friend class ObjectContainor<Asset>;
+    friend class AssetMgr;
+
     Image();
+
+public:
     virtual ~Image();
 
     bool initWithImageData(void* imgData, uint32_t dataSize);
@@ -29,8 +37,10 @@ public:
 
     NS_GFX::PixelFormat pixelFormat() const { return m_format; }
 
+public:
+    bool load(const std::string& path) override;
+
 protected:
-    virtual bool onLoaded(Data& data) override;
     void freePixelData();
 
 protected:

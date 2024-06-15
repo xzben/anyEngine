@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "platformDefine.h"
 
 #ifndef NDEBUG

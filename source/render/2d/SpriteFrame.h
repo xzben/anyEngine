@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Texture2D.h"
+#include "assets/Texture2D.h"
 #include "common/Object.h"
 #include "math/math.h"
 

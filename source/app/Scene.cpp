@@ -1,0 +1,5 @@
+#include "Scene.h"
+
+BEGIN_NS_SCENCE_GRAPH
+
+END_NS_SCENCE_GRAPH

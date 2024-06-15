@@ -14,6 +14,8 @@ public:
     TSize &operator=(const TSize &rhs) {
         this->width  = rhs.width;
         this->height = rhs.height;
+
+        return *this;
     }
 
     T width{0};

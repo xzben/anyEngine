@@ -111,6 +111,8 @@ public:
         auto it = m_name2Object.find(name);
         if (it == m_name2Object.end()) return false;
 
+        handleRemoveObject(obj);
+
         obj->delRef();
         m_name2Object.erase(name);
 
@@ -121,8 +123,6 @@ public:
 
         auto& hasVec = hashIt->second;
         hasVec.erase(std::remove(hasVec.begin(), hasVec.end(), obj), hasVec.end());
-
-        handleRemoveObject(obj);
 
         return true;
     }
