@@ -7,8 +7,8 @@ IMPLEMENT_RUNTIME_CLASS(GfxRenderSystem)
 GfxRenderSystem::GfxRenderSystem(Window* window) : RenderSystem(window) {}
 
 void GfxRenderSystem::onInit() {
-    auto hwnd = window->getNativeWinHandle();
-    auto size = window->getSize();
+    auto hwnd = m_window->getNativeWinHandle();
+    auto size = m_window->getSize();
 
     gfx::SurfaceInfo info;
     info.handle          = hwnd;
@@ -50,7 +50,7 @@ void GfxRenderSystem::onInit() {
             m_pDevice->createDrawSurface(m_swapChain, i, gfx::SwapChainAttachment::DEPTH_STENCIL);
     }
 
-    window->addEventListener(EventType::WINDOW_RESIZE, [&](const Event& event) {
+    m_window->addEventListener(EventType::WINDOW_RESIZE, [&](const Event& event) {
         auto resizeEvent = event.cast<WindowResizeEvent>();
 
         gfx::SurfaceInfo info = m_swapChain->getInfo();

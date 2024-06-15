@@ -15,9 +15,9 @@ protected:
     virtual void onUnInit()         = 0;
 
 protected:
-    void update(float dt) { onUpdate(dt); }
-    void init() { onInit(); }
-    void unInit() { onUnInit(); }
+    virtual void update(float dt) { onUpdate(dt); }
+    virtual void init() { onInit(); }
+    virtual void unInit() { onUnInit(); }
 };
 
 END_NS_SCENCE_GRAPH

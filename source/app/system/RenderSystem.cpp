@@ -4,11 +4,16 @@ BEGIN_NS_SCENCE_GRAPH
 
 IMPLEMENT_RUNTIME_CLASS(RenderSystem)
 
-RenderSystem::RenderSystem(Window* window) {
+RenderSystem::RenderSystem(Window* window) : m_window(window) {}
+
+RenderSystem::~RenderSystem() {}
+void RenderSystem::onUpdate(float dt) {}
+
+void RenderSystem::init() {
     gfx::DeviceInfo deviceInfo;
     deviceInfo.api                  = gfx::GFX_API::GL3;
-    auto& size                      = window->getSize();
-    deviceInfo.surface.handle       = window->getNativeWinHandle();
+    auto& size                      = m_window->getSize();
+    deviceInfo.surface.handle       = m_window->getNativeWinHandle();
     deviceInfo.surface.width        = size.width;
     deviceInfo.surface.height       = size.height;
     deviceInfo.surface.singleBuffer = false;
@@ -34,10 +39,8 @@ RenderSystem::RenderSystem(Window* window) {
     });
 
     m_pDevice = gfx::Device::createDevice(deviceInfo);
+    RuntimeSuperType::init();
 }
-
-RenderSystem::~RenderSystem() {}
-void RenderSystem::onUpdate(float dt) {}
 
 void RenderSystem::onInit() {}
 void RenderSystem::onUnInit() {}
