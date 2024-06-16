@@ -10,6 +10,8 @@
 BEGIN_NS_SCENCE_GRAPH
 
 class Scene;
+class Transform2D;
+class Transform3D;
 class Node : public Object, protected ObjectContainor<Component> {
     DECLARE_RUNTIME_CLASS(Node)
 public:
@@ -35,9 +37,10 @@ public:
     void addChild(Node* node);
     void removeChild(Node* node);
     void removeFromParent();
-    Node* getNode(const std::string& name);
     Node* getParent();
-    bool isVisible() { return m_visible; }
+    Node* getChildByName(const std::string& name);
+
+    bool isVisible();
     void setVisible(bool visible);
 
 public:
@@ -69,12 +72,17 @@ protected:
 protected:
     void enableStatusChange();
 
+    void clearTransformCom();
+
 protected:
     Scene* m_curScene{nullptr};
     Node* m_parent{nullptr};
     std::vector<Node*> m_childrens;
 
     bool m_visible{true};
+
+    Transform2D* m_uiTransform{nullptr};
+    Transform3D* m_transform{nullptr};
 };
 
 END_NS_SCENCE_GRAPH
