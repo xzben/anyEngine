@@ -29,8 +29,8 @@ function(compile_shader SHADERS SHADER_ROOT TARGET_NAME SHADER_INCLUDE_FOLDER GE
         get_relative_path(${SHADER_ROOT} ${SHADER_PATH} SHADER_RELATIVE_PATH)
         message("compile_shader" ${SHADER} ${SHADER_RELATIVE_PATH})
 
-        set(SPV_FILE  "${GENERATED_DIR}/${SHADER_RELATIVE_PATH}/${SHADER_NAME}.spv")
-        set(GLES3_FILE "${GENERATED_DIR}/${SHADER_RELATIVE_PATH}/${SHADER_NAME}.es3")
+        set(SPV_FILE  "${GENERATED_DIR}/spv/${SHADER_RELATIVE_PATH}/${SHADER_NAME}.spv")
+        set(GLES3_FILE "${GENERATED_DIR}/gles3/${SHADER_RELATIVE_PATH}/${SHADER_NAME}.es3")
         set(CPP_FILE  "${GENERATED_DIR}/${SHADER_RELATIVE_PATH}/${HEADER_NAME}.h")
 
         add_custom_command(
