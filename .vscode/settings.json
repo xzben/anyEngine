@@ -117,6 +117,8 @@
         "typeindex": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "__functional_base": "cpp"
+        "__functional_base": "cpp",
+        "forward_list": "cpp",
+        "stop_token": "cpp"
     }
 }

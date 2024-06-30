@@ -1,26 +1,46 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
 #include "sceneGraphDefine.h"
 
 BEGIN_NS_SCENCE_GRAPH
+
 template <class OBJ_TYPE>
 class ObjectContainor {
 private:
-    using OBJ_TYPE_ID = size_t;
+    using OBJ_TYPE_ID = NS_RTTI::Runtime*;
     template <class TT>
     OBJ_TYPE_ID GetTypeID() {
-        return typeid(TT).hash_code();
+        return TT::GetRuntime();
     }
 
-    OBJ_TYPE_ID GetTypeID(OBJ_TYPE* obj) { return typeid(*obj).hash_code(); }
+    OBJ_TYPE_ID GetTypeID(OBJ_TYPE* obj) { return obj->getRuntime(); }
 
     template <class TT>
-    bool IsType(OBJ_TYPE* obj) {
-        return typeid(*obj) == typeid(TT);
+    OBJ_TYPE_ID getSuperTypeId() {
+        return TT::GetRuntime()->getBase();
+    }
+
+    OBJ_TYPE_ID getSuperTypeId(OBJ_TYPE_ID typeId) { return typeId->getBase(); }
+
+    template <class TT>
+    bool isType(OBJ_TYPE* obj) {
+        NS_RTTI::Runtime* needRuntime = TT::GetRuntime();
+        NS_RTTI::Runtime* runtime     = obj->getRuntime();
+
+        while (true) {
+            if (runtime == nullptr) break;
+
+            if (runtime == needRuntime) return true;
+
+            runtime = runtime->getBase();
+        }
+
+        return false;
     }
 
 public:
@@ -55,9 +75,16 @@ public:
         static_assert(std::is_base_of_v<OBJ_TYPE, SUB_OBJ_TYPE>);
         OBJ_TYPE_ID typeId = GetTypeID<SUB_OBJ_TYPE>();
 
-        auto* obj = getObjectByTypeId(typeId);
-        if (obj == nullptr) return obj;
-        return dynamic_cast<SUB_OBJ_TYPE*>(obj);
+        auto ret = getObjectByTypeId(typeId);
+        if (ret == nullptr) return nullptr;
+
+        for (auto& item : *ret) {
+            if (isType<SUB_OBJ_TYPE>(item)) {
+                return dynamic_cast<SUB_OBJ_TYPE*>(item);
+            }
+        }
+
+        return nullptr;
     }
 
     template <class SUB_OBJ_TYPE>
@@ -71,9 +98,9 @@ public:
     }
 
     bool addObject(OBJ_TYPE* obj) {
-        auto& name         = getObjectName(obj);
-        OBJ_TYPE_ID typeId = GetTypeID(obj);
-        auto it            = m_name2Object.find(name);
+        auto& name = getObjectName(obj);
+
+        auto it = m_name2Object.find(name);
         if (it != m_name2Object.end()) {
             return false;
         }
@@ -82,11 +109,11 @@ public:
         m_objList.push_back(obj);
         m_name2Object[name] = obj;
 
-        auto itHash = m_type2Object.find(typeId);
-        if (itHash == m_type2Object.end()) {
-            m_type2Object[typeId] = {obj};
-        } else {
-            itHash->second.push_back(obj);
+        OBJ_TYPE_ID typeId    = GetTypeID(obj);
+        OBJ_TYPE_ID topTypeId = GetTypeID<OBJ_TYPE>();
+        while (typeId != topTypeId) {
+            addTypeIdObject(obj, typeId);
+            typeId = getSuperTypeId(typeId);
         }
 
         handleAddObject(obj);
@@ -102,13 +129,13 @@ public:
         return it->second;
     }
 
-    OBJ_TYPE* getObjectByTypeId(OBJ_TYPE_ID typeId) {
+    const std::vector<OBJ_TYPE*>* getObjectByTypeId(OBJ_TYPE_ID typeId) {
         auto it = m_type2Object.find(typeId);
         if (it == m_type2Object.end() || it->second.size() <= 0) {
             return nullptr;
         }
 
-        return it->second[0];
+        return &it->second;
     }
 
     bool removeObject(const std::string& name) {
@@ -141,6 +168,16 @@ public:
     void foreach (std::function<void(OBJ_TYPE* item)> func) {
         for (auto& it : m_objList) {
             func(it);
+        }
+    }
+
+private:
+    void addTypeIdObject(OBJ_TYPE* obj, OBJ_TYPE_ID typeId) {
+        auto itHash = m_type2Object.find(typeId);
+        if (itHash == m_type2Object.end()) {
+            m_type2Object[typeId] = {obj};
+        } else {
+            itHash->second.push_back(obj);
         }
     }
 
