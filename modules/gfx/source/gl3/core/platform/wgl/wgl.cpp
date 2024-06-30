@@ -1,6 +1,5 @@
 #include "wgl.h"
 
-
 #if CUR_GL_TYPE == OPENGL_WGL
 
 #include <conio.h>
@@ -15,6 +14,61 @@ BEGIN_GFX_NAMESPACE
 BEGIN_GL3_CORE_NAMESPACE
 
 static std::mutex g_context_lock;
+
+class HelperWindow {
+public:
+    static constexpr const char* CLASS_NAME = "HelperWindowClass";
+
+public:
+    HelperWindow() {
+        registerWndClass();
+        HINSTANCE hInstance = GetModuleHandle(NULL);
+        m_hWnd              = CreateWindowEx(0,                    // 可选窗口扩展样式
+                                             CLASS_NAME,           // 窗口类名
+                                             "Invisible Window",   // 窗口标题
+                                             WS_OVERLAPPEDWINDOW,  // 窗口样式
+                                             CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                                             NULL,       // 父窗口
+                                             NULL,       // 菜单
+                                             hInstance,  // 实例句柄
+                                             NULL        // 附加应用程序数据
+                     );
+        if (m_hWnd != NULL) ShowWindow(m_hWnd, SW_HIDE);
+    }
+    ~HelperWindow() { DestroyWindow(m_hWnd); }
+
+    HWND getHwnd() const { return m_hWnd; }
+
+protected:
+    static void registerWndClass() {
+        static bool registered = false;
+        if (registered) {
+            return;
+        }
+        HINSTANCE hInstance = GetModuleHandle(NULL);
+        // 注册窗口类
+        WNDCLASS wc      = {};
+        wc.lpfnWndProc   = WindowProc;
+        wc.hInstance     = hInstance;
+        wc.lpszClassName = CLASS_NAME;
+        ::RegisterClass(&wc);
+    }
+
+    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+        switch (uMsg) {
+            case WM_DESTROY:
+                PostQuitMessage(0);
+                return 0;
+
+                // 处理其他消息
+        }
+
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    }
+
+private:
+    HWND m_hWnd;
+};
 
 bool WGLHelper::init() {
     auto tempCtx = createContext(NULL, nullptr, true);
@@ -41,7 +95,8 @@ WGlContext* WGLHelper::createContext(HWND window, WGlContext* shareContext, bool
     HGLRC newHglrc = NULL;
     bool selfHdc   = false;
     if (window == NULL) {
-        HWND forageHwnd = NULL;
+        static HelperWindow helperWindow;
+        HWND forageHwnd = helperWindow.getHwnd();
         hdc             = ::GetDC(forageHwnd);
         selfHdc         = true;
     } else {
@@ -114,6 +169,11 @@ void WGLHelper::deleteContext(WGlContext* context) {
     if (context->hglrc) {
         wglDeleteContext(context->hglrc);
         context->hglrc = NULL;
+    }
+
+    if (context->hdc) {
+        ::ReleaseDC(context->hwnd, context->hdc);
+        context->hdc = NULL;
     }
     delete context;
 }
