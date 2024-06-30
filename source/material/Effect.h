@@ -5,6 +5,7 @@
 BEGIN_NS_SCENCE_GRAPH
 
 class Effect : public Object {
+    DECLARE_RUNTIME_CLASS(Effect)
 public:
     Effect();
     virtual ~Effect();
