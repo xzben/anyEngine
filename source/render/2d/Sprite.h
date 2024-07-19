@@ -14,7 +14,7 @@ public:
 
     void initWithFile(const std::string& filename);
     void setSize(const Size& size);
-    const Size& getSize() { return m_size; }
+    const Size& getSize() const { return m_size; }
 
 protected:
     Texture2D* m_texture{nullptr};
